@@ -1,266 +1,284 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Form Order – Bake'n Brew</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Form Order – Bake'n Brew</title>
+ <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>" />
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+ <link rel="stylesheet" href="css/style.css?v=3.0" />
 </head>
 <body>
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
-  <div class="container">
-    <a class="navbar-brand" href="index.html"><span class="logo-icon">☕</span>Bake'n <span>Brew</span></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarMain">
-      <ul class="navbar-nav ms-auto gap-1">
-        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="about.html">Tentang</a></li>
-        <li class="nav-item"><a class="nav-link" href="product.html">Produk</a></li>
-        <li class="nav-item"><a class="nav-link" href="gallery.html">Galeri</a></li>
-        <li class="nav-item"><a class="nav-link" href="contact.html">Kontak</a></li>
-        <li class="nav-item"><a class="nav-link" href="form.html">Order</a></li>
-      </ul>
-    </div>
+ <div class="container">
+   <a class="navbar-brand" href="index.html">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="me-2" style="width: 28px; height: 28px; vertical-align: middle; color: var(--accent-gold);">
+      <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+      <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
+      <line x1="6" y1="2" x2="6" y2="4" />
+      <line x1="10" y1="2" x2="10" y2="4" />
+      <line x1="14" y1="2" x2="14" y2="4" />
+    </svg>Bake'n <span>Brew</span>
+   </a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+   <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarMain">
+   <ul class="navbar-nav ms-auto gap-1">
+    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+    <li class="nav-item"><a class="nav-link" href="about.html">Tentang</a></li>
+    <li class="nav-item"><a class="nav-link" href="product.html">Produk</a></li>
+    <li class="nav-item"><a class="nav-link" href="gallery.html">Galeri</a></li>
+    <li class="nav-item"><a class="nav-link" href="contact.html">Kontak</a></li>
+    <li class="nav-item"><a class="nav-link" href="form.html">Order</a></li>
+   </ul>
   </div>
+ </div>
 </nav>
 
 <!-- PAGE HERO -->
 <section class="page-hero">
-  <div class="container position-relative" style="z-index:2">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb justify-content-center mb-3" style="font-size:.82rem">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-        <li class="breadcrumb-item active">Form Order</li>
-      </ol>
-    </nav>
-    <h1>Form Pemesanan</h1>
-    <p>Isi form di bawah ini untuk memesan produk Bake'n Brew favoritmu.</p>
-  </div>
+ <div class="container position-relative" style="z-index:2">
+  <nav aria-label="breadcrumb">
+   <ol class="breadcrumb justify-content-center mb-3" style="font-size:.82rem">
+    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+    <li class="breadcrumb-item active">Form Order</li>
+   </ol>
+  </nav>
+  <h1>Form Pemesanan</h1>
+  <p>Isi form di bawah ini untuk memesan produk Bake'n Brew favoritmu.</p>
+ </div>
 </section>
 
 <!-- FORM & TABLE SECTION -->
 <section class="form-table-section">
-  <div class="container">
+ <div class="container">
 
-    <div class="row g-5 justify-content-center">
-      <div class="col-lg-7">
+  <div class="row g-5 justify-content-center">
+   <div class="col-lg-7">
 
-        <!-- ORDER FORM CARD -->
-        <div class="order-form-card fade-in-up">
-          <div class="d-flex align-items-center gap-3 mb-4">
-            <div style="width:48px;height:48px;background:var(--brown-dark);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">🧁</div>
-            <div>
-              <h3 style="color:var(--brown-dark);margin:0;">Pesan Produk</h3>
-              <p style="color:var(--text-mid);font-size:.82rem;margin:0;">Isi semua field yang bertanda * dengan benar</p>
-            </div>
-          </div>
-
-          <form id="orderForm" novalidate>
-            <div class="row g-3">
-
-              <!-- Nama -->
-              <div class="col-sm-6">
-                <label class="form-label" for="nama">
-                  <i class="bi bi-person me-1" style="color:var(--brown-dark)"></i>Nama Lengkap *
-                </label>
-                <input type="text" class="form-control" id="nama"
-                       placeholder="Contoh: Sari Dewi"
-                       minlength="2" required />
-                <div class="invalid-feedback">Nama minimal 2 karakter dan tidak boleh kosong.</div>
-              </div>
-
-              <!-- Email -->
-              <div class="col-sm-6">
-                <label class="form-label" for="email">
-                  <i class="bi bi-envelope me-1" style="color:var(--brown-dark)"></i>Email *
-                </label>
-                <input type="email" class="form-control" id="email"
-                       placeholder="emailkamu@gmail.com" required />
-                <div class="invalid-feedback">Masukkan alamat email yang valid.</div>
-              </div>
-
-              <!-- Produk -->
-              <div class="col-sm-6">
-                <label class="form-label" for="produk">
-                  <i class="bi bi-cup-hot me-1" style="color:var(--brown-dark)"></i>Produk *
-                </label>
-                <select class="form-select" id="produk" required>
-                  <option value="">— Pilih produk —</option>
-                  <optgroup label="🧁 Bakery">
-                    <option value="Croissant Butter (Rp 22.000)">Croissant Butter – Rp 22.000</option>
-                    <option value="Almond Croissant (Rp 25.000)">Almond Croissant – Rp 25.000</option>
-                    <option value="Strawberry Croissant (Rp 28.000)">Strawberry Croissant – Rp 28.000</option>
-                    <option value="Salt Bread (Rp 25.000)">Salt Bread – Rp 25.000</option>
-                    <option value="Strawberry Danish (Rp 28.000)">Strawberry Danish – Rp 28.000</option>
-                    <option value="Donut Glazed (Rp 15.000)">Donut Glazed – Rp 15.000</option>
-                    <option value="Roti Coklat (Rp 18.000)">Roti Coklat – Rp 18.000</option>
-                    <option value="Cinnamon Roll (Rp 25.000)">Cinnamon Roll – Rp 25.000</option>
-                    <option value="Banana Bread (Rp 20.000)">Banana Bread – Rp 20.000</option>
-                    <option value="Red Velvet Cake (Rp 35.000)">Red Velvet Cake – Rp 35.000</option>
-                    <option value="Cheesecake (Rp 32.000)">Cheesecake – Rp 32.000</option>
-                    <option value="Cheese Bun (Rp 17.000)">Cheese Bun – Rp 17.000</option>
-                  </optgroup>
-                  <optgroup label="☕ Coffee">
-                    <option value="Signature Latte (Rp 28.000)">Signature Latte – Rp 28.000</option>
-                    <option value="Cappuccino (Rp 26.000)">Cappuccino – Rp 26.000</option>
-                    <option value="Cold Brew (Rp 32.000)">Cold Brew – Rp 32.000</option>
-                    <option value="Espresso (Rp 22.000)">Espresso – Rp 22.000</option>
-                    <option value="Americano (Rp 24.000)">Americano – Rp 24.000</option>
-                    <option value="Iced Caramel Latte (Rp 35.000)">Iced Caramel Latte – Rp 35.000</option>
-                    <option value="Iced Hazelnut Coffee (Rp 32.000)">Iced Hazelnut Coffee – Rp 32.000</option>
-                  </optgroup>
-                  <optgroup label="🥤 Non-Coffee">
-                    <option value="Matcha Latte (Rp 30.000)">Matcha Latte – Rp 30.000</option>
-                    <option value="Dark Chocolate (Rp 25.000)">Dark Chocolate – Rp 25.000</option>
-                    <option value="Ice Tea (Rp 15.000)">Ice Tea – Rp 15.000</option>
-                    <option value="Lemon Tea (Rp 20.000)">Lemon Tea – Rp 20.000</option>
-                  </optgroup>
-                </select>
-                <div class="invalid-feedback">Silakan pilih produk.</div>
-              </div>
-
-              <!-- Jumlah -->
-              <div class="col-sm-6">
-                <label class="form-label" for="jumlah">
-                  <i class="bi bi-hash me-1" style="color:var(--brown-dark)"></i>Jumlah (pcs) *
-                </label>
-                <input type="number" class="form-control" id="jumlah"
-                       placeholder="Contoh: 2"
-                       min="1" max="100" required />
-                <div class="invalid-feedback">Masukkan jumlah antara 1–100.</div>
-              </div>
-
-              <!-- Catatan -->
-              <div class="col-12">
-                <label class="form-label" for="catatan">
-                  <i class="bi bi-chat-left-text me-1" style="color:var(--brown-dark)"></i>Catatan Tambahan
-                </label>
-                <textarea class="form-control" id="catatan" rows="3"
-                          placeholder="Contoh: tanpa gula, ekstra keju, diantar ke meja 5..."
-                          style="resize:none;"></textarea>
-                <div style="font-size:.78rem;color:var(--text-mid);margin-top:.3rem;">Opsional – tuliskan permintaan khusus kamu.</div>
-              </div>
-
-              <!-- Submit -->
-              <div class="col-12 d-flex gap-3 flex-wrap">
-                <button type="submit" class="btn-primary-brown flex-grow-1" style="border:none;">
-                  <i class="bi bi-cart-plus me-2"></i>Tambah Pesanan
-                </button>
-                <button type="reset" class="btn-outline-brown" style="min-width:120px;" onclick="document.getElementById('orderForm').classList.remove('was-validated')">
-                  <i class="bi bi-x-circle me-1"></i>Reset
-                </button>
-              </div>
-
-            </div>
-          </form>
-        </div><!-- end order-form-card -->
-
-      </div><!-- end col -->
-    </div><!-- end row -->
-
-    <!-- ===================== TABLE SECTION ===================== -->
-    <div class="table-section fade-in-up">
-
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
-        <div>
-          <h3 style="color:var(--brown-dark);margin:0;">
-            📋 Daftar Pesanan
-            <span id="totalOrders"
-                  style="display:inline-block;background:var(--brown-dark);color:var(--cream);font-size:.75rem;padding:.15rem .65rem;border-radius:50px;vertical-align:middle;margin-left:.5rem;font-family:'Poppins',sans-serif;">0</span>
-          </h3>
-          <p style="color:var(--text-mid);font-size:.82rem;margin:.2rem 0 0;">Data pesanan yang telah dimasukkan akan tampil di sini.</p>
-        </div>
-        <div class="d-flex gap-2">
-          <button id="exportBtn" class="btn-outline-brown" style="font-size:.82rem;padding:.5rem 1.2rem;">
-            <i class="bi bi-download me-1"></i>Export CSV
-          </button>
-          <button id="clearBtn" class="delete-btn" style="padding:.5rem 1.2rem;font-size:.82rem;">
-            <i class="bi bi-trash me-1"></i>Hapus Semua
-          </button>
-        </div>
+    <!-- ORDER FORM CARD -->
+    <div class="order-form-card fade-in-up">
+     <div class="d-flex align-items-center gap-3 mb-4">
+      <div style="width:48px;height:48px;background:var(--brown-dark);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;color:var(--cream);border:1px solid var(--accent-gold);">
+       <i class="bi bi-bag-heart"></i>
       </div>
-
-      <div class="table-responsive order-table">
-        <table class="table table-hover mb-0">
-          <thead>
-            <tr>
-              <th style="width:50px">#</th>
-              <th>Nama / Email</th>
-              <th>Produk</th>
-              <th>Jumlah</th>
-              <th>Catatan</th>
-              <th>Waktu</th>
-              <th style="width:90px">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="orderTableBody">
-            <!-- Rows injected by JS -->
-          </tbody>
-        </table>
-        <!-- Empty State -->
-        <div id="emptyState" class="empty-state">
-          <div class="icon">🛒</div>
-          <p style="color:var(--text-mid);">Belum ada pesanan. Isi form di atas untuk menambahkan!</p>
-        </div>
+      <div>
+       <h3 style="color:var(--brown-dark);margin:0;">Pesan Produk</h3>
+       <p style="color:var(--text-mid);font-size:.82rem;margin:0;">Isi semua field yang bertanda * dengan benar</p>
       </div>
+     </div>
 
-    </div><!-- end table-section -->
+     <form id="orderForm" novalidate>
+      <div class="row g-3">
 
-  </div><!-- end container -->
+       <!-- Nama -->
+       <div class="col-sm-6">
+        <label class="form-label" for="nama">
+         <i class="bi bi-person me-1" style="color:var(--brown-dark)"></i>Nama Lengkap *
+        </label>
+        <input type="text" class="form-control" id="nama"
+            placeholder="Contoh: Sari Dewi"
+            minlength="2" required />
+        <div class="invalid-feedback">Nama minimal 2 karakter dan tidak boleh kosong.</div>
+       </div>
+
+       <!-- Email -->
+       <div class="col-sm-6">
+        <label class="form-label" for="email">
+         <i class="bi bi-envelope me-1" style="color:var(--brown-dark)"></i>Email *
+        </label>
+        <input type="email" class="form-control" id="email"
+            placeholder="emailkamu@gmail.com" required />
+        <div class="invalid-feedback">Masukkan alamat email yang valid.</div>
+       </div>
+
+       <!-- Produk -->
+       <div class="col-sm-6">
+        <label class="form-label" for="produk">
+         <i class="bi bi-cup-hot me-1" style="color:var(--brown-dark)"></i>Produk *
+        </label>
+        <select class="form-select" id="produk" required>
+         <option value="">— Pilih produk —</option>
+         <optgroup label=" Bakery">
+          <option value="Croissant Butter (Rp 22.000)">Croissant Butter – Rp 22.000</option>
+          <option value="Almond Croissant (Rp 25.000)">Almond Croissant – Rp 25.000</option>
+          <option value="Strawberry Croissant (Rp 28.000)">Strawberry Croissant – Rp 28.000</option>
+          <option value="Salt Bread (Rp 25.000)">Salt Bread – Rp 25.000</option>
+          <option value="Strawberry Danish (Rp 28.000)">Strawberry Danish – Rp 28.000</option>
+          <option value="Donut Glazed (Rp 15.000)">Donut Glazed – Rp 15.000</option>
+          <option value="Roti Coklat (Rp 18.000)">Roti Coklat – Rp 18.000</option>
+          <option value="Cinnamon Roll (Rp 25.000)">Cinnamon Roll – Rp 25.000</option>
+          <option value="Banana Bread (Rp 20.000)">Banana Bread – Rp 20.000</option>
+          <option value="Red Velvet Cake (Rp 35.000)">Red Velvet Cake – Rp 35.000</option>
+          <option value="Cheesecake (Rp 32.000)">Cheesecake – Rp 32.000</option>
+          <option value="Cheese Bun (Rp 17.000)">Cheese Bun – Rp 17.000</option>
+         </optgroup>
+         <optgroup label=" Coffee">
+          <option value="Signature Latte (Rp 28.000)">Signature Latte – Rp 28.000</option>
+          <option value="Cappuccino (Rp 26.000)">Cappuccino – Rp 26.000</option>
+          <option value="Cold Brew (Rp 32.000)">Cold Brew – Rp 32.000</option>
+          <option value="Espresso (Rp 22.000)">Espresso – Rp 22.000</option>
+          <option value="Americano (Rp 24.000)">Americano – Rp 24.000</option>
+          <option value="Iced Caramel Latte (Rp 35.000)">Iced Caramel Latte – Rp 35.000</option>
+          <option value="Iced Hazelnut Coffee (Rp 32.000)">Iced Hazelnut Coffee – Rp 32.000</option>
+         </optgroup>
+         <optgroup label=" Non-Coffee">
+          <option value="Matcha Latte (Rp 30.000)">Matcha Latte – Rp 30.000</option>
+          <option value="Dark Chocolate (Rp 25.000)">Dark Chocolate – Rp 25.000</option>
+          <option value="Ice Tea (Rp 15.000)">Ice Tea – Rp 15.000</option>
+          <option value="Lemon Tea (Rp 20.000)">Lemon Tea – Rp 20.000</option>
+         </optgroup>
+        </select>
+        <div class="invalid-feedback">Silakan pilih produk.</div>
+       </div>
+
+       <!-- Jumlah -->
+       <div class="col-sm-6">
+        <label class="form-label" for="jumlah">
+         <i class="bi bi-hash me-1" style="color:var(--brown-dark)"></i>Jumlah (pcs) *
+        </label>
+        <input type="number" class="form-control" id="jumlah"
+            placeholder="Contoh: 2"
+            min="1" max="100" required />
+        <div class="invalid-feedback">Masukkan jumlah antara 1–100.</div>
+       </div>
+
+       <!-- Catatan -->
+       <div class="col-12">
+        <label class="form-label" for="catatan">
+         <i class="bi bi-chat-left-text me-1" style="color:var(--brown-dark)"></i>Catatan Tambahan
+        </label>
+        <textarea class="form-control" id="catatan" rows="3"
+             placeholder="Contoh: tanpa gula, ekstra keju, diantar ke meja 5..."
+             style="resize:none;"></textarea>
+        <div style="font-size:.78rem;color:var(--text-mid);margin-top:.3rem;">Opsional: tuliskan permintaan khusus kamu.</div>
+       </div>
+
+       <!-- Submit -->
+       <div class="col-12 d-flex gap-3 flex-wrap">
+        <button type="submit" class="btn-primary-brown flex-grow-1" style="border:none;">
+         <i class="bi bi-cart-plus me-2"></i>Tambah Pesanan
+        </button>
+        <button type="reset" class="btn-outline-brown" style="min-width:120px;" onclick="document.getElementById('orderForm').classList.remove('was-validated')">
+         <i class="bi bi-x-circle me-1"></i>Reset
+        </button>
+       </div>
+
+      </div>
+     </form>
+    </div><!-- end order-form-card -->
+
+   </div><!-- end col -->
+  </div><!-- end row -->
+
+  <!-- ===================== TABLE SECTION ===================== -->
+  <div class="table-section fade-in-up">
+
+   <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+    <div>
+     <h3 style="color:var(--brown-dark);margin:0;">
+       Daftar Pesanan
+      <span id="totalOrders"
+         style="display:inline-block;background:var(--brown-dark);color:var(--cream);font-size:.75rem;padding:.15rem .65rem;border-radius:50px;vertical-align:middle;margin-left:.5rem;font-family:'Poppins',sans-serif;">0</span>
+     </h3>
+     <p style="color:var(--text-mid);font-size:.82rem;margin:.2rem 0 0;">Data pesanan yang telah dimasukkan akan tampil di sini.</p>
+    </div>
+    <div class="d-flex gap-2">
+     <button id="exportBtn" class="btn-outline-brown" style="font-size:.82rem;padding:.5rem 1.2rem;">
+      <i class="bi bi-download me-1"></i>Export CSV
+     </button>
+     <button id="clearBtn" class="delete-btn" style="padding:.5rem 1.2rem;font-size:.82rem;">
+      <i class="bi bi-trash me-1"></i>Hapus Semua
+     </button>
+    </div>
+   </div>
+
+   <div class="table-responsive order-table">
+    <table class="table table-hover mb-0">
+     <thead>
+      <tr>
+       <th style="width:50px">#</th>
+       <th>Nama / Email</th>
+       <th>Produk</th>
+       <th>Jumlah</th>
+       <th>Catatan</th>
+       <th>Waktu</th>
+       <th style="width:90px">Aksi</th>
+      </tr>
+     </thead>
+     <tbody id="orderTableBody">
+      <!-- Rows injected by JS -->
+     </tbody>
+    </table>
+     <!-- Empty State -->
+     <div id="emptyState" class="empty-state">
+      <div class="icon" style="color: var(--accent-gold);"><i class="bi bi-cart-x"></i></div>
+      <p style="color:var(--text-mid);">Belum ada pesanan. Isi form di atas untuk menambahkan!</p>
+     </div>
+   </div>
+
+  </div><!-- end table-section -->
+
+ </div><!-- end container -->
 </section>
 
 <!-- FOOTER -->
 <footer class="footer">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-lg-4 col-md-6">
-        <div class="footer-brand">☕ Bake'n <span>Brew</span></div>
-        <p>Café & Bakery di Surabaya yang menghadirkan roti segar dan kopi berkualitas dalam suasana hangat dan cozy sejak 2019.</p>
-        <div class="footer-social">
-          <a href="#"><i class="bi bi-instagram"></i></a>
-          <a href="#"><i class="bi bi-facebook"></i></a>
-          <a href="#"><i class="bi bi-whatsapp"></i></a>
-          <a href="#"><i class="bi bi-tiktok"></i></a>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-6">
-        <h6>Navigasi</h6>
-        <ul class="footer-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">Tentang Kami</a></li>
-          <li><a href="product.html">Produk</a></li>
-          <li><a href="gallery.html">Galeri</a></li>
-          <li><a href="contact.html">Kontak</a></li>
-        </ul>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <h6>Menu Populer</h6>
-        <ul class="footer-links">
-          <li><a href="product.html">Croissant Butter</a></li>
-          <li><a href="product.html">Signature Latte</a></li>
-          <li><a href="product.html">Donut Glazed</a></li>
-          <li><a href="product.html">Cappuccino</a></li>
-        </ul>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <h6>Jam Operasional</h6>
-        <p style="font-size:.85rem;">
-          <span style="color:var(--cream)">Senin – Jumat</span><br>07.00 – 21.00 WIB<br><br>
-          <span style="color:var(--cream)">Sabtu – Minggu</span><br>08.00 – 22.00 WIB
-        </p>
-      </div>
+ <div class="container">
+  <div class="row g-4">
+   <div class="col-lg-4 col-md-6">
+    <div class="footer-brand">
+     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="me-2" style="width: 26px; height: 26px; vertical-align: middle; color: var(--cream);">
+       <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+       <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
+       <line x1="6" y1="2" x2="6" y2="4" />
+       <line x1="10" y1="2" x2="10" y2="4" />
+       <line x1="14" y1="2" x2="14" y2="4" />
+     </svg>Bake'n <span>Brew</span>
     </div>
+    <p>Café & Bakery di Surabaya yang menghadirkan roti segar dan kopi berkualitas dalam suasana hangat dan cozy sejak 2019.</p>
+    <div class="footer-social">
+     <a href="https://www.instagram.com/natasyajollyn/" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
+     <a href="https://wa.me/6282335871770" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp"></i></a>
+     <a href="https://www.tiktok.com/@lynnatzz?_r=1&_t=ZS-96sLinjnNw1" target="_blank" rel="noopener noreferrer"><i class="bi bi-tiktok"></i></a>
+    </div>
+   </div>
+   <div class="col-lg-2 col-md-6">
+    <h6>Navigasi</h6>
+    <ul class="footer-links">
+     <li><a href="index.html">Home</a></li>
+     <li><a href="about.html">Tentang Kami</a></li>
+     <li><a href="product.html">Produk</a></li>
+     <li><a href="gallery.html">Galeri</a></li>
+     <li><a href="contact.html">Kontak</a></li>
+    </ul>
+   </div>
+   <div class="col-lg-3 col-md-6">
+    <h6>Menu Populer</h6>
+    <ul class="footer-links">
+     <li><a href="product.html#croissant-butter">Croissant Butter</a></li>
+     <li><a href="product.html#signature-latte">Signature Latte</a></li>
+     <li><a href="product.html#donut-glazed">Donut Glazed</a></li>
+     <li><a href="product.html#cappuccino">Cappuccino</a></li>
+     <li><a href="product.html#roti-coklat">Roti Coklat</a></li>
+    </ul>
+   </div>
+   <div class="col-lg-3 col-md-6">
+    <h6>Jam Operasional</h6>
+    <p style="font-size:.85rem;">
+     <span style="color:var(--cream)">Senin – Jumat</span><br>07.00 – 21.00 WIB<br><br>
+     <span style="color:var(--cream)">Sabtu – Minggu</span><br>08.00 – 22.00 WIB
+    </p>
+   </div>
   </div>
-  <div class="footer-bottom">
-    <div class="container"><p>© 2024 Bake'n Brew. Dibuat dengan ❤️ di Surabaya. All rights reserved.</p></div>
-  </div>
+ </div>
+ <div class="footer-bottom">
+  <div class="container"><p>© 2024 Bake'n Brew. Dibuat dengan cinta di Surabaya. All rights reserved.</p></div>
+ </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
