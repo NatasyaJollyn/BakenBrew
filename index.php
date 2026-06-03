@@ -16,7 +16,7 @@ $store_status = $status_stmt->fetchColumn() ?: 'open';
  <!-- Bootstrap Icons -->
  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
  <!-- Custom CSS -->
- <link rel="stylesheet" href="css/style.css?v=5.0" />
+ <link rel="stylesheet" href="css/style.css?v=5.1" />
 </head>
 <body>
 
@@ -58,7 +58,7 @@ $store_status = $status_stmt->fetchColumn() ?: 'open';
  <div class="container">
   <div class="hero-content col-lg-7">
    <?php if ($store_status === 'closed'): ?>
-    <div id="home-closed-banner" class="alert alert-danger d-inline-flex align-items-center gap-2 mb-3" style="border-radius: var(--radius-sm); font-size: 0.85rem; background-color: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.25); color: #FAF6F0; padding: 0.5rem 1rem; font-family: 'Poppins', sans-serif;">
+    <div id="home-closed-banner" class="alert alert-danger d-flex align-items-center gap-2 mb-3" style="border-radius: var(--radius-sm); font-size: 0.85rem; background-color: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.25); color: #FAF6F0; padding: 0.5rem 1rem; font-family: 'Poppins', sans-serif; width: fit-content;">
      <i class="bi bi-shop"></i> Kami sedang Tutup. Pemesanan dinonaktifkan sementara.
     </div>
    <?php endif; ?>
@@ -332,6 +332,6 @@ $store_status = $status_stmt->fetchColumn() ?: 'open';
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js?v=5.0"></script>
+<script src="js/script.js?v=5.1"></script>
 </body>
 </html>

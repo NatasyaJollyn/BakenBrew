@@ -65,7 +65,7 @@ foreach ($all_products as $p) {
  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>" />
  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
- <link rel="stylesheet" href="css/style.css?v=5.0" />
+ <link rel="stylesheet" href="css/style.css?v=5.1" />
 </head>
 <body>
 
@@ -357,6 +357,6 @@ foreach ($all_products as $p) {
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js?v=5.0"></script>
+<script src="js/script.js?v=5.1"></script>
 </body>
 </html>

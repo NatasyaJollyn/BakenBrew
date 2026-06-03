@@ -44,12 +44,22 @@ function startStoreStatusPolling() {
         
         const badge = document.querySelector('.navbar-brand .badge');
         if (badge) {
-          if (data.status === 'open') {
-            badge.textContent = 'Buka';
-            badge.className = 'badge bg-success ms-2';
-          } else {
-            badge.textContent = 'Tutup';
-            badge.className = 'badge bg-danger ms-2';
+          const oldText = badge.textContent.trim();
+          const newText = data.status === 'open' ? 'Buka' : 'Tutup';
+          
+          if (oldText !== newText || !badge.classList.contains('badge-flip-active')) {
+            if (data.status === 'open') {
+              badge.textContent = 'Buka';
+              badge.className = 'badge bg-success ms-2';
+            } else {
+              badge.textContent = 'Tutup';
+              badge.className = 'badge bg-danger ms-2';
+            }
+            
+            // Trigger 3D Flip Animation
+            badge.classList.remove('badge-flip-active');
+            void badge.offsetWidth; // force reflow/repaint
+            badge.classList.add('badge-flip-active');
           }
         }
         
@@ -61,8 +71,8 @@ function startStoreStatusPolling() {
             if (!homeBanner) {
               homeBanner = document.createElement('div');
               homeBanner.id = 'home-closed-banner';
-              homeBanner.className = 'alert alert-danger d-inline-flex align-items-center gap-2 mb-3 fade-in-up visible';
-              homeBanner.style.cssText = 'border-radius: var(--radius-sm); font-size: 0.85rem; background-color: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.25); color: #FAF6F0; padding: 0.5rem 1rem; font-family: "Poppins", sans-serif;';
+              homeBanner.className = 'alert alert-danger d-flex align-items-center gap-2 mb-3 fade-in-up visible';
+              homeBanner.style.cssText = 'border-radius: var(--radius-sm); font-size: 0.85rem; background-color: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.25); color: #FAF6F0; padding: 0.5rem 1rem; font-family: "Poppins", sans-serif; width: fit-content;';
               homeBanner.innerHTML = `<i class="bi bi-shop"></i> Kami sedang Tutup. Pemesanan dinonaktifkan sementara.`;
               heroContent.insertBefore(homeBanner, heroContent.querySelector('.hero-badge'));
             }
