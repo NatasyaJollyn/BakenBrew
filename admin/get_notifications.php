@@ -14,20 +14,42 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit;
 }
 
+$admin_data = null;
+if (isset($_SESSION['admin_username'])) {
+    if ($is_db_online) {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM `admin` WHERE `username` = ?");
+            $stmt->execute([$_SESSION['admin_username']]);
+            $admin_data = $stmt->fetch();
+        } catch (PDOException $e) {}
+    }
+}
+$lang_code = isset($admin_data['lang']) ? $admin_data['lang'] : 'id';
+
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 // Function to format relative timestamp
 function getRelativeTime($timestamp) {
+    global $lang_code;
     $time = strtotime($timestamp);
     $diff = time() - $time;
     if ($diff < 60) {
-        return 'Baru saja';
+        return $lang_code === 'en' ? 'Just now' : 'Baru saja';
     } elseif ($diff < 3600) {
-        return round($diff / 60) . ' menit yang lalu';
+        $mins = round($diff / 60);
+        return $lang_code === 'en' 
+            ? $mins . ' ' . ($mins == 1 ? 'minute' : 'minutes') . ' ago' 
+            : $mins . ' menit yang lalu';
     } elseif ($diff < 86400) {
-        return round($diff / 3600) . ' jam yang lalu';
+        $hours = round($diff / 3600);
+        return $lang_code === 'en' 
+            ? $hours . ' ' . ($hours == 1 ? 'hour' : 'hours') . ' ago' 
+            : $hours . ' jam yang lalu';
     } else {
-        return round($diff / 86400) . ' hari yang lalu';
+        $days = round($diff / 86400);
+        return $lang_code === 'en' 
+            ? $days . ' ' . ($days == 1 ? 'day' : 'days') . ' ago' 
+            : $days . ' hari yang lalu';
     }
 }
 

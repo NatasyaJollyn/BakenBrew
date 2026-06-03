@@ -46,7 +46,7 @@ require_once 'lang.php';
 
 // Block write operations on offline mode
 if (!$is_db_online && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $_SESSION['error_msg'] = "Penyimpanan data tidak diizinkan dalam Mode Offline.";
+    $_SESSION['error_msg'] = __('err_offline_post');
     header('Location: profil.php?tab=' . $active_tab);
     exit;
 }
@@ -60,16 +60,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $phone = trim($_POST['phone']);
         
         if (empty($fullname)) {
-            $error = "Nama Lengkap tidak boleh kosong.";
+            $error = __('err_fullname_empty');
         } else {
             try {
                 $stmt = $pdo->prepare("UPDATE `admin` SET `fullname` = ?, `phone` = ? WHERE `username` = ?");
                 $stmt->execute([$fullname, $phone, $_SESSION['admin_username']]);
-                $_SESSION['success_msg'] = "Informasi profil berhasil diperbarui.";
+                $_SESSION['success_msg'] = __('msg_profile_success');
                 header('Location: profil.php?tab=profile');
                 exit;
             } catch (PDOException $e) {
-                $error = "Gagal memperbarui profil: " . $e->getMessage();
+                $error = __('err_profile_fail') . $e->getMessage();
             }
         }
     }
@@ -87,11 +87,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $stmt = $pdo->prepare("UPDATE `admin` SET `avatar` = NULL WHERE `username` = ?");
                 $stmt->execute([$_SESSION['admin_username']]);
-                $_SESSION['success_msg'] = "Foto profil berhasil dihapus.";
+                $_SESSION['success_msg'] = __('msg_avatar_removed');
                 header('Location: profil.php?tab=profile');
                 exit;
             } catch (PDOException $e) {
-                $error = "Gagal menghapus foto profil: " . $e->getMessage();
+                $error = __('err_avatar_remove_fail') . $e->getMessage();
             }
         } elseif (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
             $file_tmp = $_FILES['avatar']['tmp_name'];
@@ -101,9 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $allowed_exts = ['jpg', 'jpeg', 'png'];
             if (!in_array($file_ext, $allowed_exts)) {
-                $error = "Format file tidak didukung. Harap unggah file .jpg, .jpeg, atau .png.";
+                $error = __('err_avatar_invalid_ext');
             } elseif ($file_size > 2 * 1024 * 1024) {
-                $error = "Ukuran file terlalu besar. Maksimal ukuran file adalah 2MB.";
+                $error = __('err_avatar_too_large');
             } else {
                 $new_filename = 'avatar_' . time() . '_' . rand(100, 999) . '.' . $file_ext;
                 if (move_uploaded_file($file_tmp, $avatar_dir . $new_filename)) {
@@ -117,18 +117,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     try {
                         $stmt = $pdo->prepare("UPDATE `admin` SET `avatar` = ? WHERE `username` = ?");
                         $stmt->execute([$new_filename, $_SESSION['admin_username']]);
-                        $_SESSION['success_msg'] = "Foto profil berhasil diunggah.";
+                        $_SESSION['success_msg'] = __('msg_avatar_uploaded');
                         header('Location: profil.php?tab=profile');
                         exit;
                     } catch (PDOException $e) {
-                        $error = "Gagal menyimpan ke database: " . $e->getMessage();
+                        $error = __('err_avatar_db_fail') . $e->getMessage();
                     }
                 } else {
-                    $error = "Gagal mengunggah file ke server.";
+                    $error = __('err_avatar_upload_fail');
                 }
             }
         } else {
-            $error = "Silakan pilih file gambar untuk diunggah.";
+            $error = __('err_avatar_select');
         }
     }
 
@@ -139,11 +139,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conf_pass = $_POST['confirm_password'];
         
         if (empty($curr_pass) || empty($new_pass) || empty($conf_pass)) {
-            $error = "Semua field password wajib diisi.";
+            $error = __('err_pass_required');
         } elseif ($new_pass !== $conf_pass) {
-            $error = "Konfirmasi password baru tidak cocok.";
+            $error = __('err_pass_mismatch');
         } elseif (strlen($new_pass) < 6) {
-            $error = "Password baru minimal harus 6 karakter.";
+            $error = __('err_pass_length');
         } else {
             // Verify current password
             if (password_verify($curr_pass, $admin_data['password'])) {
@@ -151,14 +151,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $new_hashed_pass = password_hash($new_pass, PASSWORD_DEFAULT);
                     $stmt = $pdo->prepare("UPDATE `admin` SET `password` = ? WHERE `username` = ?");
                     $stmt->execute([$new_hashed_pass, $_SESSION['admin_username']]);
-                    $_SESSION['success_msg'] = "Password berhasil diubah.";
+                    $_SESSION['success_msg'] = __('msg_pass_success');
                     header('Location: profil.php?tab=security');
                     exit;
                 } catch (PDOException $e) {
-                    $error = "Gagal mengubah password: " . $e->getMessage();
+                    $error = __('err_pass_fail') . $e->getMessage();
                 }
             } else {
-                $error = "Password saat ini tidak valid.";
+                $error = __('err_pass_invalid');
             }
         }
     }
@@ -171,11 +171,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $stmt = $pdo->prepare("UPDATE `admin` SET `notif_sound` = ?, `lang` = ? WHERE `username` = ?");
             $stmt->execute([$notif_sound, $lang, $_SESSION['admin_username']]);
-            $_SESSION['success_msg'] = "Preferensi sistem berhasil disimpan.";
+            $_SESSION['success_msg'] = __('msg_prefs_success');
             header('Location: profil.php?tab=security');
             exit;
         } catch (PDOException $e) {
-            $error = "Gagal memperbarui preferensi: " . $e->getMessage();
+            $error = __('err_prefs_fail') . $e->getMessage();
         }
     }
 }
@@ -276,13 +276,13 @@ if (isset($_SESSION['error_msg'])) {
     
     <div class="sidebar-nav">
         <a href="dashboard.php" class="nav-item-admin">
-            <i class="bi bi-speedometer2"></i> Dashboard
+            <i class="bi bi-speedometer2"></i> <?= __('nav_dashboard') ?>
         </a>
         <a href="produk.php" class="nav-item-admin">
-            <i class="bi bi-egg-fried"></i> Kelola Menu
+            <i class="bi bi-egg-fried"></i> <?= __('nav_menu') ?>
         </a>
         <a href="pesanan.php" class="nav-item-admin">
-            <i class="bi bi-cart3"></i> Kelola Pesanan
+            <i class="bi bi-cart3"></i> <?= __('nav_orders') ?>
         </a>
     </div>
 </div>
@@ -303,15 +303,15 @@ if (isset($_SESSION['error_msg'])) {
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-0" aria-labelledby="notifBell" style="width: 320px; border-radius: var(--radius-md); overflow: hidden; background-color: #ffffff;">
                     <li>
                         <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom" style="background-color: var(--cream-dark); font-family: 'Poppins', sans-serif;">
-                            <span class="fw-bold" style="color: var(--brown-dark); font-size: 0.9rem;">Notifikasi</span>
-                            <a href="#" class="text-decoration-none" style="font-size: 0.75rem; color: var(--accent-gold); font-weight: 500; display: none;" id="markAllReadHeader">Tandai Semua Dibaca</a>
+                            <span class="fw-bold" style="color: var(--brown-dark); font-size: 0.9rem;"><?= __('notif_title') ?></span>
+                            <a href="#" class="text-decoration-none" style="font-size: 0.75rem; color: var(--accent-gold); font-weight: 500; display: none;" id="markAllReadHeader"><?= __('mark_all_read') ?></a>
                         </div>
                     </li>
                     <div class="notif-items-list" style="max-height: 280px; overflow-y: auto;">
-                        <div class="p-3 text-center text-muted" style="font-size: 0.85rem;"><i class="bi bi-bell-slash me-1"></i> Tidak ada notifikasi.</div>
+                        <div class="p-3 text-center text-muted" style="font-size: 0.85rem;"><i class="bi bi-bell-slash me-1"></i> <?= __('no_notif') ?></div>
                     </div>
                     <li>
-                        <a href="notifikasi.php" class="dropdown-item text-center py-2 border-top text-decoration-none fw-semibold" style="font-size: 0.8rem; color: var(--brown-dark); background-color: var(--cream);">Lihat Semua Notifikasi</a>
+                        <a href="notifikasi.php" class="dropdown-item text-center py-2 border-top text-decoration-none fw-semibold" style="font-size: 0.8rem; color: var(--brown-dark); background-color: var(--cream);"><?= __('view_all_notif') ?></a>
                     </li>
                 </ul>
             </div>
@@ -319,7 +319,7 @@ if (isset($_SESSION['error_msg'])) {
             <!-- Profile Dropdown -->
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--brown-dark);">
-                    <span class="d-none d-sm-inline font-weight-medium me-1" style="font-size: 0.9rem;">Halo, <strong><?= htmlspecialchars($admin_data['fullname'] ?? $admin_data['username'] ?? 'Admin') ?></strong></span>
+                    <span class="d-none d-sm-inline font-weight-medium me-1" style="font-size: 0.9rem;"><?= __('halo') ?>, <strong><?= htmlspecialchars($admin_data['fullname'] ?? $admin_data['username'] ?? 'Admin') ?></strong></span>
                     <?php 
                     $avatar_img = '';
                     if (!empty($admin_data['avatar'])) {
@@ -334,16 +334,16 @@ if (isset($_SESSION['error_msg'])) {
                     <?php endif; ?>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: #ffffff; border-radius: var(--radius-md); min-width: 180px;">
-                    <li><h6 class="dropdown-header" style="color: var(--text-mid); font-family: 'Poppins', sans-serif;">Administrator</h6></li>
+                    <li><h6 class="dropdown-header" style="color: var(--text-mid); font-family: 'Poppins', sans-serif;"><?= __('administrator') ?></h6></li>
                     <li><hr class="dropdown-divider" style="border-top: 1px solid var(--cream-dark);"></li>
                     <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 href="profil.php" style="color: var(--text-mid);">
-                            <i class="bi bi-person" style="font-size: 1rem;"></i> Lihat Profil
+                        <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="profil.php" style="color: var(--text-mid);">
+                            <i class="bi bi-person" style="font-size: 1rem;"></i> <?= __('profile') ?>
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="logout.php" onclick="confirmLogout(event)" style="color: #d32f2f; font-weight: 500;">
-                            <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> Log Out
+                            <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> <?= __('logout') ?>
                         </a>
                     </li>
                 </ul>
@@ -358,8 +358,8 @@ if (isset($_SESSION['error_msg'])) {
             <div class="alert d-flex align-items-center gap-3 mb-4 shadow-sm" role="alert" style="background: linear-gradient(135deg, #FFF3CD, #FFEBAA); border: 1px solid #FFE082; color: #856404; border-radius: var(--radius-md); padding: 1.2rem 1.5rem; font-family: 'Poppins', sans-serif;">
                 <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.6rem; color: #E65100;"></i>
                 <div>
-                    <h5 class="fw-bold mb-1" style="font-size: 1.05rem; margin: 0; color: #E65100;">Koneksi Database Offline</h5>
-                    <p class="mb-0" style="font-size: 0.88rem; margin: 0; font-weight: 500;">Peringatan: Koneksi server database terputus. Anda saat ini melihat data statis (Mode Offline).</p>
+                    <h5 class="fw-bold mb-1" style="font-size: 1.05rem; margin: 0; color: #E65100;"><?= __('db_offline_title') ?></h5>
+                    <p class="mb-0" style="font-size: 0.88rem; margin: 0; font-weight: 500;"><?= __('db_offline_msg') ?></p>
                 </div>
             </div>
         <?php endif; ?>
@@ -391,27 +391,27 @@ if (isset($_SESSION['error_msg'])) {
                     </div>
                     
                     <h4 class="mb-1" style="color: var(--text-dark);"><?= htmlspecialchars($admin_data['fullname'] ?? 'Bake n Brew Admin') ?></h4>
-                    <p class="text-muted mb-4" style="font-size: 0.85rem;">@<?= htmlspecialchars($admin_data['username']) ?> &bull; <span class="badge" style="background-color: var(--brown-dark); font-weight: 500; font-size: 0.75rem;"><?= htmlspecialchars($admin_data['role'] ?? 'Administrator') ?></span></p>
+                    <p class="text-muted mb-4" style="font-size: 0.85rem;">@<?= htmlspecialchars($admin_data['username']) ?> &bull; <span class="badge" style="background-color: var(--brown-dark); font-weight: 500; font-size: 0.75rem;"><?= htmlspecialchars($admin_data['role'] ?? __('administrator')) ?></span></p>
 
                     <form method="POST" action="profil.php?tab=profile" enctype="multipart/form-data" class="d-flex flex-column gap-2 px-3">
                         <input type="hidden" name="action" value="update_avatar" />
                         
                         <div class="d-grid">
                             <label for="avatarInput" class="btn btn-admin-outline btn-sm <?= !$is_db_online ? 'disabled' : '' ?>" style="<?= !$is_db_online ? 'pointer-events: none; opacity: 0.6;' : '' ?>">
-                                <i class="bi bi-upload me-1"></i> Pilih Foto Baru
+                                <i class="bi bi-upload me-1"></i> <?= __('btn_select_photo') ?>
                             </label>
                             <input type="file" name="avatar" id="avatarInput" accept=".jpg, .jpeg, .png" class="d-none" onchange="this.form.submit()" <?= !$is_db_online ? 'disabled' : '' ?> />
                         </div>
                         
                         <?php if ($avatar_img): ?>
                             <div class="d-grid">
-                                <button type="submit" name="remove_avatar" value="1" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus foto profil?')" <?= !$is_db_online ? 'disabled' : '' ?>>
-                                    <i class="bi bi-trash me-1"></i> Hapus Foto
+                                <button type="submit" name="remove_avatar" value="1" class="btn btn-sm btn-outline-danger" onclick="return confirm('<?= __('confirm_delete_avatar') ?>')" <?= !$is_db_online ? 'disabled' : '' ?>>
+                                    <i class="bi bi-trash me-1"></i> <?= __('btn_remove_photo') ?>
                                 </button>
                             </div>
                         <?php endif; ?>
                         
-                        <span class="text-muted" style="font-size: 0.75rem;">Mendukung format JPG, PNG. Maksimal 2MB.</span>
+                        <span class="text-muted" style="font-size: 0.75rem;"><?= __('avatar_hint') ?></span>
                     </form>
                 </div>
             </div>
@@ -438,35 +438,35 @@ if (isset($_SESSION['error_msg'])) {
                         
                         <!-- TAB 1: PROFILE ACCOUNT -->
                         <div class="tab-pane fade show active" id="profileTab" role="tabpanel" style="<?= $active_tab !== 'profile' ? 'display: none;' : '' ?>">
-                            <h5 class="mb-4" style="color: var(--brown-dark); font-weight: 600;">Data Diri</h5>
+                            <h5 class="mb-4" style="color: var(--brown-dark); font-weight: 600;"><?= __('personal_data') ?></h5>
                             
                             <form method="POST" action="profil.php?tab=profile">
                                 <input type="hidden" name="action" value="update_profile" />
                                 
                                 <div class="mb-3">
-                                    <label class="form-label">Nama Lengkap</label>
+                                    <label class="form-label"><?= __('lbl_fullname') ?></label>
                                     <input type="text" class="form-control" name="fullname" value="<?= htmlspecialchars($admin_data['fullname'] ?? '') ?>" required <?= !$is_db_online ? 'disabled' : '' ?> />
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label class="form-label">Email <span class="text-muted" style="font-size: 0.75rem;">(Read-only untuk keamanan)</span></label>
+                                    <label class="form-label"><?= __('lbl_email') ?> <span class="text-muted" style="font-size: 0.75rem;"><?= __('lbl_email_hint') ?></span></label>
                                     <input type="email" class="form-control text-muted" name="email" value="<?= htmlspecialchars($admin_data['email'] ?? 'admin@bakenbrew.com') ?>" disabled />
                                 </div>
                                 
                                 <div class="mb-4">
-                                    <label class="form-label">Nomor Telepon/WhatsApp</label>
+                                    <label class="form-label"><?= __('lbl_phone') ?></label>
                                     <input type="tel" class="form-control" name="phone" placeholder="Contoh: 081234567890" value="<?= htmlspecialchars($admin_data['phone'] ?? '') ?>" <?= !$is_db_online ? 'disabled' : '' ?> />
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label class="form-label d-block">Role Hak Akses</label>
-                                    <span class="badge" style="background-color: var(--accent-gold); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 500;"><?= htmlspecialchars($admin_data['role'] ?? 'Administrator') ?></span>
+                                    <label class="form-label d-block"><?= __('lbl_role') ?></label>
+                                    <span class="badge" style="background-color: var(--accent-gold); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 500;"><?= htmlspecialchars($admin_data['role'] ?? __('administrator')) ?></span>
                                 </div>
                                 
                                 <hr class="my-4" style="border-top: 1px solid var(--cream-dark);">
                                 
                                 <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-admin-primary px-4" <?= !$is_db_online ? 'disabled' : '' ?>>Simpan Perubahan</button>
+                                    <button type="submit" class="btn btn-admin-primary px-4" <?= !$is_db_online ? 'disabled' : '' ?>><?= __('btn_save_changes') ?></button>
                                 </div>
                             </form>
                         </div>
@@ -474,12 +474,12 @@ if (isset($_SESSION['error_msg'])) {
                         <!-- TAB 2: SECURITY & PREFERENCES -->
                         <div class="tab-pane fade show active" id="securityTab" role="tabpanel" style="<?= $active_tab !== 'security' ? 'display: none;' : '' ?>">
                             <!-- Ubah Password -->
-                            <h5 class="mb-4" style="color: var(--brown-dark); font-weight: 600;">Ubah Password</h5>
+                            <h5 class="mb-4" style="color: var(--brown-dark); font-weight: 600;"><?= __('change_password') ?></h5>
                             <form method="POST" action="profil.php?tab=security" class="mb-5">
                                 <input type="hidden" name="action" value="change_password" />
                                 
                                 <div class="mb-3">
-                                    <label class="form-label">Password Saat Ini</label>
+                                    <label class="form-label"><?= __('lbl_current_pass') ?></label>
                                     <div class="password-field-wrapper">
                                         <input type="password" class="form-control password-input" name="current_password" required <?= !$is_db_online ? 'disabled' : '' ?> />
                                         <i class="bi bi-eye password-toggle-eye" onclick="togglePasswordVisibility(this)"></i>
@@ -488,14 +488,14 @@ if (isset($_SESSION['error_msg'])) {
                                 
                                 <div class="row mb-4">
                                     <div class="col-md-6 mb-3 mb-md-0">
-                                        <label class="form-label">Password Baru</label>
+                                        <label class="form-label"><?= __('lbl_new_pass') ?></label>
                                         <div class="password-field-wrapper">
                                             <input type="password" class="form-control password-input" name="new_password" required <?= !$is_db_online ? 'disabled' : '' ?> />
                                             <i class="bi bi-eye password-toggle-eye" onclick="togglePasswordVisibility(this)"></i>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Konfirmasi Password Baru</label>
+                                        <label class="form-label"><?= __('lbl_confirm_pass') ?></label>
                                         <div class="password-field-wrapper">
                                             <input type="password" class="form-control password-input" name="confirm_password" required <?= !$is_db_online ? 'disabled' : '' ?> />
                                             <i class="bi bi-eye password-toggle-eye" onclick="togglePasswordVisibility(this)"></i>
@@ -504,32 +504,32 @@ if (isset($_SESSION['error_msg'])) {
                                 </div>
                                 
                                 <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-admin-primary px-4" <?= !$is_db_online ? 'disabled' : '' ?>>Perbarui Password</button>
+                                    <button type="submit" class="btn btn-admin-primary px-4" <?= !$is_db_online ? 'disabled' : '' ?>><?= __('btn_update_pass') ?></button>
                                 </div>
                             </form>
                             
                             <hr class="my-4" style="border-top: 1px solid var(--cream-dark);">
                             
                             <!-- Preferensi Sistem -->
-                            <h5 class="mb-4" style="color: var(--brown-dark); font-weight: 600;">Preferensi Sistem</h5>
+                            <h5 class="mb-4" style="color: var(--brown-dark); font-weight: 600;"><?= __('lbl_sys_prefs') ?></h5>
                             <form method="POST" action="profil.php?tab=security">
                                 <input type="hidden" name="action" value="update_preferences" />
                                 
                                 <div class="form-check form-switch mb-3">
                                     <input class="form-check-input" type="checkbox" role="switch" id="soundToggle" name="notif_sound" value="1" <?= (isset($admin_data['notif_sound']) && $admin_data['notif_sound'] == 1) ? 'checked' : '' ?> <?= !$is_db_online ? 'disabled' : '' ?> />
-                                    <label class="form-check-label" for="soundToggle">Aktifkan Suara Notifikasi</label>
+                                    <label class="form-check-label" for="soundToggle"><?= __('lbl_enable_sound') ?></label>
                                 </div>
                                 
                                 <div class="mb-4 col-md-6">
-                                    <label class="form-label">Bahasa Default</label>
+                                    <label class="form-label"><?= __('lbl_default_lang') ?></label>
                                     <select class="form-select" name="lang" <?= !$is_db_online ? 'disabled' : '' ?>>
-                                        <option value="id" <?= (isset($admin_data['lang']) && $admin_data['lang'] === 'id') ? 'selected' : '' ?>>Bahasa Indonesia</option>
-                                        <option value="en" <?= (isset($admin_data['lang']) && $admin_data['lang'] === 'en') ? 'selected' : '' ?>>English (Bahasa Inggris)</option>
+                                        <option value="id" <?= (isset($admin_data['lang']) && $admin_data['lang'] === 'id') ? 'selected' : '' ?>><?= (isset($admin_data['lang']) && $admin_data['lang'] === 'en') ? 'Indonesian' : 'Bahasa Indonesia' ?></option>
+                                        <option value="en" <?= (isset($admin_data['lang']) && $admin_data['lang'] === 'en') ? 'selected' : '' ?>><?= (isset($admin_data['lang']) && $admin_data['lang'] === 'en') ? 'English' : 'English (Bahasa Inggris)' ?></option>
                                     </select>
                                 </div>
                                 
                                 <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-admin-primary px-4" <?= !$is_db_online ? 'disabled' : '' ?>>Simpan Preferensi</button>
+                                    <button type="submit" class="btn btn-admin-primary px-4" <?= !$is_db_online ? 'disabled' : '' ?>><?= __('btn_save_prefs') ?></button>
                                 </div>
                             </form>
                         </div>

@@ -32,6 +32,8 @@ if (isset($_SESSION['admin_username'])) {
         ];
     }
 }
+require_once 'lang.php';
+
 
 // 1. Handle Store Status Toggle Action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_store') {
@@ -98,7 +100,7 @@ if ($is_db_online) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Admin – Bake'n Brew</title>
+    <title><?= __('dash_title') ?> Admin – Bake'n Brew</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
@@ -124,13 +126,13 @@ if ($is_db_online) {
     
     <div class="sidebar-nav">
         <a href="dashboard.php" class="nav-item-admin active">
-            <i class="bi bi-speedometer2"></i> Dashboard
+            <i class="bi bi-speedometer2"></i> <?= __('nav_dashboard') ?>
         </a>
         <a href="produk.php" class="nav-item-admin">
-            <i class="bi bi-egg-fried"></i> Kelola Menu
+            <i class="bi bi-egg-fried"></i> <?= __('nav_menu') ?>
         </a>
         <a href="pesanan.php" class="nav-item-admin">
-            <i class="bi bi-cart3"></i> Kelola Pesanan
+            <i class="bi bi-cart3"></i> <?= __('nav_orders') ?>
         </a>
     </div>
 
@@ -141,7 +143,7 @@ if ($is_db_online) {
 <div class="main-wrapper">
     <!-- TOP HEADER -->
     <header class="top-header">
-        <h2>Dashboard</h2>
+        <h2><?= __('dash_title') ?></h2>
         <div class="d-flex align-items-center gap-3">
             
             <!-- Lonceng Notifikasi Dropdown -->
@@ -153,15 +155,15 @@ if ($is_db_online) {
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-0" aria-labelledby="notifBell" style="width: 320px; border-radius: var(--radius-md); overflow: hidden; background-color: #ffffff;">
                     <li>
                         <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom" style="background-color: var(--cream-dark); font-family: 'Poppins', sans-serif;">
-                            <span class="fw-bold" style="color: var(--brown-dark); font-size: 0.9rem;">Notifikasi</span>
-                            <a href="#" class="text-decoration-none" style="font-size: 0.75rem; color: var(--accent-gold); font-weight: 500; display: none;" id="markAllReadHeader">Tandai Semua Dibaca</a>
+                            <span class="fw-bold" style="color: var(--brown-dark); font-size: 0.9rem;"><?= __('notif_title') ?></span>
+                            <a href="#" class="text-decoration-none" style="font-size: 0.75rem; color: var(--accent-gold); font-weight: 500; display: none;" id="markAllReadHeader"><?= __('mark_all_read') ?></a>
                         </div>
                     </li>
                     <div class="notif-items-list" style="max-height: 280px; overflow-y: auto;">
-                        <div class="p-3 text-center text-muted" style="font-size: 0.85rem;"><i class="bi bi-bell-slash me-1"></i> Tidak ada notifikasi.</div>
+                        <div class="p-3 text-center text-muted" style="font-size: 0.85rem;"><i class="bi bi-bell-slash me-1"></i> <?= __('no_notif') ?></div>
                     </div>
                     <li>
-                        <a href="notifikasi.php" class="dropdown-item text-center py-2 border-top text-decoration-none fw-semibold" style="font-size: 0.8rem; color: var(--brown-dark); background-color: var(--cream);">Lihat Semua Notifikasi</a>
+                        <a href="notifikasi.php" class="dropdown-item text-center py-2 border-top text-decoration-none fw-semibold" style="font-size: 0.8rem; color: var(--brown-dark); background-color: var(--cream);"><?= __('view_all_notif') ?></a>
                     </li>
                 </ul>
             </div>
@@ -169,7 +171,7 @@ if ($is_db_online) {
             <!-- Profile Dropdown -->
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--brown-dark);">
-                    <span class="d-none d-sm-inline font-weight-medium me-1" style="font-size: 0.9rem;">Halo, <strong><?= htmlspecialchars($admin_data['fullname'] ?? $admin_data['username'] ?? 'Admin') ?></strong></span>
+                    <span class="d-none d-sm-inline font-weight-medium me-1" style="font-size: 0.9rem;"><?= __('halo') ?>, <strong><?= htmlspecialchars($admin_data['fullname'] ?? $admin_data['username'] ?? 'Admin') ?></strong></span>
                     <?php 
                     $avatar_img = '';
                     if (!empty($admin_data['avatar'])) {
@@ -184,16 +186,16 @@ if ($is_db_online) {
                     <?php endif; ?>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: #ffffff; border-radius: var(--radius-md); min-width: 180px;">
-                    <li><h6 class="dropdown-header" style="color: var(--text-mid); font-family: 'Poppins', sans-serif;">Administrator</h6></li>
+                    <li><h6 class="dropdown-header" style="color: var(--text-mid); font-family: 'Poppins', sans-serif;"><?= __('administrator') ?></h6></li>
                     <li><hr class="dropdown-divider" style="border-top: 1px solid var(--cream-dark);"></li>
                     <li>
                         <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="profil.php" style="color: var(--text-mid);">
-                            <i class="bi bi-person" style="font-size: 1rem;"></i> Lihat Profil
+                            <i class="bi bi-person" style="font-size: 1rem;"></i> <?= __('profile') ?>
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="logout.php" onclick="confirmLogout(event)" style="color: #d32f2f; font-weight: 500;">
-                            <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> Log Out
+                            <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> <?= __('logout') ?>
                         </a>
                     </li>
                 </ul>
@@ -208,8 +210,8 @@ if ($is_db_online) {
             <div class="alert d-flex align-items-center gap-3 mb-4 shadow-sm" role="alert" style="background: linear-gradient(135deg, #FFF3CD, #FFEBAA); border: 1px solid #FFE082; color: #856404; border-radius: var(--radius-md); padding: 1.2rem 1.5rem; font-family: 'Poppins', sans-serif;">
                 <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.6rem; color: #E65100;"></i>
                 <div>
-                    <h5 class="fw-bold mb-1" style="font-size: 1.05rem; margin: 0; color: #E65100;">Koneksi Database Offline</h5>
-                    <p class="mb-0" style="font-size: 0.88rem; margin: 0; font-weight: 500;">Peringatan: Koneksi server database terputus. Anda saat ini melihat data statis (Mode Offline).</p>
+                    <h5 class="fw-bold mb-1" style="font-size: 1.05rem; margin: 0; color: #E65100;"><?= __('db_offline_title') ?></h5>
+                    <p class="mb-0" style="font-size: 0.88rem; margin: 0; font-weight: 500;"><?= __('db_offline_msg') ?></p>
                 </div>
             </div>
         <?php endif; ?>
@@ -222,7 +224,7 @@ if ($is_db_online) {
                     <div class="stat-icon"><i class="bi bi-egg-fried"></i></div>
                     <div class="stat-details">
                         <h3><?= $total_products ?></h3>
-                        <p>Total Menu</p>
+                        <p><?= __('stat_total_menu') ?></p>
                     </div>
                 </div>
             </div>
@@ -233,7 +235,7 @@ if ($is_db_online) {
                     <div class="stat-icon"><i class="bi bi-cart3"></i></div>
                     <div class="stat-details">
                         <h3><?= $total_orders ?></h3>
-                        <p>Total Pesanan</p>
+                        <p><?= __('stat_total_order') ?></p>
                     </div>
                 </div>
             </div>
@@ -245,7 +247,7 @@ if ($is_db_online) {
                     <div class="stat-details">
                         <div class="d-flex align-items-center gap-2 mb-1" style="min-height: 43px;">
                             <span class="store-status-text <?= $store_status === 'open' ? 'text-success' : 'text-danger' ?>">
-                                <?= $store_status === 'open' ? 'BUKA' : 'TUTUP' ?>
+                                <?= $store_status === 'open' ? ($lang_code === 'en' ? 'OPEN' : 'BUKA') : ($lang_code === 'en' ? 'CLOSED' : 'TUTUP') ?>
                             </span>
                             <form id="storeToggleForm" method="POST" action="">
                                 <input type="hidden" name="action" value="toggle_store">
@@ -256,7 +258,7 @@ if ($is_db_online) {
                                 </label>
                             </form>
                         </div>
-                        <p>Status Operasional</p>
+                        <p><?= __('stat_store_status') ?></p>
                     </div>
                 </div>
             </div>
@@ -266,7 +268,7 @@ if ($is_db_online) {
             <!-- PIE CHART (Chart.js) -->
             <div class="col-lg-5">
                 <div class="admin-card h-100">
-                    <h4>Komposisi Menu</h4>
+                    <h4><?= $lang_code === 'en' ? 'Menu Composition' : 'Komposisi Menu' ?></h4>
                     <div class="chart-container" style="position: relative; height:250px; margin: auto;">
                         <canvas id="menuCompositionChart"></canvas>
                     </div>
@@ -277,16 +279,16 @@ if ($is_db_online) {
             <div class="col-lg-7">
                 <div class="admin-card h-100">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="m-0">Pesanan Terbaru</h4>
-                        <a href="pesanan.php" class="btn btn-admin-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;">Lihat Semua</a>
+                        <h4 class="m-0"><?= __('recent_orders_title') ?></h4>
+                        <a href="pesanan.php" class="btn btn-admin-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;"><?= $lang_code === 'en' ? 'View All' : 'Lihat Semua' ?></a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-admin">
                             <thead>
                                 <tr>
-                                    <th>Pelanggan</th>
-                                    <th>Menu</th>
-                                    <th>Status</th>
+                                    <th><?= __('col_customer') ?></th>
+                                    <th><?= __('col_menu') ?></th>
+                                    <th><?= __('col_status') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -303,14 +305,14 @@ if ($is_db_online) {
                                             </td>
                                             <td>
                                                 <span class="<?= $order['status'] === 'completed' ? 'badge-status-completed' : 'badge-status-pending' ?>">
-                                                    <?= $order['status'] === 'completed' ? 'Selesai' : 'Pending' ?>
+                                                    <?= $order['status'] === 'completed' ? __('status_completed') : __('status_pending') ?>
                                                 </span>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="3" class="text-center text-muted" style="padding: 2rem;">Belum ada pesanan masuk.</td>
+                                        <td colspan="3" class="text-center text-muted" style="padding: 2rem;"><?= __('recent_orders_empty') ?></td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
@@ -404,7 +406,7 @@ if ($is_db_online) {
 
     function confirmLogout(event) {
         event.preventDefault();
-        if (confirm('Apakah Anda yakin ingin keluar?')) {
+        if (confirm('<?= __('confirm_logout') ?>')) {
             sessionStorage.clear();
             localStorage.clear();
             window.location.href = 'logout.php';
@@ -486,7 +488,7 @@ function fetchNotifications() {
                         list.append(item);
                     });
                 } else {
-                    list.append('<div class="p-3 text-center text-muted" style="font-size: 0.85rem;"><i class="bi bi-bell-slash me-1"></i> Tidak ada notifikasi.</div>');
+                    list.append('<div class="p-3 text-center text-muted" style="font-size: 0.85rem;"><i class="bi bi-bell-slash me-1"></i> <?= __('no_notif') ?></div>');
                 }
             }
         }
