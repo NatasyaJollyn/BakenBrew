@@ -6,6 +6,39 @@
 session_start();
 require_once '../config/koneksi.php';
 
+// Helper function to compress and convert images to WebP format
+function compressAndSaveToWebp($source_path, $dest_path, $quality = 75) {
+    $info = @getimagesize($source_path);
+    if (!$info) return false;
+    
+    switch ($info['mime']) {
+        case 'image/jpeg':
+            $image = @imagecreatefromjpeg($source_path);
+            break;
+        case 'image/gif':
+            $image = @imagecreatefromgif($source_path);
+            break;
+        case 'image/png':
+            $image = @imagecreatefrompng($source_path);
+            if ($image) {
+                imagealphablending($image, false);
+                imagesavealpha($image, true);
+            }
+            break;
+        case 'image/webp':
+            $image = @imagecreatefromwebp($source_path);
+            break;
+        default:
+            return false;
+    }
+    
+    if (!$image) return false;
+    
+    $result = imagewebp($image, $dest_path, $quality);
+    imagedestroy($image);
+    return $result;
+}
+
 // Check if user is logged in
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: login.php');
@@ -43,10 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $allowed_exts = ['jpg', 'jpeg', 'png', 'webp'];
             if (in_array($file_ext, $allowed_exts)) {
                 $new_filename = 'prod_' . time() . '_' . rand(100, 999) . '.' . $file_ext;
-                if (move_uploaded_file($file_tmp, $upload_dir . $new_filename)) {
-                    $image_filename = $new_filename;
+                $new_filename_webp = pathinfo($new_filename, PATHINFO_FILENAME) . '.webp';
+                if (compressAndSaveToWebp($file_tmp, $upload_dir . $new_filename_webp)) {
+                    $image_filename = $new_filename_webp;
                 } else {
-                    $error = 'Gagal memindahkan file yang diunggah.';
+                    $error = 'Gagal melakukan kompresi dan penyimpanan gambar.';
                 }
             } else {
                 $error = 'Format file gambar tidak didukung (gunakan jpg, jpeg, png, atau webp).';
@@ -99,14 +133,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $allowed_exts = ['jpg', 'jpeg', 'png', 'webp'];
                 if (in_array($file_ext, $allowed_exts)) {
                     $new_filename = 'prod_' . time() . '_' . rand(100, 999) . '.' . $file_ext;
-                    if (move_uploaded_file($file_tmp, $upload_dir . $new_filename)) {
+                    $new_filename_webp = pathinfo($new_filename, PATHINFO_FILENAME) . '.webp';
+                    if (compressAndSaveToWebp($file_tmp, $upload_dir . $new_filename_webp)) {
                         // Delete old local image file if it exists and is not an external URL
                         if (!empty($curr_prod['image']) && !str_starts_with($curr_prod['image'], 'http') && file_exists($upload_dir . $curr_prod['image'])) {
                             @unlink($upload_dir . $curr_prod['image']);
                         }
-                        $image_filename = $new_filename;
+                        $image_filename = $new_filename_webp;
                     } else {
-                        $error = 'Gagal memindahkan file gambar baru.';
+                        $error = 'Gagal melakukan kompresi dan penyimpanan gambar baru.';
                     }
                 } else {
                     $error = 'Format file gambar tidak didukung.';
@@ -181,7 +216,7 @@ if (isset($_SESSION['success_msg'])) {
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <a href="../index.php" class="sidebar-brand">
+    <a href="dashboard.php" class="sidebar-brand">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--accent-gold);">
             <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
             <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
@@ -204,11 +239,6 @@ if (isset($_SESSION['success_msg'])) {
         </a>
     </div>
 
-    <div class="sidebar-footer">
-        <a href="logout.php" class="nav-item-admin logout">
-            <i class="bi bi-box-arrow-left"></i> Logout
-        </a>
-    </div>
 </div>
 
 <!-- MAIN CONTENT -->
@@ -216,14 +246,20 @@ if (isset($_SESSION['success_msg'])) {
     <!-- TOP HEADER -->
     <header class="top-header">
         <h2>Kelola Menu</h2>
-        <div class="d-flex align-items-center gap-3">
-            <div class="admin-profile">
-                <span>Halo, <strong>Admin</strong></span>
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--brown-dark);">
+                <span class="d-none d-sm-inline font-weight-medium me-1" style="font-size: 0.9rem;">Halo, <strong>Admin</strong></span>
                 <div class="admin-avatar">A</div>
-            </div>
-            <a href="logout.php" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: var(--radius-sm);" title="Logout dari panel admin">
-                <i class="bi bi-box-arrow-left"></i> Keluar
             </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: #ffffff; border-radius: var(--radius-md); min-width: 160px;">
+                <li><h6 class="dropdown-header" style="color: var(--text-mid); font-family: 'Poppins', sans-serif;">Administrator</h6></li>
+                <li><hr class="dropdown-divider" style="border-top: 1px solid var(--cream-dark);"></li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="logout.php" style="color: #d32f2f; font-weight: 500;">
+                        <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> Keluar
+                    </a>
+                </li>
+            </ul>
         </div>
     </header>
 

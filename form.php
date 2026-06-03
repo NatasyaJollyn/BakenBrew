@@ -25,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         try {
             $stmt = $pdo->prepare("INSERT INTO `orders` (`customer_name`, `customer_email`, `product_name`, `quantity`, `note`, `status`) VALUES (?, ?, ?, ?, ?, 'pending')");
             $stmt->execute([$nama, $email, $produk, $jumlah, $catatan]);
-            echo json_encode(['success' => true, 'message' => 'Pesanan berhasil dikirim ke database.']);
+            $last_id = $pdo->lastInsertId();
+echo json_encode(['success' => true, 'id' => $last_id, 'message' => 'Pesanan berhasil dikirim ke database.']);
             exit;
         } catch (PDOException $e) {
             echo json_encode(['success' => false, 'message' => 'Gagal menyimpan ke database: ' . $e->getMessage()]);
@@ -155,7 +156,7 @@ foreach ($all_products as $p) {
         </label>
         <input type="text" class="form-control" id="nama"
             placeholder="Contoh: Sari Dewi"
-            minlength="2" required />
+            minlength="2" required <?= $store_status === 'closed' ? 'disabled' : '' ?> />
         <div class="invalid-feedback">Nama minimal 2 karakter dan tidak boleh kosong.</div>
        </div>
 
@@ -165,7 +166,7 @@ foreach ($all_products as $p) {
          <i class="bi bi-envelope me-1" style="color:var(--brown-dark)"></i>Email *
         </label>
         <input type="email" class="form-control" id="email"
-            placeholder="emailkamu@gmail.com" required />
+            placeholder="emailkamu@gmail.com" required <?= $store_status === 'closed' ? 'disabled' : '' ?> />
         <div class="invalid-feedback">Masukkan alamat email yang valid.</div>
        </div>
 
@@ -217,7 +218,7 @@ foreach ($all_products as $p) {
         </label>
         <input type="number" class="form-control" id="jumlah"
             placeholder="Contoh: 2"
-            min="1" max="100" required />
+            min="1" max="100" required <?= $store_status === 'closed' ? 'disabled' : '' ?> />
         <div class="invalid-feedback">Masukkan jumlah antara 1–100.</div>
        </div>
 
@@ -228,7 +229,7 @@ foreach ($all_products as $p) {
         </label>
         <textarea class="form-control" id="catatan" rows="3"
              placeholder="Contoh: tanpa gula, ekstra keju, diantar ke meja 5..."
-             style="resize:none;"></textarea>
+             style="resize:none;" <?= $store_status === 'closed' ? 'disabled' : '' ?>></textarea>
         <div style="font-size:.78rem;color:var(--text-mid);margin-top:.3rem;">Opsional: tuliskan permintaan khusus kamu.</div>
        </div>
 

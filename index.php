@@ -58,9 +58,9 @@ $store_status = $status_stmt->fetchColumn() ?: 'open';
  <div class="container">
   <div class="hero-content col-lg-7">
    <?php if ($store_status === 'closed'): ?>
-   <div class="alert alert-danger d-inline-flex align-items-center gap-2 mb-3" style="border-radius: var(--radius-sm); font-size: 0.85rem; background-color: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.25); color: #FAF6F0; padding: 0.5rem 1rem; font-family: 'Poppins', sans-serif;">
-    <i class="bi bi-shop"></i> Kami sedang Tutup. Pemesanan dinonaktifkan sementara.
-   </div>
+    <div id="home-closed-banner" class="alert alert-danger d-inline-flex align-items-center gap-2 mb-3" style="border-radius: var(--radius-sm); font-size: 0.85rem; background-color: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.25); color: #FAF6F0; padding: 0.5rem 1rem; font-family: 'Poppins', sans-serif;">
+     <i class="bi bi-shop"></i> Kami sedang Tutup. Pemesanan dinonaktifkan sementara.
+    </div>
    <?php endif; ?>
    <div class="hero-badge"> Café & Bakery Surabaya</div>
    <h1 class="hero-title">Bake'n <span>Brew</span></h1>

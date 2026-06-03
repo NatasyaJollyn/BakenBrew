@@ -44,6 +44,11 @@ if (!$store_status) {
 
 // Recent Orders
 $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC LIMIT 5")->fetchAll();
+
+// Category Counts
+$bakery_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'bakery'")->fetchColumn();
+$coffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'coffee'")->fetchColumn();
+$noncoffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'non-coffee'")->fetchColumn();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -63,7 +68,7 @@ $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC 
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <a href="../index.php" class="sidebar-brand">
+    <a href="dashboard.php" class="sidebar-brand">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: var(--accent-gold);">
             <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
             <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
@@ -86,11 +91,7 @@ $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC 
         </a>
     </div>
 
-    <div class="sidebar-footer">
-        <a href="logout.php" class="nav-item-admin logout">
-            <i class="bi bi-box-arrow-left"></i> Logout
-        </a>
-    </div>
+    
 </div>
 
 <!-- MAIN CONTENT -->
@@ -98,14 +99,20 @@ $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC 
     <!-- TOP HEADER -->
     <header class="top-header">
         <h2>Dashboard</h2>
-        <div class="d-flex align-items-center gap-3">
-            <div class="admin-profile">
-                <span>Halo, <strong>Admin</strong></span>
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--brown-dark);">
+                <span class="d-none d-sm-inline font-weight-medium me-1" style="font-size: 0.9rem;">Halo, <strong>Admin</strong></span>
                 <div class="admin-avatar">A</div>
-            </div>
-            <a href="logout.php" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: var(--radius-sm);" title="Logout dari panel admin">
-                <i class="bi bi-box-arrow-left"></i> Keluar
             </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: #ffffff; border-radius: var(--radius-md); min-width: 160px;">
+                <li><h6 class="dropdown-header" style="color: var(--text-mid); font-family: 'Poppins', sans-serif;">Administrator</h6></li>
+                <li><hr class="dropdown-divider" style="border-top: 1px solid var(--cream-dark);"></li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="logout.php" style="color: #d32f2f; font-weight: 500;">
+                        <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> Keluar
+                    </a>
+                </li>
+            </ul>
         </div>
     </header>
 
@@ -220,12 +227,48 @@ $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC 
 </div>
 
 <script>
-    // Submit store status toggle via form
+    // Submit store status toggle via AJAX
     function submitToggle() {
         const checkbox = document.getElementById('storeSwitch');
-        const statusVal = document.getElementById('statusVal');
-        statusVal.value = checkbox.checked ? 'open' : 'closed';
-        document.getElementById('storeToggleForm').submit();
+        const statusText = document.querySelector('.store-status-text');
+        const newStatus = checkbox.checked ? 'open' : 'closed';
+        
+        // Immediately update visual indicator
+        if (newStatus === 'open') {
+            statusText.textContent = 'BUKA';
+            statusText.className = 'store-status-text text-success';
+        } else {
+            statusText.textContent = 'TUTUP';
+            statusText.className = 'store-status-text text-danger';
+        }
+        
+        const formData = new URLSearchParams();
+        formData.append('action', 'toggle_store');
+        formData.append('store_status', newStatus);
+        
+        fetch('dashboard.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData.toString()
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                // Rollback if failed
+                checkbox.checked = !checkbox.checked;
+                submitToggle();
+                alert('Gagal memperbarui status toko.');
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            checkbox.checked = !checkbox.checked;
+            submitToggle();
+            alert('Koneksi server gagal.');
+        });
     }
 
     // Chart.js Configuration

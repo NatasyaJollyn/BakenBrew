@@ -25,7 +25,206 @@ document.addEventListener('DOMContentLoaded', () => {
   initProductFilter();
  }
 
+  // ----- Real-time Polling & Order Sync -----
+  startStoreStatusPolling();
+  if (document.getElementById('orderForm')) {
+    startOrdersSyncPolling();
+  }
 });
+
+/* =============================================
+   REAL-TIME STORE STATUS POLLING
+   ============================================= */
+function startStoreStatusPolling() {
+  const checkStatus = () => {
+    fetch('config/get_store_status.php')
+      .then(response => response.json())
+      .then(data => {
+        window.storeStatus = data.status;
+        
+        const badge = document.querySelector('.navbar-brand .badge');
+        if (badge) {
+          if (data.status === 'open') {
+            badge.textContent = 'Buka';
+            badge.className = 'badge bg-success ms-2';
+          } else {
+            badge.textContent = 'Tutup';
+            badge.className = 'badge bg-danger ms-2';
+          }
+        }
+        
+        // Handle index.php hero alert banner dynamically
+        const heroContent = document.querySelector('.hero-content');
+        if (heroContent) {
+          let homeBanner = document.getElementById('home-closed-banner');
+          if (data.status === 'closed') {
+            if (!homeBanner) {
+              homeBanner = document.createElement('div');
+              homeBanner.id = 'home-closed-banner';
+              homeBanner.className = 'alert alert-danger d-inline-flex align-items-center gap-2 mb-3 fade-in-up visible';
+              homeBanner.style.cssText = 'border-radius: var(--radius-sm); font-size: 0.85rem; background-color: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.25); color: #FAF6F0; padding: 0.5rem 1rem; font-family: "Poppins", sans-serif;';
+              homeBanner.innerHTML = `<i class="bi bi-shop"></i> Kami sedang Tutup. Pemesanan dinonaktifkan sementara.`;
+              heroContent.insertBefore(homeBanner, heroContent.querySelector('.hero-badge'));
+            }
+          } else {
+            if (homeBanner) {
+              homeBanner.remove();
+            }
+          }
+        }
+        
+        // Handle form.php locking/unlocking dynamically
+        const form = document.getElementById('orderForm');
+        if (form) {
+          const formInputs = form.querySelectorAll('input, select, textarea, button');
+          let alertBanner = document.querySelector('.form-table-section .alert-danger');
+          
+          if (data.status === 'closed') {
+            formInputs.forEach(input => input.disabled = true);
+            
+            if (!alertBanner) {
+              alertBanner = document.createElement('div');
+              alertBanner.className = 'alert alert-danger d-flex align-items-center gap-3 mb-4 fade-in-up';
+              alertBanner.style.cssText = 'border-radius: 12px; border: 1px solid #f5c2c7; background-color: #f8d7da; color: #842029; padding: 1rem 1.5rem;';
+              alertBanner.innerHTML = `
+                <i class="bi bi-shop" style="font-size: 1.8rem; color: #842029;"></i>
+                <div>
+                  <h5 class="alert-heading fw-bold mb-1" style="font-size: 1rem; margin: 0;">Maaf, Toko Kami Sedang Tutup</h5>
+                  <p class="mb-0" style="font-size: 0.82rem; margin: 0; opacity: 0.9;">Saat ini kami tidak menerima pesanan baru sementara waktu. Silakan hubungi kami untuk informasi lebih lanjut.</p>
+                </div>
+              `;
+              const container = form.closest('.col-lg-7');
+              if (container) {
+                container.insertBefore(alertBanner, form.closest('.order-form-card'));
+              }
+            }
+          } else {
+            if (alertBanner) {
+              alertBanner.remove();
+            }
+            formInputs.forEach(input => input.disabled = false);
+          }
+        }
+      })
+      .catch(err => console.error('Status check failed:', err));
+  };
+
+  checkStatus();
+  setInterval(checkStatus, 3000);
+
+  // Hook global click event on order links when closed
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href*="form.php"]');
+    if (link && window.storeStatus === 'closed') {
+      e.preventDefault();
+      showStoreClosedModal();
+    }
+  });
+}
+
+/* =============================================
+   AESTHETIC STORE CLOSED POP-UP MODAL
+   ============================================= */
+function showStoreClosedModal() {
+  const existing = document.getElementById('storeClosedModal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'storeClosedModal';
+  modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); background-color: rgba(75, 46, 43, 0.45); opacity: 0; transition: opacity 0.3s ease;';
+  
+  modal.innerHTML = `
+    <div style="background: #ffffff; border-radius: 20px; border: 1px solid #D6BFAF; box-shadow: 0 15px 40px rgba(0,0,0,0.15); padding: 2.5rem 2rem; max-width: 440px; width: 90%; text-align: center; transform: scale(0.8); transition: transform 0.3s ease; font-family: 'Poppins', sans-serif;">
+      <div style="width: 72px; height: 72px; background: #f8d7da; color: #d32f2f; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2.2rem; box-shadow: 0 4px 10px rgba(211, 47, 47, 0.15);">
+        <i class="bi bi-shop"></i>
+      </div>
+      <h4 style="font-family: 'Playfair Display', serif; color: #4B2E2B; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.5rem;">Toko Sedang Tutup</h4>
+      <p style="color: #6c757d; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.8rem;">
+        Maaf, saat ini Bake'n Brew sedang tidak menerima pesanan baru secara online. Silakan kunjungi kami kembali saat jam operasional atau hubungi kontak kami.
+      </p>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <a href="contact.php" style="background: transparent; color: #4B2E2B; border: 1.5px solid #4B2E2B; padding: 0.6rem 1.5rem; border-radius: 30px; font-weight: 600; text-decoration: none; font-size: 0.85rem; transition: all 0.2s;">Hubungi Kami</a>
+        <button id="closeStoreClosedModal" style="background: #4B2E2B; color: #FAF6F0; border: none; padding: 0.6rem 1.8rem; border-radius: 30px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">Tutup</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  setTimeout(() => {
+    modal.style.opacity = '1';
+    modal.querySelector('div').style.transform = 'scale(1)';
+  }, 10);
+
+  const close = () => {
+    modal.style.opacity = '0';
+    modal.querySelector('div').style.transform = 'scale(0.8)';
+    setTimeout(() => {
+      modal.remove();
+    }, 300);
+  };
+  
+  modal.querySelector('#closeStoreClosedModal').addEventListener('click', close);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) close();
+  });
+}
+
+/* =============================================
+   REAL-TIME ACTIVE ORDERS SYNCHRONIZATION
+   ============================================= */
+function startOrdersSyncPolling() {
+  setInterval(() => {
+    if (orders.length === 0) return;
+    
+    // Collect all database IDs (db_id)
+    const dbIds = orders.filter(o => o.db_id).map(o => o.db_id);
+    if (dbIds.length === 0) return;
+    
+    fetch(`config/check_active_orders.php?ids=${dbIds.join(',')}`)
+      .then(response => response.json())
+      .then(data => {
+        const activeIds = data.active_ids || [];
+        
+        // Find if any of our orders are no longer active
+        let changed = false;
+        const remainingOrders = [];
+        
+        orders.forEach(o => {
+          if (!o.db_id || activeIds.includes(parseInt(o.db_id))) {
+            remainingOrders.push(o);
+          } else {
+            changed = true;
+            // Visual effect: find row and animate removal
+            const rows = document.querySelectorAll('#orderTableBody tr');
+            rows.forEach(row => {
+              const deleteBtn = row.querySelector('.delete-btn');
+              if (deleteBtn) {
+                const idx = parseInt(deleteBtn.getAttribute('data-idx'));
+                if (orders[idx] && orders[idx].db_id === o.db_id) {
+                  row.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                  row.style.opacity = '0';
+                  row.style.transform = 'translateX(-20px)';
+                  setTimeout(() => {
+                    row.remove();
+                  }, 500);
+                }
+              }
+            });
+          }
+        });
+        
+        if (changed) {
+          orders = remainingOrders;
+          sessionStorage.setItem('bnbOrders', JSON.stringify(orders));
+          setTimeout(() => {
+            renderTable();
+          }, 600);
+        }
+      })
+      .catch(err => console.error('Orders sync failed:', err));
+  }, 3000);
+}
 
 /* =============================================
   ACTIVE NAV LINK
@@ -115,6 +314,7 @@ function initOrderForm() {
    if (data.success) {
     const order = {
      id:   ++orderCount,
+     db_id: data.id,
      nama,
      email,
      produk,
@@ -269,7 +469,7 @@ function initProductFilter() {
   productCards.forEach(card => {
    const cat = card.getAttribute('data-category');
    if (filter === 'all' || cat === filter) {
-    card.style.display = 'block';
+    card.style.display = '';
     card.style.animation = 'fadeIn 0.4s ease forwards';
    } else {
     card.style.display = 'none';

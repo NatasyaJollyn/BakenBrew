@@ -91,6 +91,20 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
     echo "<div class='alert alert-success'>✓ Tabel <strong>settings</strong> berhasil dibuat/dipastikan ada.</div>";
 
+    // Add indexes for performance optimization (Non-Functional Requirement)
+    try {
+        $pdo->exec("ALTER TABLE `products` ADD INDEX `idx_products_category` (`category`)");
+    } catch (PDOException $e) { /* index might already exist */ }
+    try {
+        $pdo->exec("ALTER TABLE `products` ADD INDEX `idx_products_bestseller` (`is_bestseller`)");
+    } catch (PDOException $e) { /* index might already exist */ }
+    try {
+        $pdo->exec("ALTER TABLE `products` ADD INDEX `idx_products_new` (`is_new`)");
+    } catch (PDOException $e) { /* index might already exist */ }
+    try {
+        $pdo->exec("ALTER TABLE `orders` ADD INDEX `idx_orders_status` (`status`)");
+    } catch (PDOException $e) { /* index might already exist */ }
+
     // 3. Seed Default Settings
     $stmt_set = $pdo->prepare("INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES ('store_status', 'open') 
         ON DUPLICATE KEY UPDATE `setting_value`=`setting_value` ");
