@@ -17,6 +17,9 @@ $options = [
     PDO::ATTR_EMULATE_PREPARES   => false,
 ];
 
+$is_db_online = true;
+$mock_data = null;
+
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (PDOException $e) {
@@ -27,10 +30,20 @@ try {
             $pdo_temp->exec("CREATE DATABASE IF NOT EXISTS `$db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
             $pdo = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $ex) {
-            die("Koneksi database gagal: " . $ex->getMessage());
+            $is_db_online = false;
+            $pdo = null;
         }
     } else {
-        die("Koneksi database gagal: " . $e->getMessage());
+        $is_db_online = false;
+        $pdo = null;
+    }
+}
+
+// Load mock data if database is offline
+if (!$is_db_online) {
+    $mock_file = __DIR__ . '/mock_data.json';
+    if (file_exists($mock_file)) {
+        $mock_data = json_decode(file_get_contents($mock_file), true);
     }
 }
 ?>

@@ -49,6 +49,13 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $error = '';
 $success = '';
 
+// Block write operations in offline mode
+if (!$is_db_online && ($_SERVER['REQUEST_METHOD'] === 'POST' || $action === 'delete' || $action === 'add' || $action === 'edit')) {
+    $_SESSION['error_msg'] = "Aksi tidak diizinkan dalam Mode Offline (Database Terputus).";
+    header('Location: produk.php');
+    exit;
+}
+
 // Folder paths
 $upload_dir = '../public/images/products/';
 
@@ -199,6 +206,10 @@ if (isset($_SESSION['success_msg'])) {
     $success = $_SESSION['success_msg'];
     unset($_SESSION['success_msg']);
 }
+if (isset($_SESSION['error_msg'])) {
+    $error = $_SESSION['error_msg'];
+    unset($_SESSION['error_msg']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -270,6 +281,15 @@ if (isset($_SESSION['success_msg'])) {
 
     <!-- PAGE CONTENT -->
     <main class="page-content">
+        <?php if (!$is_db_online): ?>
+            <div class="alert d-flex align-items-center gap-3 mb-4 shadow-sm" role="alert" style="background: linear-gradient(135deg, #FFF3CD, #FFEBAA); border: 1px solid #FFE082; color: #856404; border-radius: var(--radius-md); padding: 1.2rem 1.5rem; font-family: 'Poppins', sans-serif;">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.6rem; color: #E65100;"></i>
+                <div>
+                    <h5 class="fw-bold mb-1" style="font-size: 1.05rem; margin: 0; color: #E65100;">Koneksi Database Offline</h5>
+                    <p class="mb-0" style="font-size: 0.88rem; margin: 0; font-weight: 500;">Peringatan: Koneksi server database terputus. Anda saat ini melihat data statis (Mode Offline).</p>
+                </div>
+            </div>
+        <?php endif; ?>
         
         <?php if ($success): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: var(--radius-md);">
@@ -414,21 +434,45 @@ if (isset($_SESSION['success_msg'])) {
                 $where_str = "WHERE " . implode(" AND ", $where_clauses);
             }
 
-            // Total Count query
-            $count_stmt = $pdo->prepare("SELECT COUNT(*) FROM `products` $where_str");
-            $count_stmt->execute($params);
-            $total_records = $count_stmt->fetchColumn();
-            $total_pages = ceil($total_records / $limit);
+            // Retrieve products
+            if ($is_db_online) {
+                // Total Count query
+                $count_stmt = $pdo->prepare("SELECT COUNT(*) FROM `products` $where_str");
+                $count_stmt->execute($params);
+                $total_records = $count_stmt->fetchColumn();
+                $total_pages = ceil($total_records / $limit);
 
-            // Fetch Records query
-            $fetch_stmt = $pdo->prepare("SELECT * FROM `products` $where_str ORDER BY `created_at` DESC LIMIT $limit OFFSET $offset");
-            $fetch_stmt->execute($params);
-            $products = $fetch_stmt->fetchAll();
+                // Fetch Records query
+                $fetch_stmt = $pdo->prepare("SELECT * FROM `products` $where_str ORDER BY `created_at` DESC LIMIT $limit OFFSET $offset");
+                $fetch_stmt->execute($params);
+                $products = $fetch_stmt->fetchAll();
+            } else {
+                // Read from mock data
+                $mock_products = $mock_data['products'];
+                
+                // Apply search & category filters locally
+                if (!empty($search)) {
+                    $mock_products = array_filter($mock_products, function($p) use ($search) {
+                        return stripos($p['name'], $search) !== false || stripos($p['description'], $search) !== false;
+                    });
+                }
+                if (!empty($filter_cat)) {
+                    $mock_products = array_filter($mock_products, function($p) use ($filter_cat) {
+                        return $p['category'] === $filter_cat;
+                    });
+                }
+                
+                $total_records = count($mock_products);
+                $total_pages = ceil($total_records / $limit);
+                
+                // Pagination slice
+                $products = array_slice($mock_products, $offset, $limit);
+            }
         ?>
             <div class="admin-card">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                     <h4 class="m-0">Daftar Menu</h4>
-                    <a href="produk.php?action=add" class="btn btn-admin-primary">
+                    <a href="<?= $is_db_online ? 'produk.php?action=add' : '#' ?>" class="btn btn-admin-primary <?= !$is_db_online ? 'disabled' : '' ?>" style="<?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>">
                         <i class="bi bi-plus-lg me-1"></i> Tambah Menu
                     </a>
                 </div>
@@ -514,10 +558,10 @@ if (isset($_SESSION['success_msg'])) {
                                         </td>
                                         <td>
                                             <div class="d-flex gap-1 justify-content-center">
-                                                <a href="produk.php?action=edit&id=<?= $prod['id'] ?>" class="btn btn-sm btn-admin-outline" style="padding: 0.25rem 0.5rem; font-size: 0.78rem;">
+                                                <a href="<?= $is_db_online ? 'produk.php?action=edit&id=' . $prod['id'] : '#' ?>" class="btn btn-sm btn-admin-outline <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.78rem; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>">
                                                     <i class="bi bi-pencil-square"></i> Edit
                                                 </a>
-                                                <a href="produk.php?action=delete&id=<?= $prod['id'] ?>" class="btn btn-sm btn-admin-danger" style="padding: 0.25rem 0.5rem; font-size: 0.78rem;" onclick="return confirm('Apakah Anda yakin ingin menghapus menu \'<?= htmlspecialchars(addslashes($prod['name'])) ?>\'?')">
+                                                <a href="<?= $is_db_online ? 'produk.php?action=delete&id=' . $prod['id'] : '#' ?>" class="btn btn-sm btn-admin-danger <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.78rem; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>" onclick="return <?= $is_db_online ? "confirm('Apakah Anda yakin ingin menghapus menu \'" . htmlspecialchars(addslashes($prod['name'])) . "\'?')" : 'false' ?>">
                                                     <i class="bi bi-trash"></i> Hapus
                                                 </a>
                                             </div>

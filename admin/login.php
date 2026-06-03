@@ -194,10 +194,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
         </button>
     </form>
-
-    <div class="back-link">
-        <a href="../index.php"><i class="bi bi-arrow-left me-1"></i> Kembali ke Beranda</a>
-    </div>
 </div>
 
 </body>

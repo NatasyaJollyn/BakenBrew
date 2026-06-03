@@ -16,6 +16,23 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 $success = '';
 $error = '';
 
+// Block write operations in offline mode
+if (!$is_db_online && ($action === 'complete' || $action === 'delete')) {
+    $_SESSION['error_msg'] = "Aksi tidak diizinkan dalam Mode Offline (Database Terputus).";
+    header('Location: pesanan.php');
+    exit;
+}
+
+// Fetch success and error msg from session
+if (isset($_SESSION['success_msg'])) {
+    $success = $_SESSION['success_msg'];
+    unset($_SESSION['success_msg']);
+}
+if (isset($_SESSION['error_msg'])) {
+    $error = $_SESSION['error_msg'];
+    unset($_SESSION['error_msg']);
+}
+
 // 1. UPDATE ORDER STATUS TO COMPLETED
 if ($action === 'complete' && isset($_GET['id'])) {
     $id = intval($_GET['id']);
@@ -44,15 +61,7 @@ if ($action === 'delete' && isset($_GET['id'])) {
     exit;
 }
 
-// Fetch messages from session
-if (isset($_SESSION['success_msg'])) {
-    $success = $_SESSION['success_msg'];
-    unset($_SESSION['success_msg']);
-}
-if (isset($_SESSION['error_msg'])) {
-    $error = $_SESSION['error_msg'];
-    unset($_SESSION['error_msg']);
-}
+
 
 // Filter and pagination config
 $filter_status = isset($_GET['status']) ? $_GET['status'] : '';
@@ -83,16 +92,55 @@ if (count($where_clauses) > 0) {
     $where_str = "WHERE " . implode(" AND ", $where_clauses);
 }
 
-// Count total records
-$count_stmt = $pdo->prepare("SELECT COUNT(*) FROM `orders` $where_str");
-$count_stmt->execute($params);
-$total_records = $count_stmt->fetchColumn();
-$total_pages = ceil($total_records / $limit);
+// Retrieve orders
+if ($is_db_online) {
+    // Count total records
+    $count_stmt = $pdo->prepare("SELECT COUNT(*) FROM `orders` $where_str");
+    $count_stmt->execute($params);
+    $total_records = $count_stmt->fetchColumn();
+    $total_pages = ceil($total_records / $limit);
 
-// Fetch records
-$fetch_stmt = $pdo->prepare("SELECT * FROM `orders` $where_str ORDER BY `created_at` DESC LIMIT $limit OFFSET $offset");
-$fetch_stmt->execute($params);
-$orders = $fetch_stmt->fetchAll();
+    // Fetch records
+    $fetch_stmt = $pdo->prepare("SELECT * FROM `orders` $where_str ORDER BY `created_at` DESC LIMIT $limit OFFSET $offset");
+    $fetch_stmt->execute($params);
+    $orders = $fetch_stmt->fetchAll();
+} else {
+    // Read from mock data
+    $mock_orders = isset($mock_data['orders']) ? $mock_data['orders'] : [];
+    
+    // Convert 'notes' key to 'note' if present, to prevent undefined index error
+    foreach ($mock_orders as &$mo) {
+        if (!isset($mo['note']) && isset($mo['notes'])) {
+            $mo['note'] = $mo['notes'];
+        }
+    }
+    unset($mo);
+
+    // Apply search & status filters locally
+    if (!empty($search)) {
+        $mock_orders = array_filter($mock_orders, function($o) use ($search) {
+            return stripos($o['customer_name'], $search) !== false || 
+                   stripos($o['customer_email'], $search) !== false || 
+                   stripos($o['product_name'], $search) !== false;
+        });
+    }
+    if (!empty($filter_status)) {
+        $mock_orders = array_filter($mock_orders, function($o) use ($filter_status) {
+            return $o['status'] === $filter_status;
+        });
+    }
+    
+    // Sort by created_at DESC (simulating DESC order)
+    usort($mock_orders, function($a, $b) {
+        return strcmp($b['created_at'], $a['created_at']);
+    });
+    
+    $total_records = count($mock_orders);
+    $total_pages = ceil($total_records / $limit);
+    
+    // Pagination slice
+    $orders = array_slice($mock_orders, $offset, $limit);
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -165,6 +213,15 @@ $orders = $fetch_stmt->fetchAll();
 
     <!-- PAGE CONTENT -->
     <main class="page-content">
+        <?php if (!$is_db_online): ?>
+            <div class="alert d-flex align-items-center gap-3 mb-4 shadow-sm" role="alert" style="background: linear-gradient(135deg, #FFF3CD, #FFEBAA); border: 1px solid #FFE082; color: #856404; border-radius: var(--radius-md); padding: 1.2rem 1.5rem; font-family: 'Poppins', sans-serif;">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.6rem; color: #E65100;"></i>
+                <div>
+                    <h5 class="fw-bold mb-1" style="font-size: 1.05rem; margin: 0; color: #E65100;">Koneksi Database Offline</h5>
+                    <p class="mb-0" style="font-size: 0.88rem; margin: 0; font-weight: 500;">Peringatan: Koneksi server database terputus. Anda saat ini melihat data statis (Mode Offline).</p>
+                </div>
+            </div>
+        <?php endif; ?>
         
         <?php if ($success): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: var(--radius-md);">
@@ -259,11 +316,11 @@ $orders = $fetch_stmt->fetchAll();
                                     <td>
                                         <div class="d-flex gap-1 justify-content-center">
                                             <?php if ($order['status'] === 'pending'): ?>
-                                                <a href="pesanan.php?action=complete&id=<?= $order['id'] ?>" class="btn btn-sm btn-admin-primary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background-color: #2e7d32;">
+                                                <a href="<?= $is_db_online ? 'pesanan.php?action=complete&id=' . $order['id'] : '#' ?>" class="btn btn-sm btn-admin-primary <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background-color: #2e7d32; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>">
                                                     <i class="bi bi-check-lg"></i> Selesai
                                                 </a>
                                             <?php endif; ?>
-                                            <a href="pesanan.php?action=delete&id=<?= $order['id'] ?>" class="btn btn-sm btn-admin-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="return confirm('Apakah Anda yakin ingin menghapus log pesanan #<?= $order['id'] ?>?')">
+                                            <a href="<?= $is_db_online ? 'pesanan.php?action=delete&id=' . $order['id'] : '#' ?>" class="btn btn-sm btn-admin-danger <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>" onclick="return <?= $is_db_online ? "confirm('Apakah Anda yakin ingin menghapus log pesanan #" . $order['id'] . "?')" : 'false' ?>">
                                                 <i class="bi bi-trash"></i> Hapus
                                             </a>
                                         </div>

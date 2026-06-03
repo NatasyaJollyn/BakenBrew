@@ -14,6 +14,16 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 // 1. Handle Store Status Toggle Action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_store') {
+    if (!$is_db_online) {
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Aksi tidak diizinkan dalam Mode Offline.']);
+            exit;
+        }
+        header('Location: dashboard.php');
+        exit;
+    }
     $new_status = $_POST['store_status'] === 'open' ? 'open' : 'closed';
     $stmt = $pdo->prepare("UPDATE `settings` SET `setting_value` = ? WHERE `setting_key` = 'store_status'");
     $stmt->execute([$new_status]);
@@ -29,26 +39,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 // 2. Fetch Statistics
-// Total Products
-$total_products = $pdo->query("SELECT COUNT(*) FROM `products`")->fetchColumn();
+if ($is_db_online) {
+    // Total Products
+    $total_products = $pdo->query("SELECT COUNT(*) FROM `products`")->fetchColumn();
 
-// Total Orders
-$total_orders = $pdo->query("SELECT COUNT(*) FROM `orders`")->fetchColumn();
+    // Total Orders
+    $total_orders = $pdo->query("SELECT COUNT(*) FROM `orders`")->fetchColumn();
 
-// Store Status
-$store_status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
-$store_status = $store_status_stmt->fetchColumn();
-if (!$store_status) {
-    $store_status = 'open'; // default fallback
+    // Store Status
+    $store_status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
+    $store_status = $store_status_stmt->fetchColumn();
+    if (!$store_status) {
+        $store_status = 'open'; // default fallback
+    }
+
+    // Recent Orders
+    $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC LIMIT 5")->fetchAll();
+
+    // Category Counts
+    $bakery_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'bakery'")->fetchColumn();
+    $coffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'coffee'")->fetchColumn();
+    $noncoffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'non-coffee'")->fetchColumn();
+} else {
+    // Fallback Mock Data
+    $total_products = count($mock_data['products']);
+    $total_orders = count($mock_data['orders']);
+    $store_status = $mock_data['settings']['store_status'];
+    $recent_orders = array_slice($mock_data['orders'], 0, 5);
+    
+    $bakery_count = count(array_filter($mock_data['products'], fn($p) => $p['category'] === 'bakery'));
+    $coffee_count = count(array_filter($mock_data['products'], fn($p) => $p['category'] === 'coffee'));
+    $noncoffee_count = count(array_filter($mock_data['products'], fn($p) => $p['category'] === 'non-coffee'));
 }
-
-// Recent Orders
-$recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC LIMIT 5")->fetchAll();
-
-// Category Counts
-$bakery_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'bakery'")->fetchColumn();
-$coffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'coffee'")->fetchColumn();
-$noncoffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'non-coffee'")->fetchColumn();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -123,6 +145,16 @@ $noncoffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category`
 
     <!-- PAGE CONTENT -->
     <main class="page-content">
+        <?php if (!$is_db_online): ?>
+            <div class="alert d-flex align-items-center gap-3 mb-4 shadow-sm" role="alert" style="background: linear-gradient(135deg, #FFF3CD, #FFEBAA); border: 1px solid #FFE082; color: #856404; border-radius: var(--radius-md); padding: 1.2rem 1.5rem; font-family: 'Poppins', sans-serif;">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.6rem; color: #E65100;"></i>
+                <div>
+                    <h5 class="fw-bold mb-1" style="font-size: 1.05rem; margin: 0; color: #E65100;">Koneksi Database Offline</h5>
+                    <p class="mb-0" style="font-size: 0.88rem; margin: 0; font-weight: 500;">Peringatan: Koneksi server database terputus. Anda saat ini melihat data statis (Mode Offline).</p>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <!-- STATISTICS CARDS -->
         <div class="row g-4 mb-4">
             <!-- Card 1: Total Menu -->
@@ -160,7 +192,7 @@ $noncoffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category`
                                 <input type="hidden" name="action" value="toggle_store">
                                 <input type="hidden" id="statusVal" name="store_status" value="<?= $store_status ?>">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="storeSwitch" <?= $store_status === 'open' ? 'checked' : '' ?> onchange="submitToggle()">
+                                    <input type="checkbox" id="storeSwitch" <?= $store_status === 'open' ? 'checked' : '' ?> onchange="submitToggle()" <?= !$is_db_online ? 'disabled' : '' ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </form>

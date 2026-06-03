@@ -1,0 +1,99 @@
+{
+  "settings": {
+    "store_status": "closed"
+  },
+  "products": [
+    {
+      "id": 1,
+      "name": "Croissant Butter",
+      "category": "bakery",
+      "price": 22000,
+      "description": "Croissant berlapis mentega premium, renyah di luar, lembut di dalam. Dipanggang fresh setiap pagi.",
+      "image": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80&fm=webp",
+      "is_bestseller": 1,
+      "is_new": 0
+    },
+    {
+      "id": 2,
+      "name": "Signature Latte",
+      "category": "coffee",
+      "price": 28000,
+      "description": "Espresso double shot dengan susu full cream yang di-steam sempurna. Creamy, smooth, dan selalu memuaskan.",
+      "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&q=80&fm=webp",
+      "is_bestseller": 1,
+      "is_new": 0
+    },
+    {
+      "id": 3,
+      "name": "Matcha Latte",
+      "category": "non-coffee",
+      "price": 30000,
+      "description": "Matcha jepang pilihan dipadu dengan steam milk yang lembut. Cita rasa manis-sepat yang pas.",
+      "image": "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&q=80&fm=webp",
+      "is_bestseller": 0,
+      "is_new": 1
+    },
+    {
+      "id": 4,
+      "name": "Almond Croissant",
+      "category": "bakery",
+      "price": 26000,
+      "description": "Croissant berlapis dengan tambahan almond gurih dan gula halus di atasnya.",
+      "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80&fm=webp",
+      "is_bestseller": 0,
+      "is_new": 0
+    },
+    {
+      "id": 5,
+      "name": "Cappuccino",
+      "category": "coffee",
+      "price": 26000,
+      "description": "Espresso shot dengan susu steam berbusa tebal khas Italia dan taburan bubuk kayu manis.",
+      "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&q=80&fm=webp",
+      "is_bestseller": 0,
+      "is_new": 0
+    },
+    {
+      "id": 6,
+      "name": "Dark Chocolate",
+      "category": "non-coffee",
+      "price": 28000,
+      "description": "Coklat hitam premium 70% yang diseduh hangat atau dingin dengan susu creamy.",
+      "image": "https://images.unsplash.com/photo-1511381939415-e44015466834?w=600&q=80&fm=webp",
+      "is_bestseller": 0,
+      "is_new": 0
+    }
+  ],
+  "orders": [
+    {
+      "id": 101,
+      "customer_name": "Ahmad Dani",
+      "customer_email": "ahmaddani@gmail.com",
+      "product_name": "Croissant Butter",
+      "quantity": 2,
+      "notes": "Minta dipanaskan sebentar",
+      "status": "pending",
+      "created_at": "2026-06-03 14:00:00"
+    },
+    {
+      "id": 102,
+      "customer_name": "Siti Aminah",
+      "customer_email": "siti.aminah@yahoo.com",
+      "product_name": "Signature Latte",
+      "quantity": 1,
+      "notes": "Less sugar please",
+      "status": "completed",
+      "created_at": "2026-06-03 13:30:00"
+    },
+    {
+      "id": 103,
+      "customer_name": "Budi Setiawan",
+      "customer_email": "budi.setiawan@outlook.com",
+      "product_name": "Matcha Latte",
+      "quantity": 3,
+      "notes": "",
+      "status": "pending",
+      "created_at": "2026-06-03 12:45:00"
+    }
+  ]
+}
