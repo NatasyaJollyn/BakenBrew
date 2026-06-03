@@ -16,7 +16,7 @@ $store_status = $status_stmt->fetchColumn() ?: 'open';
  <!-- Bootstrap Icons -->
  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
  <!-- Custom CSS -->
- <link rel="stylesheet" href="css/style.css?v=4.0" />
+ <link rel="stylesheet" href="css/style.css?v=5.0" />
 </head>
 <body>
 
@@ -332,6 +332,6 @@ $store_status = $status_stmt->fetchColumn() ?: 'open';
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js?v=4.0"></script>
+<script src="js/script.js?v=5.0"></script>
 </body>
 </html>
