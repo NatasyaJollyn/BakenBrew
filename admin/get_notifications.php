@@ -24,7 +24,7 @@ if (isset($_SESSION['admin_username'])) {
         } catch (PDOException $e) {}
     }
 }
-$lang_code = isset($admin_data['lang']) ? $admin_data['lang'] : 'id';
+$lang_code = (isset($admin_data['lang']) && $admin_data['lang'] === 'id') ? 'id' : 'en';
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 

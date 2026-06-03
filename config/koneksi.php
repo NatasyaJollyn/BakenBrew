@@ -24,15 +24,20 @@ try {
     $pdo = new PDO($dsn, $user, $pass, $options);
     
     // Ensure admin table has all required columns for profile management
-    $stmt = $pdo->query("SHOW COLUMNS FROM `admin` LIKE 'fullname'");
-    if (!$stmt->fetch()) {
-        $pdo->exec("ALTER TABLE `admin` ADD COLUMN `fullname` VARCHAR(100) DEFAULT 'Bake n Brew Admin'");
-        $pdo->exec("ALTER TABLE `admin` ADD COLUMN `email` VARCHAR(100) DEFAULT 'admin@bakenbrew.com'");
-        $pdo->exec("ALTER TABLE `admin` ADD COLUMN `phone` VARCHAR(20) DEFAULT '081234567890'");
-        $pdo->exec("ALTER TABLE `admin` ADD COLUMN `avatar` VARCHAR(255) DEFAULT NULL");
-        $pdo->exec("ALTER TABLE `admin` ADD COLUMN `role` VARCHAR(50) DEFAULT 'Administrator'");
-        $pdo->exec("ALTER TABLE `admin` ADD COLUMN `notif_sound` TINYINT(1) DEFAULT 1");
-        $pdo->exec("ALTER TABLE `admin` ADD COLUMN `lang` VARCHAR(10) DEFAULT 'id'");
+    $columns_to_ensure = [
+        'fullname' => "VARCHAR(100) DEFAULT 'Bake n Brew Admin'",
+        'email' => "VARCHAR(100) DEFAULT 'admin@bakenbrew.com'",
+        'phone' => "VARCHAR(20) DEFAULT '081234567890'",
+        'avatar' => "VARCHAR(255) DEFAULT NULL",
+        'role' => "VARCHAR(50) DEFAULT 'Administrator'",
+        'notif_sound' => "TINYINT(1) DEFAULT 1",
+        'lang' => "VARCHAR(10) DEFAULT 'en'"
+    ];
+    foreach ($columns_to_ensure as $col => $definition) {
+        $stmt = $pdo->query("SHOW COLUMNS FROM `admin` LIKE '$col'");
+        if (!$stmt->fetch()) {
+            $pdo->exec("ALTER TABLE `admin` ADD COLUMN `$col` $definition");
+        }
     }
 
     // Ensure notifications table exists
@@ -89,15 +94,20 @@ try {
             $pdo = new PDO($dsn, $user, $pass, $options);
             
             // Ensure admin table has all required columns for profile management
-            $stmt = $pdo->query("SHOW COLUMNS FROM `admin` LIKE 'fullname'");
-            if (!$stmt->fetch()) {
-                $pdo->exec("ALTER TABLE `admin` ADD COLUMN `fullname` VARCHAR(100) DEFAULT 'Bake n Brew Admin'");
-                $pdo->exec("ALTER TABLE `admin` ADD COLUMN `email` VARCHAR(100) DEFAULT 'admin@bakenbrew.com'");
-                $pdo->exec("ALTER TABLE `admin` ADD COLUMN `phone` VARCHAR(20) DEFAULT '081234567890'");
-                $pdo->exec("ALTER TABLE `admin` ADD COLUMN `avatar` VARCHAR(255) DEFAULT NULL");
-                $pdo->exec("ALTER TABLE `admin` ADD COLUMN `role` VARCHAR(50) DEFAULT 'Administrator'");
-                $pdo->exec("ALTER TABLE `admin` ADD COLUMN `notif_sound` TINYINT(1) DEFAULT 1");
-                $pdo->exec("ALTER TABLE `admin` ADD COLUMN `lang` VARCHAR(10) DEFAULT 'id'");
+            $columns_to_ensure = [
+                'fullname' => "VARCHAR(100) DEFAULT 'Bake n Brew Admin'",
+                'email' => "VARCHAR(100) DEFAULT 'admin@bakenbrew.com'",
+                'phone' => "VARCHAR(20) DEFAULT '081234567890'",
+                'avatar' => "VARCHAR(255) DEFAULT NULL",
+                'role' => "VARCHAR(50) DEFAULT 'Administrator'",
+                'notif_sound' => "TINYINT(1) DEFAULT 1",
+                'lang' => "VARCHAR(10) DEFAULT 'en'"
+            ];
+            foreach ($columns_to_ensure as $col => $definition) {
+                $stmt = $pdo->query("SHOW COLUMNS FROM `admin` LIKE '$col'");
+                if (!$stmt->fetch()) {
+                    $pdo->exec("ALTER TABLE `admin` ADD COLUMN `$col` $definition");
+                }
             }
 
             // Ensure notifications table exists

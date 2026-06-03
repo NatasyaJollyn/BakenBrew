@@ -28,7 +28,7 @@ if (isset($_SESSION['admin_username'])) {
             'avatar' => null,
             'role' => 'Administrator',
             'notif_sound' => 1,
-            'lang' => 'id'
+            'lang' => 'en'
         ];
     }
 }

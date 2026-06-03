@@ -28,7 +28,7 @@ if (isset($_SESSION['admin_username'])) {
             'avatar' => null,
             'role' => 'Administrator',
             'notif_sound' => 1,
-            'lang' => 'id'
+            'lang' => 'en'
         ];
     }
 }
@@ -62,7 +62,7 @@ if ($action === 'complete' && isset($_GET['id'])) {
     try {
         $stmt = $pdo->prepare("UPDATE `orders` SET `status` = 'completed' WHERE `id` = ?");
         $stmt->execute([$id]);
-        $_SESSION['success_msg'] = "Pesanan #$id berhasil ditandai selesai.";
+        $_SESSION['success_msg'] = sprintf(__('msg_order_completed'), $id);
     } catch (PDOException $e) {
         $_SESSION['error_msg'] = "Database error: " . $e->getMessage();
     }
@@ -76,7 +76,7 @@ if ($action === 'delete' && isset($_GET['id'])) {
     try {
         $stmt = $pdo->prepare("DELETE FROM `orders` WHERE `id` = ?");
         $stmt->execute([$id]);
-        $_SESSION['success_msg'] = "Log pesanan #$id berhasil dihapus.";
+        $_SESSION['success_msg'] = sprintf(__('msg_order_deleted'), $id);
 
         // Add notification for order cancellation
         try {
@@ -312,26 +312,26 @@ if ($is_db_online) {
         <!-- FILTER & SEARCH PANEL -->
         <div class="admin-card">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-                <h4 class="m-0">Log Pesanan Pelanggan</h4>
-                <div style="font-size: 0.85rem;" class="text-muted">Total: <strong><?= $total_records ?></strong> pesanan</div>
+                <h4 class="m-0"><?= __('orders_list') ?></h4>
+                <div style="font-size: 0.85rem;" class="text-muted"><?= __('orders_total') ?>: <strong><?= $total_records ?></strong></div>
             </div>
 
             <form method="GET" action="" class="row g-2 mb-4 align-items-center">
                 <div class="col-md-4">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" class="form-control border-start-0 ps-1" name="search" placeholder="Cari nama, email, atau menu..." value="<?= htmlspecialchars($search) ?>" />
+                        <input type="text" class="form-control border-start-0 ps-1" name="search" placeholder="<?= __('search_placeholder_orders') ?>" value="<?= htmlspecialchars($search) ?>" />
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <select class="form-select form-select-sm" name="status">
-                        <option value="">— Semua Status —</option>
-                        <option value="pending" <?= $filter_status === 'pending' ? 'selected' : '' ?>>Pending</option>
-                        <option value="completed" <?= $filter_status === 'completed' ? 'selected' : '' ?>>Selesai</option>
+                        <option value=""><?= __('filter_all_status') ?></option>
+                        <option value="pending" <?= $filter_status === 'pending' ? 'selected' : '' ?>><?= __('status_pending') ?></option>
+                        <option value="completed" <?= $filter_status === 'completed' ? 'selected' : '' ?>><?= __('status_completed') ?></option>
                     </select>
                 </div>
                 <div class="col-md-2 col-sm-6 d-flex gap-2">
-                    <button type="submit" class="btn btn-admin-outline btn-sm w-100">Filter</button>
+                    <button type="submit" class="btn btn-admin-outline btn-sm w-100"><?= __('filter_btn') ?></button>
                     <?php if (!empty($search) || !empty($filter_status)): ?>
                         <a href="pesanan.php" class="btn btn-outline-secondary btn-sm" title="Reset Filter"><i class="bi bi-arrow-counterclockwise"></i></a>
                     <?php endif; ?>
@@ -343,13 +343,13 @@ if ($is_db_online) {
                     <thead>
                         <tr>
                             <th style="width: 50px;">#</th>
-                            <th>Pelanggan</th>
-                            <th>Menu Yang Dipesan</th>
-                            <th>Jumlah</th>
-                            <th>Catatan</th>
-                            <th>Waktu Pemesanan</th>
-                            <th>Status</th>
-                            <th style="width: 180px; text-align: center;">Aksi</th>
+                            <th><?= __('col_customer') ?></th>
+                            <th><?= __('col_menu') ?></th>
+                            <th><?= __('col_qty') ?></th>
+                            <th><?= __('tbl_notes') ?></th>
+                            <th><?= __('tbl_order_time') ?></th>
+                            <th><?= __('col_status') ?></th>
+                            <th style="width: 180px; text-align: center;"><?= __('tbl_actions') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -382,18 +382,18 @@ if ($is_db_online) {
                                     </td>
                                     <td>
                                         <span class="<?= $order['status'] === 'completed' ? 'badge-status-completed' : 'badge-status-pending' ?>">
-                                            <?= $order['status'] === 'completed' ? 'Selesai' : 'Pending' ?>
+                                            <?= $order['status'] === 'completed' ? __('status_completed') : __('status_pending') ?>
                                         </span>
                                     </td>
                                     <td>
                                         <div class="d-flex gap-1 justify-content-center">
                                             <?php if ($order['status'] === 'pending'): ?>
                                                 <a href="<?= $is_db_online ? 'pesanan.php?action=complete&id=' . $order['id'] : '#' ?>" class="btn btn-sm btn-admin-primary <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background-color: #2e7d32; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>">
-                                                    <i class="bi bi-check-lg"></i> Selesai
+                                                    <i class="bi bi-check-lg"></i> <?= __('btn_complete') ?>
                                                 </a>
                                             <?php endif; ?>
-                                            <a href="<?= $is_db_online ? 'pesanan.php?action=delete&id=' . $order['id'] : '#' ?>" class="btn btn-sm btn-admin-danger <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>" onclick="return <?= $is_db_online ? "confirm('Apakah Anda yakin ingin menghapus log pesanan #" . $order['id'] . "?')" : 'false' ?>">
-                                                <i class="bi bi-trash"></i> Hapus
+                                            <a href="<?= $is_db_online ? 'pesanan.php?action=delete&id=' . $order['id'] : '#' ?>" class="btn btn-sm btn-admin-danger <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>" onclick="return <?= $is_db_online ? "confirm('" . sprintf(__('confirm_delete_order_item'), $order['id']) . "')" : 'false' ?>">
+                                                <i class="bi bi-trash"></i> <?= __('btn_delete') ?>
                                             </a>
                                         </div>
                                     </td>
@@ -401,7 +401,7 @@ if ($is_db_online) {
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="8" class="text-center text-muted" style="padding: 2.5rem;">Tidak ada data pesanan yang cocok.</td>
+                                <td colspan="8" class="text-center text-muted" style="padding: 2.5rem;"><?= __('empty_orders') ?></td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

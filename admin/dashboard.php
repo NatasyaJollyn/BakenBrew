@@ -28,7 +28,7 @@ if (isset($_SESSION['admin_username'])) {
             'avatar' => null,
             'role' => 'Administrator',
             'notif_sound' => 1,
-            'lang' => 'id'
+            'lang' => 'en'
         ];
     }
 }
@@ -247,7 +247,7 @@ if ($is_db_online) {
                     <div class="stat-details">
                         <div class="d-flex align-items-center gap-2 mb-1" style="min-height: 43px;">
                             <span class="store-status-text <?= $store_status === 'open' ? 'text-success' : 'text-danger' ?>">
-                                <?= $store_status === 'open' ? ($lang_code === 'en' ? 'OPEN' : 'BUKA') : ($lang_code === 'en' ? 'CLOSED' : 'TUTUP') ?>
+                                <?= $store_status === 'open' ? __('status_open') : __('status_closed') ?>
                             </span>
                             <form id="storeToggleForm" method="POST" action="">
                                 <input type="hidden" name="action" value="toggle_store">
@@ -268,7 +268,7 @@ if ($is_db_online) {
             <!-- PIE CHART (Chart.js) -->
             <div class="col-lg-5">
                 <div class="admin-card h-100">
-                    <h4><?= $lang_code === 'en' ? 'Menu Composition' : 'Komposisi Menu' ?></h4>
+                    <h4><?= __('menu_composition') ?></h4>
                     <div class="chart-container" style="position: relative; height:250px; margin: auto;">
                         <canvas id="menuCompositionChart"></canvas>
                     </div>
@@ -280,7 +280,7 @@ if ($is_db_online) {
                 <div class="admin-card h-100">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="m-0"><?= __('recent_orders_title') ?></h4>
-                        <a href="pesanan.php" class="btn btn-admin-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;"><?= $lang_code === 'en' ? 'View All' : 'Lihat Semua' ?></a>
+                        <a href="pesanan.php" class="btn btn-admin-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;"><?= __('view_all') ?></a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-admin">
@@ -331,12 +331,12 @@ if ($is_db_online) {
         const statusText = document.querySelector('.store-status-text');
         const newStatus = checkbox.checked ? 'open' : 'closed';
         
-        // Immediately update visual indicator
+         // Immediately update visual indicator
         if (newStatus === 'open') {
-            statusText.textContent = 'BUKA';
+            statusText.textContent = '<?= $lang_code === 'en' ? 'OPEN' : 'BUKA' ?>';
             statusText.className = 'store-status-text text-success';
         } else {
-            statusText.textContent = 'TUTUP';
+            statusText.textContent = '<?= $lang_code === 'en' ? 'CLOSED' : 'TUTUP' ?>';
             statusText.className = 'store-status-text text-danger';
         }
         
@@ -358,14 +358,14 @@ if ($is_db_online) {
                 // Rollback if failed
                 checkbox.checked = !checkbox.checked;
                 submitToggle();
-                alert('Gagal memperbarui status toko.');
+                alert('<?= $lang_code === 'en' ? 'Failed to update store status.' : 'Gagal memperbarui status toko.' ?>');
             }
         })
         .catch(err => {
             console.error('Error:', err);
             checkbox.checked = !checkbox.checked;
             submitToggle();
-            alert('Koneksi server gagal.');
+            alert('<?= $lang_code === 'en' ? 'Server connection failed.' : 'Koneksi server gagal.' ?>');
         });
     }
 

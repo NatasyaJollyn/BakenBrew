@@ -61,7 +61,7 @@ if (isset($_SESSION['admin_username'])) {
             'avatar' => null,
             'role' => 'Administrator',
             'notif_sound' => 1,
-            'lang' => 'id'
+            'lang' => 'en'
         ];
     }
 }
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
                     $stmt = $pdo->prepare("INSERT INTO `products` (`name`, `price`, `description`, `image`, `category`, `is_bestseller`, `is_new`) VALUES (?, ?, ?, ?, ?, ?, ?)");
                     $stmt->execute([$name, $price, $description, $image_filename, $category, $is_bestseller, $is_new]);
-                    $_SESSION['success_msg'] = "Menu '$name' berhasil ditambahkan!";
+                    $_SESSION['success_msg'] = sprintf(__('msg_menu_added'), $name);
                     header('Location: produk.php');
                     exit;
                 } catch (PDOException $e) {
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     try {
                         $stmt = $pdo->prepare("UPDATE `products` SET `name` = ?, `price` = ?, `description` = ?, `image` = ?, `category` = ?, `is_bestseller` = ?, `is_new` = ? WHERE `id` = ?");
                         $stmt->execute([$name, $price, $description, $image_filename, $category, $is_bestseller, $is_new, $id]);
-                        $_SESSION['success_msg'] = "Menu '$name' berhasil diperbarui!";
+                        $_SESSION['success_msg'] = sprintf(__('msg_menu_updated'), $name);
                         header('Location: produk.php');
                         exit;
                     } catch (PDOException $e) {
@@ -217,7 +217,7 @@ if ($action === 'delete' && isset($_GET['id'])) {
             @unlink($upload_dir . $prod['image']);
         }
         
-        $_SESSION['success_msg'] = "Menu '" . $prod['name'] . "' berhasil dihapus beserta gambarnya.";
+        $_SESSION['success_msg'] = sprintf(__('msg_menu_deleted'), $prod['name']);
     }
     header('Location: produk.php');
     exit;
@@ -369,7 +369,7 @@ if (isset($_SESSION['error_msg'])) {
              1. FORM TAMBAH / EDIT
              ======================================================== -->
         <?php if ($action === 'add' || $action === 'edit'): 
-            $form_title = 'Tambah Menu Baru';
+            $form_title = __('btn_add_menu_new');
             $name_val = '';
             $price_val = '';
             $desc_val = '';
@@ -385,7 +385,7 @@ if (isset($_SESSION['error_msg'])) {
                 $prod = $stmt_fetch->fetch();
                 
                 if ($prod) {
-                    $form_title = 'Edit Menu: ' . htmlspecialchars($prod['name']);
+                    $form_title = __('btn_edit') . ' ' . __('nav_menu') . ': ' . htmlspecialchars($prod['name']);
                     $name_val = $prod['name'];
                     $price_val = $prod['price'];
                     $desc_val = $prod['description'];
@@ -411,15 +411,15 @@ if (isset($_SESSION['error_msg'])) {
                 <form method="POST" action="" enctype="multipart/form-data">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label" for="name">Nama Menu *</label>
-                            <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($name_val) ?>" required placeholder="Contoh: Matcha Cheese Croissant" />
+                            <label class="form-label" for="name"><?= __('lbl_menu_name') ?> *</label>
+                            <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($name_val) ?>" required placeholder="<?= __('lbl_menu_name_placeholder') ?>" />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" for="price">Harga (Rupiah) *</label>
-                            <input type="number" class="form-control" id="price" name="price" value="<?= htmlspecialchars($price_val) ?>" required placeholder="Contoh: 28000" min="1000" />
+                            <label class="form-label" for="price"><?= __('lbl_price') ?> *</label>
+                            <input type="number" class="form-control" id="price" name="price" value="<?= htmlspecialchars($price_val) ?>" required placeholder="<?= __('lbl_price_placeholder') ?>" min="1000" />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" for="category">Kategori Menu *</label>
+                            <label class="form-label" for="category"><?= __('lbl_category') ?> *</label>
                             <select class="form-select form-control" id="category" name="category" required>
                                 <option value="bakery" <?= $cat_val === 'bakery' ? 'selected' : '' ?>>Bakery</option>
                                 <option value="coffee" <?= $cat_val === 'coffee' ? 'selected' : '' ?>>Coffee</option>
@@ -427,37 +427,40 @@ if (isset($_SESSION['error_msg'])) {
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" for="image">Foto Produk <?= $action === 'add' ? '*' : '(Kosongkan jika tidak ingin diubah)' ?></label>
+                            <label class="form-label" for="image"><?= $action === 'add' ? __('lbl_photo_hint_add') : __('lbl_photo_hint_edit') ?></label>
                             <input type="file" class="form-control" id="image" name="image" <?= $action === 'add' ? 'required' : '' ?> accept="image/*" />
                             <?php if ($img_preview): ?>
                                 <div class="mt-2">
-                                    <span style="font-size: 0.78rem;" class="text-muted d-block mb-1">Preview Foto Saat Ini:</span>
+                                    <span style="font-size: 0.78rem;" class="text-muted d-block mb-1"><?= $lang_code === 'en' ? 'Current Photo Preview:' : 'Preview Foto Saat Ini:' ?></span>
                                     <img src="<?= $img_preview ?>" alt="Preview" style="height: 80px; border-radius: var(--radius-sm); object-fit: cover;" />
                                 </div>
                             <?php endif; ?>
                         </div>
                         <div class="col-12">
-                            <label class="form-label" for="description">Deskripsi Menu *</label>
-                            <textarea class="form-control" id="description" name="description" rows="4" required placeholder="Jelaskan detail menu, rasa, dan keunggulan produk..." style="resize: none;"><?= htmlspecialchars($desc_val) ?></textarea>
+                            <label class="form-label" for="description"><?= __('lbl_description') ?> *</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required placeholder="<?= __('lbl_description_placeholder') ?>" style="resize: none;"><?= htmlspecialchars($desc_val) ?></textarea>
                         </div>
                         <div class="col-md-6 d-flex gap-4 align-items-center mt-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="is_bestseller" name="is_bestseller" value="1" <?= $best_checked ?> style="border-color: var(--accent-gold);" />
-                                <label class="form-check-label" for="is_bestseller">Lencana <strong>Best Seller</strong></label>
+                                <label class="form-check-label" for="is_bestseller"><?= __('tbl_badge') ?> <strong>Best Seller</strong></label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="is_new" name="is_new" value="1" <?= $new_checked ?> style="border-color: var(--accent-gold);" />
-                                <label class="form-check-label" for="is_new">Lencana <strong>New</strong></label>
+                                <label class="form-check-label" for="is_new"><?= __('tbl_badge') ?> <strong>New</strong></label>
                             </div>
                         </div>
                         <div class="col-12 mt-4 d-flex gap-2">
                             <button type="submit" class="btn btn-admin-primary px-4 py-2">
-                                <i class="bi bi-floppy me-2"></i>Simpan Perubahan
+                                <i class="bi bi-floppy me-2"></i><?= __('btn_save_changes') ?>
                             </button>
                             <a href="produk.php" class="btn btn-admin-outline px-4 py-2">
-                                <i class="bi bi-x-circle me-2"></i>Batal
+                                <i class="bi bi-x-circle me-2"></i><?= __('btn_cancel') ?>
                             </a>
                         </div>
+                    </div>
+                </form>
+            </div>
                     </div>
                 </form>
             </div>
@@ -531,9 +534,9 @@ if (isset($_SESSION['error_msg'])) {
         ?>
             <div class="admin-card">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-                    <h4 class="m-0">Daftar Menu</h4>
+                    <h4 class="m-0"><?= __('menu_list') ?></h4>
                     <a href="<?= $is_db_online ? 'produk.php?action=add' : '#' ?>" class="btn btn-admin-primary <?= !$is_db_online ? 'disabled' : '' ?>" style="<?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>">
-                        <i class="bi bi-plus-lg me-1"></i> Tambah Menu
+                        <i class="bi bi-plus-lg me-1"></i> <?= __('btn_add_menu') ?>
                     </a>
                 </div>
 
@@ -542,19 +545,19 @@ if (isset($_SESSION['error_msg'])) {
                     <div class="col-md-4">
                         <div class="input-group input-group-sm">
                             <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0 ps-1" name="search" placeholder="Cari nama menu..." value="<?= htmlspecialchars($search) ?>" />
+                            <input type="text" class="form-control border-start-0 ps-1" name="search" placeholder="<?= __('search_placeholder_menu') ?>" value="<?= htmlspecialchars($search) ?>" />
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <select class="form-select form-select-sm" name="filter_cat">
-                            <option value="">— Semua Kategori —</option>
+                            <option value=""><?= __('filter_all_cat') ?></option>
                             <option value="bakery" <?= $filter_cat === 'bakery' ? 'selected' : '' ?>>Bakery</option>
                             <option value="coffee" <?= $filter_cat === 'coffee' ? 'selected' : '' ?>>Coffee</option>
                             <option value="non-coffee" <?= $filter_cat === 'non-coffee' ? 'selected' : '' ?>>Non-Coffee</option>
                         </select>
                     </div>
                     <div class="col-md-2 col-sm-6 d-flex gap-2">
-                        <button type="submit" class="btn btn-admin-outline btn-sm w-100">Filter</button>
+                        <button type="submit" class="btn btn-admin-outline btn-sm w-100"><?= __('filter_btn') ?></button>
                         <?php if (!empty($search) || !empty($filter_cat)): ?>
                             <a href="produk.php" class="btn btn-outline-secondary btn-sm" title="Reset Filter"><i class="bi bi-arrow-counterclockwise"></i></a>
                         <?php endif; ?>
@@ -565,12 +568,11 @@ if (isset($_SESSION['error_msg'])) {
                     <table class="table table-admin">
                         <thead>
                             <tr>
-                                <th style="width: 70px;">Foto</th>
-                                <th>Nama Menu</th>
-                                <th>Kategori</th>
-                                <th>Harga</th>
-                                <th>Lencana</th>
-                                <th style="width: 140px; text-align: center;">Aksi</th>
+                                <th><?= __('tbl_menu_name') ?></th>
+                                <th><?= __('tbl_category') ?></th>
+                                <th><?= __('tbl_price') ?></th>
+                                <th><?= __('tbl_badge') ?></th>
+                                <th style="width: 140px; text-align: center;"><?= __('tbl_actions') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -587,15 +589,17 @@ if (isset($_SESSION['error_msg'])) {
                                 ?>
                                     <tr>
                                         <td>
-                                            <?php if ($img_src): ?>
-                                                <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($prod['name']) ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--cream-dark);" />
-                                            <?php else: ?>
-                                                <div style="width: 50px; height: 50px; background-color: var(--cream-dark); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 0.8rem;" class="text-muted"><i class="bi bi-image"></i></div>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <div class="fw-semibold" style="color: var(--text-dark);"><?= htmlspecialchars($prod['name']) ?></div>
-                                            <div style="font-size: 0.76rem; color: var(--text-mid); max-width: 320px;" class="text-truncate"><?= htmlspecialchars($prod['description']) ?></div>
+                                            <div class="table-media">
+                                                <?php if ($img_src): ?>
+                                                    <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($prod['name']) ?>" class="product-thumb" />
+                                                <?php else: ?>
+                                                    <div class="product-thumb text-muted d-flex align-items-center justify-content-center" style="background-color: var(--cream-dark);"><i class="bi bi-image"></i></div>
+                                                <?php endif; ?>
+                                                <div>
+                                                    <div class="fw-semibold" style="color: var(--text-dark);"><?= htmlspecialchars($prod['name']) ?></div>
+                                                    <div style="font-size: 0.76rem; color: var(--text-mid); max-width: 320px;" class="text-truncate"><?= htmlspecialchars($prod['description']) ?></div>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             <span class="badge-category"><?= htmlspecialchars(ucfirst($prod['category'])) ?></span>
@@ -619,10 +623,10 @@ if (isset($_SESSION['error_msg'])) {
                                         <td>
                                             <div class="d-flex gap-1 justify-content-center">
                                                 <a href="<?= $is_db_online ? 'produk.php?action=edit&id=' . $prod['id'] : '#' ?>" class="btn btn-sm btn-admin-outline <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.78rem; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>">
-                                                    <i class="bi bi-pencil-square"></i> Edit
+                                                    <i class="bi bi-pencil-square"></i> <?= __('btn_edit') ?>
                                                 </a>
-                                                <a href="<?= $is_db_online ? 'produk.php?action=delete&id=' . $prod['id'] : '#' ?>" class="btn btn-sm btn-admin-danger <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.78rem; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>" onclick="return <?= $is_db_online ? "confirm('Apakah Anda yakin ingin menghapus menu \'" . htmlspecialchars(addslashes($prod['name'])) . "\'?')" : 'false' ?>">
-                                                    <i class="bi bi-trash"></i> Hapus
+                                                <a href="<?= $is_db_online ? 'produk.php?action=delete&id=' . $prod['id'] : '#' ?>" class="btn btn-sm btn-admin-danger <?= !$is_db_online ? 'disabled' : '' ?>" style="padding: 0.25rem 0.5rem; font-size: 0.78rem; <?= !$is_db_online ? 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' : '' ?>" onclick="return <?= $is_db_online ? "confirm('" . sprintf(__('confirm_delete_menu_item'), htmlspecialchars(addslashes($prod['name']))) . "')" : 'false' ?>">
+                                                    <i class="bi bi-trash"></i> <?= __('btn_delete') ?>
                                                 </a>
                                             </div>
                                         </td>
@@ -630,7 +634,7 @@ if (isset($_SESSION['error_msg'])) {
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted" style="padding: 2rem;">Belum ada menu terdaftar.</td>
+                                    <td colspan="5" class="text-center text-muted" style="padding: 2rem;"><?= __('empty_menu') ?></td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
