@@ -14,10 +14,25 @@ if (count($ids) === 0) {
     exit;
 }
 
-$placeholders = implode(',', array_fill(0, count($ids), '?'));
-$stmt = $pdo->prepare("SELECT `id` FROM `orders` WHERE `id` IN ($placeholders) AND `status` = 'pending'");
-$stmt->execute($ids);
-$active_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+$active_ids = [];
+if ($is_db_online && $pdo) {
+    try {
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $stmt = $pdo->prepare("SELECT `id` FROM `orders` WHERE `id` IN ($placeholders) AND `status` = 'pending'");
+        $stmt->execute($ids);
+        $active_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    } catch (PDOException $e) {
+        $active_ids = [];
+    }
+} else {
+    if ($mock_data && isset($mock_data['orders'])) {
+        foreach ($mock_data['orders'] as $mo) {
+            if (in_array((int)$mo['id'], $ids) && $mo['status'] === 'pending') {
+                $active_ids[] = (int)$mo['id'];
+            }
+        }
+    }
+}
 
 echo json_encode(['active_ids' => $active_ids]);
 exit;

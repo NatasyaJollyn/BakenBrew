@@ -296,6 +296,13 @@ function initOrderForm() {
    return;
   }
 
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalBtnHTML = submitBtn ? submitBtn.innerHTML : '';
+  if (submitBtn) {
+   submitBtn.disabled = true;
+   submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Memproses...';
+  }
+
   const nama  = document.getElementById('nama').value.trim();
   const email  = document.getElementById('email').value.trim();
   const produk = document.getElementById('produk').value;
@@ -321,6 +328,10 @@ function initOrderForm() {
   })
   .then(response => response.json())
   .then(data => {
+   if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalBtnHTML;
+   }
    if (data.success) {
     const order = {
      id:   ++orderCount,
@@ -345,6 +356,10 @@ function initOrderForm() {
    }
   })
   .catch(err => {
+   if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalBtnHTML;
+   }
    console.error('Error:', err);
    showToast('⚠️ Gagal mengirim pesanan ke server.');
   });

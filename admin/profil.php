@@ -22,6 +22,38 @@ if (!file_exists($avatar_dir)) {
     @mkdir($avatar_dir, 0777, true);
 }
 
+function compressAndSaveToWebp($source_path, $dest_path, $quality = 75) {
+    $info = @getimagesize($source_path);
+    if (!$info) return false;
+    
+    switch ($info['mime']) {
+        case 'image/jpeg':
+            $image = @imagecreatefromjpeg($source_path);
+            break;
+        case 'image/gif':
+            $image = @imagecreatefromgif($source_path);
+            break;
+        case 'image/png':
+            $image = @imagecreatefrompng($source_path);
+            if ($image) {
+                imagealphablending($image, false);
+                imagesavealpha($image, true);
+            }
+            break;
+        case 'image/webp':
+            $image = @imagecreatefromwebp($source_path);
+            break;
+        default:
+            return false;
+    }
+    
+    if (!$image) return false;
+    
+    $result = imagewebp($image, $dest_path, $quality);
+    imagedestroy($image);
+    return $result;
+}
+
 // Fetch active admin details
 $admin_data = null;
 if (isset($_SESSION['admin_username'])) {
@@ -99,14 +131,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_size = $_FILES['avatar']['size'];
             $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
             
-            $allowed_exts = ['jpg', 'jpeg', 'png'];
+            $allowed_exts = ['jpg', 'jpeg', 'png', 'webp'];
             if (!in_array($file_ext, $allowed_exts)) {
                 $error = __('err_avatar_invalid_ext');
             } elseif ($file_size > 2 * 1024 * 1024) {
                 $error = __('err_avatar_too_large');
             } else {
                 $new_filename = 'avatar_' . time() . '_' . rand(100, 999) . '.' . $file_ext;
-                if (move_uploaded_file($file_tmp, $avatar_dir . $new_filename)) {
+                $new_filename_webp = pathinfo($new_filename, PATHINFO_FILENAME) . '.webp';
+                
+                if (compressAndSaveToWebp($file_tmp, $avatar_dir . $new_filename_webp)) {
                     // Delete old avatar
                     if ($admin_data && !empty($admin_data['avatar'])) {
                         $old_avatar = $avatar_dir . $admin_data['avatar'];
@@ -116,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     try {
                         $stmt = $pdo->prepare("UPDATE `admin` SET `avatar` = ? WHERE `username` = ?");
-                        $stmt->execute([$new_filename, $_SESSION['admin_username']]);
+                        $stmt->execute([$new_filename_webp, $_SESSION['admin_username']]);
                         $_SESSION['success_msg'] = __('msg_avatar_uploaded');
                         header('Location: profil.php?tab=profile');
                         exit;

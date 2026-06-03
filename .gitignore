@@ -1,0 +1,9 @@
+# Local development files & temporary directories
+refrensidosen/
+refrensidosen.zip
+scratch/
+bakenbrew.zip
+
+# Guidelines & local revisions
+revisi*.md
+prd_revisi*.md

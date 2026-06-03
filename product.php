@@ -1,14 +1,28 @@
 <?php
 require_once 'config/koneksi.php';
-// Get store status
-$status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
-$store_status = $status_stmt->fetchColumn() ?: 'open';
+// Get store status safely
+$store_status = 'open';
+if ($is_db_online && $pdo) {
+    try {
+        $status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
+        $store_status = $status_stmt->fetchColumn() ?: 'open';
+    } catch (PDOException $e) {
+        $store_status = 'open';
+    }
+} else {
+    $store_status = $mock_data['settings']['store_status'] ?? 'open';
+}
 
-try {
-    $stmt = $pdo->query("SELECT * FROM `products` ORDER BY `id` ASC");
-    $all_products = $stmt->fetchAll();
-} catch (PDOException $e) {
-    die("Gagal memuat produk: " . $e->getMessage());
+$all_products = [];
+if ($is_db_online && $pdo) {
+    try {
+        $stmt = $pdo->query("SELECT * FROM `products` ORDER BY `id` ASC");
+        $all_products = $stmt->fetchAll();
+    } catch (PDOException $e) {
+        $all_products = $mock_data['products'] ?? [];
+    }
+} else {
+    $all_products = $mock_data['products'] ?? [];
 }
 
 $bakery_products = [];
@@ -129,6 +143,16 @@ function renderProductCard($p, $delayIndex) {
 <!-- PRODUCT SECTION -->
 <section class="product-section">
  <div class="container">
+
+  <?php if (!$is_db_online): ?>
+   <div class="alert d-flex align-items-center gap-3 mb-4 shadow-sm" role="alert" style="background: linear-gradient(135deg, #FFF3CD, #FFEBAA); border: 1px solid #FFE082; color: #856404; border-radius: var(--radius-md); padding: 1rem 1.5rem; font-family: 'Poppins', sans-serif;">
+    <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.4rem; color: #E65100;"></i>
+    <div>
+     <h6 class="fw-bold mb-1" style="margin: 0; color: #E65100;">Koneksi Database Offline...</h6>
+     <p class="mb-0" style="font-size: 0.82rem; margin: 0; opacity: 0.9;">Sistem saat ini menggunakan cadangan data produk statis lokal.</p>
+    </div>
+   </div>
+  <?php endif; ?>
 
   <!-- Filter Buttons -->
   <div class="text-center mb-5 fade-in-up">

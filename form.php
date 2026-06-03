@@ -2,13 +2,27 @@
 require_once 'config/koneksi.php';
 session_start();
 
-// Fetch Store Status
-$store_status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
-$store_status = $store_status_stmt->fetchColumn() ?: 'open';
+// Fetch Store Status Safely
+$store_status = 'open';
+if ($is_db_online && $pdo) {
+    try {
+        $store_status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
+        $store_status = $store_status_stmt->fetchColumn() ?: 'open';
+    } catch (PDOException $e) {
+        $store_status = 'open';
+    }
+} else {
+    $store_status = $mock_data['settings']['store_status'] ?? 'open';
+}
 
 // Handle AJAX Request to Save Order
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_order') {
     header('Content-Type: application/json');
+    
+    if (!$is_db_online || !$pdo) {
+        echo json_encode(['success' => false, 'message' => 'Koneksi database terputus. Pemesanan tidak dapat diproses saat offline.']);
+        exit;
+    }
     
     if ($store_status === 'closed') {
         echo json_encode(['success' => false, 'message' => 'Toko sedang tutup. Pemesanan tidak dapat diproses.']);
@@ -51,11 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 // Fetch products grouped by category for dropdown options
-try {
-    $stmt = $pdo->query("SELECT * FROM `products` ORDER BY `id` ASC");
-    $all_products = $stmt->fetchAll();
-} catch (PDOException $e) {
-    die("Gagal memuat data produk: " . $e->getMessage());
+$all_products = [];
+if ($is_db_online && $pdo) {
+    try {
+        $stmt = $pdo->query("SELECT * FROM `products` ORDER BY `id` ASC");
+        $all_products = $stmt->fetchAll();
+    } catch (PDOException $e) {
+        $all_products = $mock_data['products'] ?? [];
+    }
+} else {
+    $all_products = $mock_data['products'] ?? [];
 }
 
 $bakery_opts = [];
@@ -135,7 +154,16 @@ foreach ($all_products as $p) {
   <div class="row g-5 justify-content-center">
    <div class="col-lg-7">
 
-    <?php if ($store_status === 'closed'): ?>
+    <?php if (!$is_db_online): ?>
+     <!-- Database Offline Alert Banner -->
+     <div class="alert d-flex align-items-center gap-3 mb-4 fade-in-up" role="alert" style="border-radius: 12px; border: 1px solid #FFE082; background: linear-gradient(135deg, #FFF3CD, #FFEBAA); color: #856404; padding: 1rem 1.5rem;">
+      <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.8rem; color: #E65100;"></i>
+      <div>
+       <h5 class="alert-heading fw-bold mb-1" style="font-size: 1rem; margin: 0; color: #E65100;">Koneksi Database Offline...</h5>
+       <p class="mb-0" style="font-size: 0.82rem; margin: 0; opacity: 0.9;">Pemesanan dinonaktifkan sementara waktu karena koneksi database terputus.</p>
+      </div>
+     </div>
+    <?php elseif ($store_status === 'closed'): ?>
      <!-- Toko Tutup Alert Banner -->
      <div class="alert alert-danger d-flex align-items-center gap-3 mb-4 fade-in-up" role="alert" style="border-radius: 12px; border: 1px solid #f5c2c7; background-color: #f8d7da; color: #842029; padding: 1rem 1.5rem;">
       <i class="bi bi-shop" style="font-size: 1.8rem; color: #842029;"></i>
@@ -168,7 +196,7 @@ foreach ($all_products as $p) {
         </label>
         <input type="text" class="form-control" id="nama"
             placeholder="Contoh: Sari Dewi"
-            minlength="2" required <?= $store_status === 'closed' ? 'disabled' : '' ?> />
+            minlength="2" required <?= ($store_status === 'closed' || !$is_db_online) ? 'disabled' : '' ?> />
         <div class="invalid-feedback">Nama minimal 2 karakter dan tidak boleh kosong.</div>
        </div>
 
@@ -178,7 +206,7 @@ foreach ($all_products as $p) {
          <i class="bi bi-envelope me-1" style="color:var(--brown-dark)"></i>Email *
         </label>
         <input type="email" class="form-control" id="email"
-            placeholder="emailkamu@gmail.com" required <?= $store_status === 'closed' ? 'disabled' : '' ?> />
+            placeholder="emailkamu@gmail.com" required <?= ($store_status === 'closed' || !$is_db_online) ? 'disabled' : '' ?> />
         <div class="invalid-feedback">Masukkan alamat email yang valid.</div>
        </div>
 
@@ -187,7 +215,7 @@ foreach ($all_products as $p) {
         <label class="form-label" for="produk">
          <i class="bi bi-cup-hot me-1" style="color:var(--brown-dark)"></i>Produk *
         </label>
-        <select class="form-select" id="produk" required <?= $store_status === 'closed' ? 'disabled' : '' ?>>
+        <select class="form-select" id="produk" required <?= ($store_status === 'closed' || !$is_db_online) ? 'disabled' : '' ?>>
          <option value="">— Pilih produk —</option>
          <?php if (count($bakery_opts) > 0): ?>
           <optgroup label=" Bakery">
@@ -230,7 +258,7 @@ foreach ($all_products as $p) {
         </label>
         <input type="number" class="form-control" id="jumlah"
             placeholder="Contoh: 2"
-            min="1" max="100" required <?= $store_status === 'closed' ? 'disabled' : '' ?> />
+            min="1" max="100" required <?= ($store_status === 'closed' || !$is_db_online) ? 'disabled' : '' ?> />
         <div class="invalid-feedback">Masukkan jumlah antara 1–100.</div>
        </div>
 
@@ -241,16 +269,16 @@ foreach ($all_products as $p) {
         </label>
         <textarea class="form-control" id="catatan" rows="3"
              placeholder="Contoh: tanpa gula, ekstra keju, diantar ke meja 5..."
-             style="resize:none;" <?= $store_status === 'closed' ? 'disabled' : '' ?>></textarea>
+             style="resize:none;" <?= ($store_status === 'closed' || !$is_db_online) ? 'disabled' : '' ?>></textarea>
         <div style="font-size:.78rem;color:var(--text-mid);margin-top:.3rem;">Opsional: tuliskan permintaan khusus kamu.</div>
        </div>
 
        <!-- Submit -->
         <div class="col-12 d-flex gap-3 flex-wrap">
-         <button type="submit" class="btn-primary-brown flex-grow-1" style="border:none;" <?= $store_status === 'closed' ? 'disabled' : '' ?>>
+         <button type="submit" class="btn-primary-brown flex-grow-1" style="border:none;" <?= ($store_status === 'closed' || !$is_db_online) ? 'disabled' : '' ?>>
           <i class="bi bi-cart-plus me-2"></i>Tambah Pesanan
          </button>
-         <button type="reset" class="btn-outline-brown" style="min-width:120px;" onclick="document.getElementById('orderForm').classList.remove('was-validated')" <?= $store_status === 'closed' ? 'disabled' : '' ?>>
+         <button type="reset" class="btn-outline-brown" style="min-width:120px;" onclick="document.getElementById('orderForm').classList.remove('was-validated')" <?= ($store_status === 'closed' || !$is_db_online) ? 'disabled' : '' ?>>
           <i class="bi bi-x-circle me-1"></i>Reset
          </button>
         </div>

@@ -1,8 +1,17 @@
 <?php
 require_once 'config/koneksi.php';
-// Get store status
-$status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
-$store_status = $status_stmt->fetchColumn() ?: 'open';
+// Get store status safely
+$store_status = 'open';
+if ($is_db_online && $pdo) {
+    try {
+        $status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
+        $store_status = $status_stmt->fetchColumn() ?: 'open';
+    } catch (PDOException $e) {
+        $store_status = 'open';
+    }
+} else {
+    $store_status = $mock_data['settings']['store_status'] ?? 'open';
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
