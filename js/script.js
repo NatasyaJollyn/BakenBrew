@@ -467,25 +467,54 @@ function initProductFilter() {
  const filterBtns  = document.querySelectorAll('.filter-btn');
  const productCards = document.querySelectorAll('.product-item');
 
- function applyFilter(filter) {
-  filterBtns.forEach(b => {
-   if (b.getAttribute('data-filter') === filter) {
-    b.classList.add('active');
-   } else {
-    b.classList.remove('active');
+  const sections = {
+   bakery: {
+    header: document.getElementById('bakery'),
+    row: document.getElementById('bakery') ? document.getElementById('bakery').nextElementSibling : null
+   },
+   coffee: {
+    header: document.getElementById('coffee'),
+    row: document.getElementById('coffee') ? document.getElementById('coffee').nextElementSibling : null
+   },
+   noncoffee: {
+    header: document.getElementById('non-coffee'),
+    row: document.getElementById('non-coffee') ? document.getElementById('non-coffee').nextElementSibling : null
    }
-  });
+  };
 
-  productCards.forEach(card => {
-   const cat = card.getAttribute('data-category');
-   if (filter === 'all' || cat === filter) {
-    card.style.display = '';
-    card.style.animation = 'fadeIn 0.4s ease forwards';
-   } else {
-    card.style.display = 'none';
+  function applyFilter(filter) {
+   filterBtns.forEach(b => {
+    if (b.getAttribute('data-filter') === filter) {
+     b.classList.add('active');
+    } else {
+     b.classList.remove('active');
+    }
+   });
+
+   // Toggle category section headers and rows visibility
+   for (const key in sections) {
+    const sec = sections[key];
+    if (sec.header && sec.row) {
+     if (filter === 'all' || key === filter) {
+      sec.header.style.display = '';
+      sec.row.style.display = '';
+     } else {
+      sec.header.style.display = 'none';
+      sec.row.style.display = 'none';
+     }
+    }
    }
-  });
- }
+
+   productCards.forEach(card => {
+    const cat = card.getAttribute('data-category');
+    if (filter === 'all' || cat === filter) {
+     card.style.display = '';
+     card.style.animation = 'fadeIn 0.4s ease forwards';
+    } else {
+     card.style.display = 'none';
+    }
+   });
+  }
 
  filterBtns.forEach(btn => {
   btn.addEventListener('click', () => {

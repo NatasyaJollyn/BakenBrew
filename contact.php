@@ -13,7 +13,7 @@ $store_status = $status_stmt->fetchColumn() ?: 'open';
  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>" />
  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
- <link rel="stylesheet" href="css/style.css?v=5.1" />
+ <link rel="stylesheet" href="css/style.css?v=5.2" />
 </head>
 <body>
 
@@ -29,9 +29,9 @@ $store_status = $status_stmt->fetchColumn() ?: 'open';
        <line x1="14" y1="2" x2="14" y2="4" />
      </svg>Bake'n <span>Brew</span>
      <?php if ($store_status === 'open'): ?>
-      <span class="badge bg-success ms-2" style="font-size: 0.65rem; vertical-align: middle; font-family: 'Poppins', sans-serif;">Buka</span>
+      <span class="badge bg-success ms-2 badge-flip-active" style="font-size: 0.65rem; vertical-align: middle; font-family: 'Poppins', sans-serif;">Buka</span>
      <?php else: ?>
-      <span class="badge bg-danger ms-2" style="font-size: 0.65rem; vertical-align: middle; font-family: 'Poppins', sans-serif;">Tutup</span>
+      <span class="badge bg-danger ms-2 badge-flip-active" style="font-size: 0.65rem; vertical-align: middle; font-family: 'Poppins', sans-serif;">Tutup</span>
      <?php endif; ?>
     </a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
@@ -273,7 +273,7 @@ $store_status = $status_stmt->fetchColumn() ?: 'open';
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js?v=5.1"></script>
+<script src="js/script.js?v=5.2"></script>
 <script>
  // Contact Form submit handler
  document.getElementById('contactForm').addEventListener('submit', function(e){
