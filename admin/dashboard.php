@@ -42,31 +42,6 @@ if (!$store_status) {
     $store_status = 'open'; // default fallback
 }
 
-// Most Popular Menu
-// Try to get from orders count first
-$popular_query = "SELECT `product_name`, COUNT(*) as `count` FROM `orders` GROUP BY `product_name` ORDER BY `count` DESC LIMIT 1";
-$popular_res = $pdo->query($popular_query)->fetch();
-if ($popular_res) {
-    // Strip price info if in format "Name (Rp 22.000)"
-    $popular_menu = preg_replace('/ \(.+\)/', '', $popular_res['product_name']);
-} else {
-    // Fallback to one of the bestseller products
-    $fallback_popular = $pdo->query("SELECT `name` FROM `products` WHERE `is_bestseller` = 1 LIMIT 1")->fetchColumn();
-    $popular_menu = $fallback_popular ? $fallback_popular : 'Belum Ada';
-}
-
-// 3. Fetch Category Composition for Chart.js
-$cat_composition = $pdo->query("SELECT `category`, COUNT(*) as `count` FROM `products` GROUP BY `category`")->fetchAll();
-$bakery_count = 0;
-$coffee_count = 0;
-$noncoffee_count = 0;
-
-foreach ($cat_composition as $cat) {
-    if ($cat['category'] === 'bakery') $bakery_count = $cat['count'];
-    if ($cat['category'] === 'coffee') $coffee_count = $cat['count'];
-    if ($cat['category'] === 'non-coffee') $noncoffee_count = $cat['count'];
-}
-
 // Recent Orders
 $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC LIMIT 5")->fetchAll();
 ?>
@@ -112,7 +87,7 @@ $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC 
     </div>
 
     <div class="sidebar-footer">
-        <a href="logout.php" class="nav-item-admin" style="color: #ff8a80;">
+        <a href="logout.php" class="nav-item-admin logout">
             <i class="bi bi-box-arrow-left"></i> Logout
         </a>
     </div>
@@ -123,9 +98,14 @@ $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC 
     <!-- TOP HEADER -->
     <header class="top-header">
         <h2>Dashboard</h2>
-        <div class="admin-profile">
-            <span>Halo, <strong>Admin</strong></span>
-            <div class="admin-avatar">A</div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="admin-profile">
+                <span>Halo, <strong>Admin</strong></span>
+                <div class="admin-avatar">A</div>
+            </div>
+            <a href="logout.php" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: var(--radius-sm);" title="Logout dari panel admin">
+                <i class="bi bi-box-arrow-left"></i> Keluar
+            </a>
         </div>
     </header>
 
@@ -134,7 +114,7 @@ $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC 
         <!-- STATISTICS CARDS -->
         <div class="row g-4 mb-4">
             <!-- Card 1: Total Menu -->
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="bi bi-egg-fried"></i></div>
                     <div class="stat-details">
@@ -145,7 +125,7 @@ $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC 
             </div>
             
             <!-- Card 2: Total Orders -->
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="bi bi-cart3"></i></div>
                     <div class="stat-details">
@@ -155,19 +135,8 @@ $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC 
                 </div>
             </div>
 
-            <!-- Card 3: Popular Menu -->
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="bi bi-award"></i></div>
-                    <div class="stat-details">
-                        <h3 style="font-size: 1.15rem; font-weight: 600; min-height: 43px; display: flex; align-items: center;"><?= htmlspecialchars($popular_menu) ?></h3>
-                        <p>Menu Terpopuler</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4: Store Status -->
-            <div class="col-md-3">
+            <!-- Card 3: Store Status -->
+            <div class="col-md-4">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="bi bi-shop"></i></div>
                     <div class="stat-details">

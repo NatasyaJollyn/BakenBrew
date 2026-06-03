@@ -1,3 +1,9 @@
+<?php
+require_once 'config/koneksi.php';
+// Get store status
+$status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
+$store_status = $status_stmt->fetchColumn() ?: 'open';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -18,14 +24,19 @@
 <nav class="navbar navbar-expand-lg">
  <div class="container">
    <a class="navbar-brand" href="index.php">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="me-2" style="width: 28px; height: 28px; vertical-align: middle; color: var(--accent-gold);">
-      <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
-      <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
-      <line x1="6" y1="2" x2="6" y2="4" />
-      <line x1="10" y1="2" x2="10" y2="4" />
-      <line x1="14" y1="2" x2="14" y2="4" />
-    </svg>Bake'n <span>Brew</span>
-   </a>
+     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="me-2" style="width: 28px; height: 28px; vertical-align: middle; color: var(--accent-gold);">
+       <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+       <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
+       <line x1="6" y1="2" x2="6" y2="4" />
+       <line x1="10" y1="2" x2="10" y2="4" />
+       <line x1="14" y1="2" x2="14" y2="4" />
+     </svg>Bake'n <span>Brew</span>
+     <?php if ($store_status === 'open'): ?>
+      <span class="badge bg-success ms-2" style="font-size: 0.65rem; vertical-align: middle; font-family: 'Poppins', sans-serif;">Buka</span>
+     <?php else: ?>
+      <span class="badge bg-danger ms-2" style="font-size: 0.65rem; vertical-align: middle; font-family: 'Poppins', sans-serif;">Tutup</span>
+     <?php endif; ?>
+    </a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
    <span class="navbar-toggler-icon"></span>
   </button>
@@ -46,6 +57,11 @@
 <section class="hero-section">
  <div class="container">
   <div class="hero-content col-lg-7">
+   <?php if ($store_status === 'closed'): ?>
+   <div class="alert alert-danger d-inline-flex align-items-center gap-2 mb-3" style="border-radius: var(--radius-sm); font-size: 0.85rem; background-color: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.25); color: #FAF6F0; padding: 0.5rem 1rem; font-family: 'Poppins', sans-serif;">
+    <i class="bi bi-shop"></i> Kami sedang Tutup. Pemesanan dinonaktifkan sementara.
+   </div>
+   <?php endif; ?>
    <div class="hero-badge"> Café & Bakery Surabaya</div>
    <h1 class="hero-title">Bake'n <span>Brew</span></h1>
    <p class="hero-tagline">Freshly Baked, Perfectly Brewed</p>

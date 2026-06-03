@@ -134,7 +134,7 @@ $orders = $fetch_stmt->fetchAll();
     </div>
 
     <div class="sidebar-footer">
-        <a href="logout.php" class="nav-item-admin" style="color: #ff8a80;">
+        <a href="logout.php" class="nav-item-admin logout">
             <i class="bi bi-box-arrow-left"></i> Logout
         </a>
     </div>
@@ -145,9 +145,14 @@ $orders = $fetch_stmt->fetchAll();
     <!-- TOP HEADER -->
     <header class="top-header">
         <h2>Kelola Pesanan</h2>
-        <div class="admin-profile">
-            <span>Halo, <strong>Admin</strong></span>
-            <div class="admin-avatar">A</div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="admin-profile">
+                <span>Halo, <strong>Admin</strong></span>
+                <div class="admin-avatar">A</div>
+            </div>
+            <a href="logout.php" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: var(--radius-sm);" title="Logout dari panel admin">
+                <i class="bi bi-box-arrow-left"></i> Keluar
+            </a>
         </div>
     </header>
 

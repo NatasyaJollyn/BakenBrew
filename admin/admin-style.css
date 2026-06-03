@@ -99,6 +99,21 @@ body {
     padding-top: 1.5rem;
 }
 
+.nav-item-admin.logout {
+    color: #ff8a80;
+    border: 1px solid rgba(255, 138, 128, 0.15);
+    background-color: rgba(255, 138, 128, 0.05);
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.nav-item-admin.logout:hover {
+    color: #ffffff;
+    background-color: #d32f2f;
+    border-color: #d32f2f;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+}
+
 /* Main Content Wrapper */
 .main-wrapper {
     margin-left: 260px;
