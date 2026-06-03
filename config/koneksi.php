@@ -3,10 +3,23 @@
 // BAKE'N BREW - Database Connection Configuration (Laragon)
 // ========================================================
 
-$host = 'localhost';
-$user = 'root';
-$pass = '';
-$db   = 'db_bakenbrew';
+// Check environment: Local Laragon vs InfinityFree Live Server
+$is_local = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1', '[::1]']) 
+            || (strpos($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1:') === 0) 
+            || (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost:') === 0);
+
+if ($is_local) {
+    $host = 'localhost';
+    $user = 'root';
+    $pass = '';
+    $db   = 'db_bakenbrew';
+} else {
+    // Production (InfinityFree)
+    $host = 'sql313.infinityfree.com';
+    $user = 'if0_42086787';
+    $pass = 'bUI5qx7AgE0Nc';
+    $db   = 'if0_42086787_db_bakenbrew';
+}
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -86,8 +99,8 @@ try {
         }
     }
 } catch (PDOException $e) {
-    // If the database doesn't exist yet, we allow connecting to host to create it (used in setup_db.php)
-    if ($e->getCode() == 1049) { // Database not found
+    // If the database doesn't exist yet, we allow connecting to host to create it (only locally)
+    if ($e->getCode() == 1049 && $is_local) { // Database not found
         try {
             $pdo_temp = new PDO("mysql:host=$host;charset=$charset", $user, $pass, $options);
             $pdo_temp->exec("CREATE DATABASE IF NOT EXISTS `$db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");

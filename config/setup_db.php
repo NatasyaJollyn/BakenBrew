@@ -6,10 +6,23 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$host = 'localhost';
-$user = 'root';
-$pass = '';
-$db   = 'db_bakenbrew';
+// Check environment: Local Laragon vs InfinityFree Live Server
+$is_local = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1', '[::1]']) 
+            || (strpos($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1:') === 0) 
+            || (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost:') === 0);
+
+if ($is_local) {
+    $host = 'localhost';
+    $user = 'root';
+    $pass = '';
+    $db   = 'db_bakenbrew';
+} else {
+    // Production (InfinityFree)
+    $host = 'sql313.infinityfree.com';
+    $user = 'if0_42086787';
+    $pass = 'bUI5qx7AgE0Nc';
+    $db   = 'if0_42086787_db_bakenbrew';
+}
 $charset = 'utf8mb4';
 
 echo "<!DOCTYPE html>
@@ -32,17 +45,21 @@ echo "<!DOCTYPE html>
         <div class='mb-3'>";
 
 try {
-    // 1. Connect without DB selected to create it
+    // 1. Connect and initialize DB (only run CREATE DATABASE on local environment)
     $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
     ];
-    $pdo_init = new PDO("mysql:host=$host;charset=$charset", $user, $pass, $options);
     
-    // Create DB
-    $pdo_init->exec("CREATE DATABASE IF NOT EXISTS `$db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    echo "<div class='alert alert-success'>✓ Database <strong>$db</strong> berhasil dibuat/dipastikan ada.</div>";
+    if ($is_local) {
+        $pdo_init = new PDO("mysql:host=$host;charset=$charset", $user, $pass, $options);
+        // Create DB
+        $pdo_init->exec("CREATE DATABASE IF NOT EXISTS `$db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        echo "<div class='alert alert-success'>✓ Database <strong>$db</strong> berhasil dibuat/dipastikan ada.</div>";
+    } else {
+        echo "<div class='alert alert-success'>✓ Menggunakan database hosting yang sudah ada: <strong>$db</strong>.</div>";
+    }
     
     // Connect to specific DB
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=$charset", $user, $pass, $options);
