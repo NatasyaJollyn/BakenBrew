@@ -104,12 +104,17 @@ $noncoffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category`
                 <span class="d-none d-sm-inline font-weight-medium me-1" style="font-size: 0.9rem;">Halo, <strong>Admin</strong></span>
                 <div class="admin-avatar">A</div>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: #ffffff; border-radius: var(--radius-md); min-width: 160px;">
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: #ffffff; border-radius: var(--radius-md); min-width: 180px;">
                 <li><h6 class="dropdown-header" style="color: var(--text-mid); font-family: 'Poppins', sans-serif;">Administrator</h6></li>
                 <li><hr class="dropdown-divider" style="border-top: 1px solid var(--cream-dark);"></li>
                 <li>
-                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="logout.php" style="color: #d32f2f; font-weight: 500;">
-                        <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> Keluar
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#" style="color: var(--text-mid); opacity: 0.65; cursor: not-allowed;" onclick="event.preventDefault(); alert('Fitur Lihat Profil akan tersedia pada Fase 2.');">
+                        <i class="bi bi-person" style="font-size: 1rem;"></i> Lihat Profil (Fase 2)
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="logout.php" onclick="confirmLogout(event)" style="color: #d32f2f; font-weight: 500;">
+                        <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> Log Out
                     </a>
                 </li>
             </ul>
@@ -305,7 +310,18 @@ $noncoffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category`
             }
         }
     });
+
+    function confirmLogout(event) {
+        event.preventDefault();
+        if (confirm('Apakah Anda yakin ingin keluar?')) {
+            sessionStorage.clear();
+            localStorage.clear();
+            window.location.href = 'logout.php';
+        }
+    }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

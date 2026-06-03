@@ -37,7 +37,7 @@ body {
     left: 0;
     z-index: 100;
     display: flex;
-    flex-column: column;
+    flex-direction: column;
     padding: 2rem 1.5rem;
     box-shadow: 4px 0 20px rgba(75, 46, 43, 0.08);
 }
@@ -435,4 +435,7 @@ input:checked + .toggle-slider:before {
 }
 .dropdown-toggle::after {
     display: none !important;
+}
+.dropdown-toggle {
+    cursor: pointer !important;
 }
