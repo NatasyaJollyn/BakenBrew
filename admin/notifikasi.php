@@ -1,6 +1,6 @@
 <?php
 // ========================================================
-// BAKE'N BREW - Admin Dashboard
+// BAKE'N BREW - Admin Notifications Archive
 // ========================================================
 
 session_start();
@@ -33,64 +33,92 @@ if (isset($_SESSION['admin_username'])) {
     }
 }
 
-// 1. Handle Store Status Toggle Action
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_store') {
-    if (!$is_db_online) {
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Aksi tidak diizinkan dalam Mode Offline.']);
-            exit;
+// Function to format relative timestamp
+function getRelativeTime($timestamp) {
+    $time = strtotime($timestamp);
+    $diff = time() - $time;
+    if ($diff < 60) {
+        return 'Baru saja';
+    } elseif ($diff < 3600) {
+        return round($diff / 60) . ' menit yang lalu';
+    } elseif ($diff < 86400) {
+        return round($diff / 3600) . ' jam yang lalu';
+    } else {
+        return round($diff / 86400) . ' hari yang lalu';
+    }
+}
+
+$success = '';
+$error = '';
+
+// Handle actions
+$action = isset($_GET['action']) ? $_GET['action'] : '';
+
+if ($action === 'read_all') {
+    if ($is_db_online) {
+        try {
+            $pdo->exec("UPDATE `notifications` SET `is_read` = 1");
+            $_SESSION['success_msg'] = "Semua notifikasi ditandai telah dibaca.";
+        } catch (PDOException $e) {
+            $_SESSION['error_msg'] = "Gagal memperbarui database: " . $e->getMessage();
         }
-        header('Location: dashboard.php');
-        exit;
+    } else {
+        $_SESSION['success_msg'] = "Semua notifikasi ditandai telah dibaca (Mode Offline).";
     }
-    $new_status = $_POST['store_status'] === 'open' ? 'open' : 'closed';
-    $stmt = $pdo->prepare("UPDATE `settings` SET `setting_value` = ? WHERE `setting_key` = 'store_status'");
-    $stmt->execute([$new_status]);
-    
-    // Return JSON if AJAX request, otherwise page redirect
-    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'status' => $new_status]);
-        exit;
-    }
-    header('Location: dashboard.php');
+    header('Location: notifikasi.php');
     exit;
 }
 
-// 2. Fetch Statistics
-if ($is_db_online) {
-    // Total Products
-    $total_products = $pdo->query("SELECT COUNT(*) FROM `products`")->fetchColumn();
-
-    // Total Orders
-    $total_orders = $pdo->query("SELECT COUNT(*) FROM `orders`")->fetchColumn();
-
-    // Store Status
-    $store_status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
-    $store_status = $store_status_stmt->fetchColumn();
-    if (!$store_status) {
-        $store_status = 'open'; // default fallback
+if ($action === 'clear_all') {
+    if ($is_db_online) {
+        try {
+            $pdo->exec("DELETE FROM `notifications`");
+            $_SESSION['success_msg'] = "Arsip notifikasi berhasil dibersihkan.";
+        } catch (PDOException $e) {
+            $_SESSION['error_msg'] = "Gagal membersihkan database: " . $e->getMessage();
+        }
+    } else {
+        $_SESSION['success_msg'] = "Arsip notifikasi dibersihkan (Mode Offline).";
     }
+    header('Location: notifikasi.php');
+    exit;
+}
 
-    // Recent Orders
-    $recent_orders = $pdo->query("SELECT * FROM `orders` ORDER BY `created_at` DESC LIMIT 5")->fetchAll();
+// Retrieve success/error messages
+if (isset($_SESSION['success_msg'])) {
+    $success = $_SESSION['success_msg'];
+    unset($_SESSION['success_msg']);
+}
+if (isset($_SESSION['error_msg'])) {
+    $error = $_SESSION['error_msg'];
+    unset($_SESSION['error_msg']);
+}
 
-    // Category Counts
-    $bakery_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'bakery'")->fetchColumn();
-    $coffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'coffee'")->fetchColumn();
-    $noncoffee_count = $pdo->query("SELECT COUNT(*) FROM `products` WHERE `category` = 'non-coffee'")->fetchColumn();
-} else {
-    // Fallback Mock Data
-    $total_products = count($mock_data['products']);
-    $total_orders = count($mock_data['orders']);
-    $store_status = $mock_data['settings']['store_status'];
-    $recent_orders = array_slice($mock_data['orders'], 0, 5);
+// Pagination setup
+$limit = 10;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+if ($page < 1) $page = 1;
+$offset = ($page - 1) * $limit;
+
+if ($is_db_online) {
+    // Total count
+    $total_records = (int)$pdo->query("SELECT COUNT(*) FROM `notifications`")->fetchColumn();
+    $total_pages = ceil($total_records / $limit);
     
-    $bakery_count = count(array_filter($mock_data['products'], fn($p) => $p['category'] === 'bakery'));
-    $coffee_count = count(array_filter($mock_data['products'], fn($p) => $p['category'] === 'coffee'));
-    $noncoffee_count = count(array_filter($mock_data['products'], fn($p) => $p['category'] === 'non-coffee'));
+    // Fetch notifications
+    $stmt = $pdo->prepare("SELECT * FROM `notifications` ORDER BY `created_at` DESC LIMIT ? OFFSET ?");
+    $stmt->execute([$limit, $offset]);
+    $notifications = $stmt->fetchAll();
+} else {
+    // Mock notifications fallback
+    $mock_notifs = isset($mock_data['notifications']) ? $mock_data['notifications'] : [];
+    usort($mock_notifs, function($a, $b) {
+        return $b['id'] - $a['id'];
+    });
+    
+    $total_records = count($mock_notifs);
+    $total_pages = ceil($total_records / $limit);
+    $notifications = array_slice($mock_notifs, $offset, $limit);
 }
 ?>
 <!DOCTYPE html>
@@ -98,14 +126,42 @@ if ($is_db_online) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Admin – Bake'n Brew</title>
+    <title>Notifikasi – Bake'n Brew</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="admin-style.css?v=5.2" />
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .notif-item {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--cream-dark);
+        }
+        .notif-item:hover {
+            background-color: #FAF8F5;
+        }
+        .notif-item.unread {
+            background-color: #FFFDF4;
+        }
+        .notif-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .notif-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #2f80ed;
+            display: inline-block;
+            margin-left: 8px;
+        }
+    </style>
 </head>
 <body>
 
@@ -123,7 +179,7 @@ if ($is_db_online) {
     </a>
     
     <div class="sidebar-nav">
-        <a href="dashboard.php" class="nav-item-admin active">
+        <a href="dashboard.php" class="nav-item-admin">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
         <a href="produk.php" class="nav-item-admin">
@@ -133,15 +189,13 @@ if ($is_db_online) {
             <i class="bi bi-cart3"></i> Kelola Pesanan
         </a>
     </div>
-
-    
 </div>
 
 <!-- MAIN CONTENT -->
 <div class="main-wrapper">
     <!-- TOP HEADER -->
     <header class="top-header">
-        <h2>Dashboard</h2>
+        <h2>Pusat Notifikasi</h2>
         <div class="d-flex align-items-center gap-3">
             
             <!-- Lonceng Notifikasi Dropdown -->
@@ -214,213 +268,122 @@ if ($is_db_online) {
             </div>
         <?php endif; ?>
 
-        <!-- STATISTICS CARDS -->
-        <div class="row g-4 mb-4">
-            <!-- Card 1: Total Menu -->
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="bi bi-egg-fried"></i></div>
-                    <div class="stat-details">
-                        <h3><?= $total_products ?></h3>
-                        <p>Total Menu</p>
-                    </div>
-                </div>
+        <?php if ($success): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: var(--radius-md);">
+                <i class="bi bi-check-circle-fill me-2"></i><?= htmlspecialchars($success) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            
-            <!-- Card 2: Total Orders -->
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="bi bi-cart3"></i></div>
-                    <div class="stat-details">
-                        <h3><?= $total_orders ?></h3>
-                        <p>Total Pesanan</p>
-                    </div>
+        <?php endif; ?>
+
+        <?php if ($error): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: var(--radius-md);">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i><?= htmlspecialchars($error) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <div class="admin-card">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                <h4 class="m-0">Semua Notifikasi</h4>
+                <div class="d-flex gap-2">
+                    <a href="notifikasi.php?action=read_all" class="btn btn-sm btn-admin-outline" style="font-size: 0.82rem;"><i class="bi bi-check2-all me-1"></i> Tandai Semua Dibaca</a>
+                    <a href="notifikasi.php?action=clear_all" class="btn btn-sm btn-admin-danger" style="font-size: 0.82rem;" onclick="return confirm('Apakah Anda yakin ingin menghapus semua riwayat notifikasi?')"><i class="bi bi-trash me-1"></i> Hapus Semua</a>
                 </div>
             </div>
 
-            <!-- Card 3: Store Status -->
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="bi bi-shop"></i></div>
-                    <div class="stat-details">
-                        <div class="d-flex align-items-center gap-2 mb-1" style="min-height: 43px;">
-                            <span class="store-status-text <?= $store_status === 'open' ? 'text-success' : 'text-danger' ?>">
-                                <?= $store_status === 'open' ? 'BUKA' : 'TUTUP' ?>
-                            </span>
-                            <form id="storeToggleForm" method="POST" action="">
-                                <input type="hidden" name="action" value="toggle_store">
-                                <input type="hidden" id="statusVal" name="store_status" value="<?= $store_status ?>">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="storeSwitch" <?= $store_status === 'open' ? 'checked' : '' ?> onchange="submitToggle()" <?= !$is_db_online ? 'disabled' : '' ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </form>
-                        </div>
-                        <p>Status Operasional</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <!-- PIE CHART (Chart.js) -->
-            <div class="col-lg-5">
-                <div class="admin-card h-100">
-                    <h4>Komposisi Menu</h4>
-                    <div class="chart-container" style="position: relative; height:250px; margin: auto;">
-                        <canvas id="menuCompositionChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RECENT ORDERS -->
-            <div class="col-lg-7">
-                <div class="admin-card h-100">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="m-0">Pesanan Terbaru</h4>
-                        <a href="pesanan.php" class="btn btn-admin-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;">Lihat Semua</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-admin">
-                            <thead>
-                                <tr>
-                                    <th>Pelanggan</th>
-                                    <th>Menu</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (count($recent_orders) > 0): ?>
-                                    <?php foreach ($recent_orders as $order): ?>
-                                        <tr>
-                                            <td>
-                                                <div class="fw-semibold"><?= htmlspecialchars($order['customer_name']) ?></div>
-                                                <span style="font-size: 0.75rem;" class="text-muted"><?= htmlspecialchars($order['customer_email']) ?></span>
-                                            </td>
-                                            <td>
-                                                <div><?= htmlspecialchars(preg_replace('/ \(.+\)/', '', $order['product_name'])) ?></div>
-                                                <span class="badge bg-secondary" style="font-size: 0.7rem;"><?= $order['quantity'] ?> pcs</span>
-                                            </td>
-                                            <td>
-                                                <span class="<?= $order['status'] === 'completed' ? 'badge-status-completed' : 'badge-status-pending' ?>">
-                                                    <?= $order['status'] === 'completed' ? 'Selesai' : 'Pending' ?>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr>
-                                        <td colspan="3" class="text-center text-muted" style="padding: 2rem;">Belum ada pesanan masuk.</td>
-                                    </tr>
+            <div class="notif-list-container border rounded-3 overflow-hidden">
+                <?php if (count($notifications) > 0): ?>
+                    <?php foreach ($notifications as $n): 
+                        $icon_class = 'bi-bell-fill bg-light text-secondary';
+                        if ($n['type'] === 'new_order') {
+                            $icon_class = 'bi-cart-plus-fill text-success';
+                        } elseif ($n['type'] === 'low_stock') {
+                            $icon_class = 'bi-exclamation-triangle-fill text-warning';
+                        } elseif ($n['type'] === 'cancelled_order') {
+                            $icon_class = 'bi-x-circle-fill text-danger';
+                        }
+                        
+                        $is_unread = (isset($n['is_read']) && $n['is_read'] == 0);
+                        $bg_style = $is_unread ? 'background-color: #FFFDF4;' : 'background-color: #ffffff;';
+                        $text_style = $is_unread ? 'font-weight: 600; color: var(--text-dark);' : 'font-weight: normal; color: var(--text-mid);';
+                        $link_url = !empty($n['link']) ? $n['link'] : '#';
+                    ?>
+                        <div class="notif-item p-3 d-flex align-items-center gap-3 <?= $is_unread ? 'unread' : '' ?>" id="notif-row-<?= $n['id'] ?>" style="<?= $bg_style ?>">
+                            <div class="notif-icon-box shadow-sm" style="background-color: #ffffff; border: 1px solid var(--cream-dark);">
+                                <i class="bi <?= $icon_class ?>"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap">
+                                    <h6 class="m-0 mb-1" style="<?= $text_style ?>">
+                                        <?= htmlspecialchars($n['title']) ?>
+                                        <?php if ($is_unread): ?>
+                                            <span class="notif-dot"></span>
+                                        <?php endif; ?>
+                                    </h6>
+                                    <span style="font-size: 0.76rem; color: var(--text-mid);"><?= getRelativeTime($n['created_at']) ?></span>
+                                </div>
+                                <p class="mb-0" style="font-size: 0.85rem; color: var(--text-mid);"><?= htmlspecialchars($n['message']) ?></p>
+                                <?php if (!empty($n['link'])): ?>
+                                    <a href="<?= $link_url ?>" onclick="markNotificationRead(<?= $n['id'] ?>)" class="text-decoration-none d-inline-flex align-items-center gap-1 mt-1 fw-medium" style="font-size: 0.8rem; color: var(--accent-gold);">
+                                        Lihat Detail <i class="bi bi-chevron-right" style="font-size: 0.7rem;"></i>
+                                    </a>
                                 <?php endif; ?>
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="p-5 text-center text-muted">
+                        <i class="bi bi-bell-slash" style="font-size: 2.5rem; display: block; margin-bottom: 1rem;"></i>
+                        Belum ada notifikasi yang diterima.
                     </div>
-                </div>
+                <?php endif; ?>
             </div>
+
+            <!-- PAGINATION -->
+            <?php if ($total_pages > 1): ?>
+                <div class="pagination-admin mt-4">
+                    <?php if ($page > 1): ?>
+                        <a href="notifikasi.php?page=<?= $page - 1 ?>"><i class="bi bi-chevron-left"></i></a>
+                    <?php endif; ?>
+
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <?php if ($i == $page): ?>
+                            <span class="active"><?= $i ?></span>
+                        <?php else: ?>
+                            <a href="notifikasi.php?page=<?= $i ?>"><?= $i ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+
+                    <?php if ($page < $total_pages): ?>
+                        <a href="notifikasi.php?page=<?= $page + 1 ?>"><i class="bi bi-chevron-right"></i></a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         </div>
     </main>
 </div>
 
-<script>
-    // Submit store status toggle via AJAX
-    function submitToggle() {
-        const checkbox = document.getElementById('storeSwitch');
-        const statusText = document.querySelector('.store-status-text');
-        const newStatus = checkbox.checked ? 'open' : 'closed';
-        
-        // Immediately update visual indicator
-        if (newStatus === 'open') {
-            statusText.textContent = 'BUKA';
-            statusText.className = 'store-status-text text-success';
-        } else {
-            statusText.textContent = 'TUTUP';
-            statusText.className = 'store-status-text text-danger';
-        }
-        
-        const formData = new URLSearchParams();
-        formData.append('action', 'toggle_store');
-        formData.append('store_status', newStatus);
-        
-        fetch('dashboard.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: formData.toString()
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) {
-                // Rollback if failed
-                checkbox.checked = !checkbox.checked;
-                submitToggle();
-                alert('Gagal memperbarui status toko.');
-            }
-        })
-        .catch(err => {
-            console.error('Error:', err);
-            checkbox.checked = !checkbox.checked;
-            submitToggle();
-            alert('Koneksi server gagal.');
-        });
-    }
-
-    // Chart.js Configuration
-    const ctx = document.getElementById('menuCompositionChart').getContext('2d');
-    const menuCompositionChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Bakery', 'Coffee', 'Non-Coffee'],
-            datasets: [{
-                data: [<?= $bakery_count ?>, <?= $coffee_count ?>, <?= $noncoffee_count ?>],
-                backgroundColor: [
-                    '#4B2E2B', // Dark Brown for Bakery
-                    '#C5A880', // Gold/Beige for Coffee
-                    '#D6BFAF'  // Soft Beige for Non-Coffee
-                ],
-                borderWidth: 1,
-                borderColor: '#ffffff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        boxWidth: 12,
-                        font: {
-                            family: 'Poppins',
-                            size: 11
-                        }
-                    }
-                }
-            }
-        }
-    });
-
-    function confirmLogout(event) {
-        event.preventDefault();
-        if (confirm('Apakah Anda yakin ingin keluar?')) {
-            sessionStorage.clear();
-            localStorage.clear();
-            window.location.href = 'logout.php';
-        }
-    }
-</script>
-
 <!-- Scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+function confirmLogout(event) {
+    event.preventDefault();
+    if (confirm('Apakah Anda yakin ingin keluar?')) {
+        sessionStorage.clear();
+        localStorage.clear();
+        window.location.href = 'logout.php';
+    }
+}
+
 // Function to mark individual notification read
 function markNotificationRead(id) {
     $.ajax({
         url: 'get_notifications.php?action=read&id=' + id,
-        method: 'GET'
+        method: 'GET',
+        success: function() {
+            // Read success, row background transition will happen before redirection
+        }
     });
 }
 
@@ -435,6 +398,7 @@ function fetchNotifications() {
             if (response.success) {
                 const count = response.unread_count;
                 const badge = $('#notifBadge');
+                const badgeHeader = $('#notifBadgeHeader');
                 
                 // Show/hide badges
                 if (count > 0) {
@@ -507,6 +471,10 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     fetchNotifications();
+                    // If on the archive page, reload list to show read status
+                    if (window.location.pathname.includes('notifikasi.php')) {
+                        setTimeout(() => { window.location.reload(); }, 150);
+                    }
                 }
             }
         });

@@ -12,6 +12,27 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit;
 }
 
+// Fetch active admin details
+$admin_data = null;
+if (isset($_SESSION['admin_username'])) {
+    if ($is_db_online) {
+        $stmt = $pdo->prepare("SELECT * FROM `admin` WHERE `username` = ?");
+        $stmt->execute([$_SESSION['admin_username']]);
+        $admin_data = $stmt->fetch();
+    } else {
+        $admin_data = [
+            'username' => $_SESSION['admin_username'],
+            'fullname' => 'Bake n Brew Admin (Offline)',
+            'email' => 'admin@bakenbrew.com',
+            'phone' => '081234567890',
+            'avatar' => null,
+            'role' => 'Administrator',
+            'notif_sound' => 1,
+            'lang' => 'id'
+        ];
+    }
+}
+
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 $success = '';
 $error = '';
@@ -54,6 +75,17 @@ if ($action === 'delete' && isset($_GET['id'])) {
         $stmt = $pdo->prepare("DELETE FROM `orders` WHERE `id` = ?");
         $stmt->execute([$id]);
         $_SESSION['success_msg'] = "Log pesanan #$id berhasil dihapus.";
+
+        // Add notification for order cancellation
+        try {
+            $stmt_notif = $pdo->prepare("INSERT INTO `notifications` (`title`, `message`, `type`, `link`) VALUES (?, ?, 'cancelled_order', 'pesanan.php')");
+            $stmt_notif->execute([
+                "Pembatalan Pesanan",
+                "Pesanan #$id telah dibatalkan oleh sistem/pelanggan."
+            ]);
+        } catch (PDOException $ex_notif) {
+            // Ignore notification errors
+        }
     } catch (PDOException $e) {
         $_SESSION['error_msg'] = "Database error: " . $e->getMessage();
     }
@@ -189,25 +221,63 @@ if ($is_db_online) {
     <!-- TOP HEADER -->
     <header class="top-header">
         <h2>Kelola Pesanan</h2>
-        <div class="dropdown">
-            <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--brown-dark);">
-                <span class="d-none d-sm-inline font-weight-medium me-1" style="font-size: 0.9rem;">Halo, <strong>Admin</strong></span>
-                <div class="admin-avatar">A</div>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: #ffffff; border-radius: var(--radius-md); min-width: 180px;">
-                <li><h6 class="dropdown-header" style="color: var(--text-mid); font-family: 'Poppins', sans-serif;">Administrator</h6></li>
-                <li><hr class="dropdown-divider" style="border-top: 1px solid var(--cream-dark);"></li>
-                <li>
-                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#" style="color: var(--text-mid); opacity: 0.65; cursor: not-allowed;" onclick="event.preventDefault(); alert('Fitur Lihat Profil akan tersedia pada Fase 2.');">
-                        <i class="bi bi-person" style="font-size: 1rem;"></i> Lihat Profil (Fase 2)
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="logout.php" onclick="confirmLogout(event)" style="color: #d32f2f; font-weight: 500;">
-                        <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> Log Out
-                    </a>
-                </li>
-            </ul>
+        <div class="d-flex align-items-center gap-3">
+            
+            <!-- Lonceng Notifikasi Dropdown -->
+            <div class="dropdown" id="notificationDropdown">
+                <a href="#" class="position-relative text-decoration-none dropdown-toggle-no-caret" id="notifBell" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--brown-dark);">
+                    <i class="bi bi-bell" style="font-size: 1.4rem;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.25em 0.5em; display: none;" id="notifBadge">0</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-0" aria-labelledby="notifBell" style="width: 320px; border-radius: var(--radius-md); overflow: hidden; background-color: #ffffff;">
+                    <li>
+                        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom" style="background-color: var(--cream-dark); font-family: 'Poppins', sans-serif;">
+                            <span class="fw-bold" style="color: var(--brown-dark); font-size: 0.9rem;">Notifikasi</span>
+                            <a href="#" class="text-decoration-none" style="font-size: 0.75rem; color: var(--accent-gold); font-weight: 500; display: none;" id="markAllReadHeader">Tandai Semua Dibaca</a>
+                        </div>
+                    </li>
+                    <div class="notif-items-list" style="max-height: 280px; overflow-y: auto;">
+                        <div class="p-3 text-center text-muted" style="font-size: 0.85rem;"><i class="bi bi-bell-slash me-1"></i> Tidak ada notifikasi.</div>
+                    </div>
+                    <li>
+                        <a href="notifikasi.php" class="dropdown-item text-center py-2 border-top text-decoration-none fw-semibold" style="font-size: 0.8rem; color: var(--brown-dark); background-color: var(--cream);">Lihat Semua Notifikasi</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Profile Dropdown -->
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--brown-dark);">
+                    <span class="d-none d-sm-inline font-weight-medium me-1" style="font-size: 0.9rem;">Halo, <strong><?= htmlspecialchars($admin_data['fullname'] ?? $admin_data['username'] ?? 'Admin') ?></strong></span>
+                    <?php 
+                    $avatar_img = '';
+                    if (!empty($admin_data['avatar'])) {
+                        $avatar_img = '../public/images/avatars/' . $admin_data['avatar'];
+                    }
+                    $initial = strtoupper(substr($admin_data['fullname'] ?? $admin_data['username'] ?? 'A', 0, 1));
+                    if ($avatar_img && file_exists($avatar_img)): 
+                    ?>
+                        <img src="<?= $avatar_img ?>" alt="Avatar" class="admin-avatar" style="width: 38px; height: 38px; object-fit: cover; border-radius: 50%; border: 1px solid var(--accent-gold);" />
+                    <?php else: ?>
+                        <div class="admin-avatar"><?= $initial ?></div>
+                    <?php endif; ?>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: #ffffff; border-radius: var(--radius-md); min-width: 180px;">
+                    <li><h6 class="dropdown-header" style="color: var(--text-mid); font-family: 'Poppins', sans-serif;">Administrator</h6></li>
+                    <li><hr class="dropdown-divider" style="border-top: 1px solid var(--cream-dark);"></li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="profil.php" style="color: var(--text-mid);">
+                            <i class="bi bi-person" style="font-size: 1rem;"></i> Lihat Profil
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="logout.php" onclick="confirmLogout(event)" style="color: #d32f2f; font-weight: 500;">
+                            <i class="bi bi-box-arrow-left" style="font-size: 1rem;"></i> Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
         </div>
     </header>
 
@@ -361,6 +431,7 @@ if ($is_db_online) {
     </main>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 function confirmLogout(event) {
@@ -371,6 +442,103 @@ function confirmLogout(event) {
         window.location.href = 'logout.php';
     }
 }
+
+// Function to mark individual notification read
+function markNotificationRead(id) {
+    $.ajax({
+        url: 'get_notifications.php?action=read&id=' + id,
+        method: 'GET'
+    });
+}
+
+// Polling and notification fetching for Bell icon
+let lastUnreadCount = 0;
+function fetchNotifications() {
+    $.ajax({
+        url: 'get_notifications.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                const count = response.unread_count;
+                const badge = $('#notifBadge');
+                
+                // Show/hide badges
+                if (count > 0) {
+                    badge.text(count).show();
+                    $('#markAllReadHeader').show();
+                } else {
+                    badge.hide();
+                    $('#markAllReadHeader').hide();
+                }
+
+                // Shake bell if new notifications arrive
+                if (count > lastUnreadCount && lastUnreadCount > 0) {
+                    $('#notifBell').addClass('bell-jiggle');
+                    // Play notification sound if preferred
+                    <?php if (isset($admin_data['notif_sound']) && $admin_data['notif_sound'] == 1): ?>
+                    try {
+                        const audio = new Audio('../public/sounds/notification.mp3');
+                        audio.play();
+                    } catch(e) {}
+                    <?php endif; ?>
+                    setTimeout(() => {
+                        $('#notifBell').removeClass('bell-jiggle');
+                    }, 1000);
+                }
+                lastUnreadCount = count;
+
+                // Build dropdown items
+                const list = $('.notif-items-list');
+                list.empty();
+                
+                if (response.notifications.length > 0) {
+                    response.notifications.forEach(n => {
+                        const isUnread = n.is_read == 0;
+                        const bgStyle = isUnread ? 'background-color: #FFFDF4;' : 'background-color: #ffffff;';
+                        const textWeight = isUnread ? 'font-weight: 600;' : 'font-weight: normal;';
+                        const dot = isUnread ? '<span class="notif-dot"></span>' : '';
+                        
+                        const item = `
+                            <li class="notif-dropdown-item border-bottom py-2 px-3" style="${bgStyle} list-style: none;">
+                                <a href="${n.link || '#'}" onclick="markNotificationRead(${n.id})" class="text-decoration-none" style="color: var(--text-dark); display: block;">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <span style="${textWeight} font-size: 0.85rem;">${n.title}${dot}</span>
+                                        <span class="text-muted" style="font-size: 0.7rem;">${n.relative_time}</span>
+                                    </div>
+                                    <p class="mb-0 text-truncate text-muted" style="font-size: 0.78rem;" title="${n.message}">${n.message}</p>
+                                </a>
+                            </li>
+                        `;
+                        list.append(item);
+                    });
+                } else {
+                    list.append('<div class="p-3 text-center text-muted" style="font-size: 0.85rem;"><i class="bi bi-bell-slash me-1"></i> Tidak ada notifikasi.</div>');
+                }
+            }
+        }
+    });
+}
+
+// Initial fetch and set interval
+$(document).ready(function() {
+    fetchNotifications();
+    setInterval(fetchNotifications, 5000);
+
+    // Mark all read handler
+    $('#markAllReadHeader').on('click', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: 'get_notifications.php?action=read_all',
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    fetchNotifications();
+                }
+            }
+        });
+    });
+});
 </script>
 
 </body>

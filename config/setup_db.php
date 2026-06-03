@@ -84,6 +84,18 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
     echo "<div class='alert alert-success'>✓ Tabel <strong>orders</strong> berhasil dibuat/dipastikan ada.</div>";
 
+    // Notifications Table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `notifications` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `title` VARCHAR(255) NOT NULL,
+        `message` TEXT NOT NULL,
+        `type` VARCHAR(50) NOT NULL,
+        `is_read` TINYINT(1) DEFAULT 0,
+        `link` VARCHAR(255) DEFAULT NULL,
+        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+    echo "<div class='alert alert-success'>✓ Tabel <strong>notifications</strong> berhasil dibuat/dipastikan ada.</div>";
+
     // Settings Table
     $pdo->exec("CREATE TABLE IF NOT EXISTS `settings` (
         `setting_key` VARCHAR(50) PRIMARY KEY,
@@ -346,6 +358,43 @@ try {
         echo "<div class='alert alert-success'>✓ Berhasil memasukkan 23 produk default ke dalam database.</div>";
     } else {
         echo "<div class='alert alert-info'>i Tabel products sudah terisi data, lewati seeding.</div>";
+    }
+    
+    // 6. Seed Default Notifications
+    $check_notifs = $pdo->query("SELECT COUNT(*) FROM `notifications`")->fetchColumn();
+    if ($check_notifs == 0) {
+        $default_notifs = [
+            [
+                'title' => 'Pesanan Baru Masuk',
+                'message' => 'Pesanan baru dari Ahmad Dani (2 Item) menunggu konfirmasi.',
+                'type' => 'new_order',
+                'is_read' => 0,
+                'link' => 'pesanan.php',
+                'created_at' => date('Y-m-d H:i:s', time() - 180) // 3 minutes ago
+            ],
+            [
+                'title' => 'Perubahan Status Stok',
+                'message' => 'Peringatan: Stok bahan Croissant Butter hampir habis (Tersisa 5 pcs).',
+                'type' => 'low_stock',
+                'is_read' => 0,
+                'link' => 'produk.php',
+                'created_at' => date('Y-m-d H:i:s', time() - 3600) // 1 hour ago
+            ],
+            [
+                'title' => 'Pembatalan Pesanan',
+                'message' => 'Pesanan #104 telah dibatalkan oleh sistem/pelanggan.',
+                'type' => 'cancelled_order',
+                'is_read' => 1,
+                'link' => 'pesanan.php',
+                'created_at' => date('Y-m-d H:i:s', time() - 86400) // 1 day ago
+            ]
+        ];
+        
+        $stmt_n = $pdo->prepare("INSERT INTO `notifications` (`title`, `message`, `type`, `is_read`, `link`, `created_at`) VALUES (:title, :message, :type, :is_read, :link, :created_at)");
+        foreach ($default_notifs as $n) {
+            $stmt_n->execute($n);
+        }
+        echo "<div class='alert alert-success'>✓ Berhasil memasukkan notifikasi default ke dalam database.</div>";
     }
     
     echo "<div class='alert alert-success text-center mt-4 fw-bold'>PROSES SETUP DATABASE SELESAI DENGAN SUKSES!</div>";

@@ -26,7 +26,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $stmt = $pdo->prepare("INSERT INTO `orders` (`customer_name`, `customer_email`, `product_name`, `quantity`, `note`, `status`) VALUES (?, ?, ?, ?, ?, 'pending')");
             $stmt->execute([$nama, $email, $produk, $jumlah, $catatan]);
             $last_id = $pdo->lastInsertId();
-echo json_encode(['success' => true, 'id' => $last_id, 'message' => 'Pesanan berhasil dikirim ke database.']);
+
+            // Add notification for new order
+            try {
+                $stmt_notif = $pdo->prepare("INSERT INTO `notifications` (`title`, `message`, `type`, `link`) VALUES (?, ?, 'new_order', 'pesanan.php')");
+                $stmt_notif->execute([
+                    "Pesanan Baru Masuk",
+                    "Pesanan baru dari " . $nama . " (" . $jumlah . " Item) menunggu konfirmasi."
+                ]);
+            } catch (PDOException $ex_notif) {
+                // Ignore notification errors to avoid blocking the order submission
+            }
+
+            echo json_encode(['success' => true, 'id' => $last_id, 'message' => 'Pesanan berhasil dikirim ke database.']);
             exit;
         } catch (PDOException $e) {
             echo json_encode(['success' => false, 'message' => 'Gagal menyimpan ke database: ' . $e->getMessage()]);

@@ -95,5 +95,44 @@
       "status": "pending",
       "created_at": "2026-06-03 12:45:00"
     }
+  ],
+  "profile": {
+    "username": "admin",
+    "fullname": "Bake n Brew Admin (Offline)",
+    "email": "admin@bakenbrew.com",
+    "phone": "081234567890",
+    "avatar": null,
+    "role": "Administrator",
+    "notif_sound": 1,
+    "lang": "id"
+  },
+  "notifications": [
+    {
+      "id": 901,
+      "title": "Pesanan Baru Masuk",
+      "message": "Pesanan baru dari Ahmad Dani (2 Item) menunggu konfirmasi.",
+      "type": "new_order",
+      "is_read": 0,
+      "link": "pesanan.php",
+      "created_at": "2026-06-03 15:30:00"
+    },
+    {
+      "id": 902,
+      "title": "Perubahan Status Stok",
+      "message": "Peringatan: Stok bahan Croissant Butter hampir habis (Tersisa 5 pcs).",
+      "type": "low_stock",
+      "is_read": 0,
+      "link": "produk.php",
+      "created_at": "2026-06-03 14:35:00"
+    },
+    {
+      "id": 903,
+      "title": "Pembatalan Pesanan",
+      "message": "Pesanan #104 telah dibatalkan oleh sistem/pelanggan.",
+      "type": "cancelled_order",
+      "is_read": 1,
+      "link": "pesanan.php",
+      "created_at": "2026-06-03 12:10:00"
+    }
   ]
 }
