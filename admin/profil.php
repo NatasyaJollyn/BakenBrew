@@ -42,6 +42,7 @@ if (isset($_SESSION['admin_username'])) {
         ];
     }
 }
+require_once 'lang.php';
 
 // Block write operations on offline mode
 if (!$is_db_online && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -194,7 +195,7 @@ if (isset($_SESSION['error_msg'])) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manajemen Profil – Bake'n Brew</title>
+    <title><?= __('profile_title') ?> – Bake'n Brew</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
@@ -290,7 +291,7 @@ if (isset($_SESSION['error_msg'])) {
 <div class="main-wrapper">
     <!-- TOP HEADER -->
     <header class="top-header">
-        <h2>Profil & Pengaturan</h2>
+        <h2><?= __('profile_title') ?></h2>
         <div class="d-flex align-items-center gap-3">
             
             <!-- Lonceng Notifikasi Dropdown -->
@@ -422,12 +423,12 @@ if (isset($_SESSION['error_msg'])) {
                     <ul class="nav nav-tabs nav-tabs-profile border-bottom px-4 pt-3" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link <?= $active_tab === 'profile' ? 'active' : '' ?>" href="profil.php?tab=profile" role="tab">
-                                <i class="bi bi-person-gear me-1"></i> Profil Akun
+                                <i class="bi bi-person-gear me-1"></i> <?= __('tab_profile') ?>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link <?= $active_tab === 'security' ? 'active' : '' ?>" href="profil.php?tab=security" role="tab">
-                                <i class="bi bi-shield-lock me-1"></i> Keamanan & Preferensi
+                                <i class="bi bi-shield-lock me-1"></i> <?= __('tab_security') ?>
                             </a>
                         </li>
                     </ul>

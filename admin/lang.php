@@ -1,0 +1,213 @@
+<?php
+// ========================================================
+// BAKE'N BREW - System Translation Dictionary (id & en)
+// ========================================================
+
+$lang_code = isset($admin_data['lang']) ? $admin_data['lang'] : 'id';
+
+$dict = [
+    'id' => [
+        // Sidebar & Navbar
+        'nav_dashboard' => 'Dashboard',
+        'nav_menu' => 'Kelola Menu',
+        'nav_orders' => 'Kelola Pesanan',
+        'halo' => 'Halo',
+        'profile' => 'Lihat Profil',
+        'logout' => 'Log Out',
+        'administrator' => 'Administrator',
+        'notif_title' => 'Notifikasi',
+        'mark_all_read' => 'Tandai Semua Dibaca',
+        'view_all_notif' => 'Lihat Semua Notifikasi',
+        'no_notif' => 'Tidak ada notifikasi.',
+        
+        // General Messages
+        'db_offline_title' => 'Koneksi Database Offline',
+        'db_offline_msg' => 'Peringatan: Koneksi server database terputus. Anda saat ini melihat data statis (Mode Offline).',
+        'confirm_logout' => 'Apakah Anda yakin ingin keluar?',
+        
+        // Dashboard
+        'dash_title' => 'Dashboard',
+        'stat_total_menu' => 'Total Menu',
+        'stat_total_order' => 'Total Pesanan',
+        'stat_store_status' => 'Status Operasional Toko',
+        'store_open' => 'Toko Buka',
+        'store_closed' => 'Toko Tutup',
+        'chart_title' => 'Kategori Terpopuler',
+        'recent_orders_title' => 'Pesanan Terbaru',
+        'recent_orders_sub' => '5 pesanan terakhir pelanggan',
+        'recent_orders_empty' => 'Belum ada pesanan masuk.',
+        'col_id' => 'ID',
+        'col_customer' => 'Pelanggan',
+        'col_menu' => 'Menu',
+        'col_qty' => 'Jumlah',
+        'col_status' => 'Status',
+        'status_pending' => 'Pending',
+        'status_completed' => 'Selesai',
+        
+        // Kelola Menu
+        'menu_title' => 'Kelola Menu',
+        'menu_list' => 'Daftar Menu',
+        'btn_add_menu' => 'Tambah Menu',
+        'filter_all_cat' => '— Semua Kategori —',
+        'filter_btn' => 'Filter',
+        'search_placeholder_menu' => 'Cari nama menu...',
+        'tbl_photo' => 'Foto',
+        'tbl_menu_name' => 'Nama Menu',
+        'tbl_category' => 'Kategori',
+        'tbl_price' => 'Harga',
+        'tbl_badge' => 'Lencana',
+        'tbl_actions' => 'Aksi',
+        'btn_edit' => 'Edit',
+        'btn_delete' => 'Hapus',
+        'empty_menu' => 'Belum ada menu terdaftar.',
+        'confirm_delete_menu' => 'Apakah Anda yakin ingin menghapus menu ini?',
+        
+        // Kelola Pesanan
+        'orders_title' => 'Kelola Pesanan',
+        'orders_list' => 'Log Pesanan Pelanggan',
+        'orders_total' => 'Total',
+        'search_placeholder_orders' => 'Cari nama, email, atau menu...',
+        'filter_all_status' => '— Semua Status —',
+        'tbl_notes' => 'Catatan',
+        'tbl_order_time' => 'Waktu Pemesanan',
+        'btn_complete' => 'Selesai',
+        'empty_orders' => 'Tidak ada data pesanan yang cocok.',
+        'confirm_delete_order' => 'Apakah Anda yakin ingin menghapus log pesanan ini?',
+        
+        // Profil
+        'profile_title' => 'Profil & Pengaturan',
+        'tab_profile' => 'Profil Akun',
+        'tab_security' => 'Keamanan & Preferensi',
+        'lbl_fullname' => 'Nama Lengkap',
+        'lbl_email' => 'Email',
+        'lbl_email_hint' => '(Read-only untuk keamanan)',
+        'lbl_phone' => 'Nomor Telepon/WhatsApp',
+        'lbl_role' => 'Role Hak Akses',
+        'btn_save_changes' => 'Simpan Perubahan',
+        'lbl_current_pass' => 'Password Saat Ini',
+        'lbl_new_pass' => 'Password Baru',
+        'lbl_confirm_pass' => 'Konfirmasi Password Baru',
+        'btn_update_pass' => 'Perbarui Password',
+        'lbl_sys_prefs' => 'Preferensi Sistem',
+        'lbl_enable_sound' => 'Aktifkan Suara Notifikasi',
+        'lbl_default_lang' => 'Bahasa Default',
+        'btn_save_prefs' => 'Simpan Preferensi',
+        'btn_select_photo' => 'Pilih Foto Baru',
+        'btn_remove_photo' => 'Hapus Foto',
+        'avatar_hint' => 'Mendukung format JPG, PNG. Maksimal 2MB.',
+        
+        // Notifikasi Archive
+        'notif_archive_title' => 'Pusat Notifikasi',
+        'notif_all' => 'Semua Notifikasi',
+        'btn_clear_all' => 'Hapus Semua',
+        'lbl_view_detail' => 'Lihat Detail',
+        'empty_notif_archive' => 'Belum ada notifikasi yang diterima.',
+        'confirm_clear_all' => 'Apakah Anda yakin ingin menghapus semua riwayat notifikasi?'
+    ],
+    'en' => [
+        // Sidebar & Navbar
+        'nav_dashboard' => 'Dashboard',
+        'nav_menu' => 'Manage Menu',
+        'nav_orders' => 'Manage Orders',
+        'halo' => 'Hello',
+        'profile' => 'View Profile',
+        'logout' => 'Log Out',
+        'administrator' => 'Administrator',
+        'notif_title' => 'Notifications',
+        'mark_all_read' => 'Mark All Read',
+        'view_all_notif' => 'View All Notifications',
+        'no_notif' => 'No notifications available.',
+        
+        // General Messages
+        'db_offline_title' => 'Database Connection Offline',
+        'db_offline_msg' => 'Warning: Database server connection lost. You are currently viewing static data (Offline Mode).',
+        'confirm_logout' => 'Are you sure you want to log out?',
+        
+        // Dashboard
+        'dash_title' => 'Dashboard',
+        'stat_total_menu' => 'Total Menus',
+        'stat_total_order' => 'Total Orders',
+        'stat_store_status' => 'Store Operational Status',
+        'store_open' => 'Store Open',
+        'store_closed' => 'Store Closed',
+        'chart_title' => 'Most Popular Categories',
+        'recent_orders_title' => 'Recent Orders',
+        'recent_orders_sub' => 'Last 5 customer orders',
+        'recent_orders_empty' => 'No orders placed yet.',
+        'col_id' => 'ID',
+        'col_customer' => 'Customer',
+        'col_menu' => 'Menu',
+        'col_qty' => 'Quantity',
+        'col_status' => 'Status',
+        'status_pending' => 'Pending',
+        'status_completed' => 'Completed',
+        
+        // Kelola Menu
+        'menu_title' => 'Manage Menu',
+        'menu_list' => 'Menu List',
+        'btn_add_menu' => 'Add Menu',
+        'filter_all_cat' => '— All Categories —',
+        'filter_btn' => 'Filter',
+        'search_placeholder_menu' => 'Search menu name...',
+        'tbl_photo' => 'Photo',
+        'tbl_menu_name' => 'Menu Name',
+        'tbl_category' => 'Category',
+        'tbl_price' => 'Price',
+        'tbl_badge' => 'Badge',
+        'tbl_actions' => 'Actions',
+        'btn_edit' => 'Edit',
+        'btn_delete' => 'Delete',
+        'empty_menu' => 'No menus registered yet.',
+        'confirm_delete_menu' => 'Are you sure you want to delete this menu?',
+        
+        // Kelola Pesanan
+        'orders_title' => 'Manage Orders',
+        'orders_list' => 'Customer Orders Log',
+        'orders_total' => 'Total',
+        'search_placeholder_orders' => 'Search name, email, or menu...',
+        'filter_all_status' => '— All Statuses —',
+        'tbl_notes' => 'Notes',
+        'tbl_order_time' => 'Order Time',
+        'btn_complete' => 'Complete',
+        'empty_orders' => 'No matching orders found.',
+        'confirm_delete_order' => 'Are you sure you want to delete this order log?',
+        
+        // Profil
+        'profile_title' => 'Profile & Settings',
+        'tab_profile' => 'Account Profile',
+        'tab_security' => 'Security & Preferences',
+        'lbl_fullname' => 'Full Name',
+        'lbl_email' => 'Email',
+        'lbl_email_hint' => '(Read-only for security)',
+        'lbl_phone' => 'Phone/WhatsApp Number',
+        'lbl_role' => 'Access Role',
+        'btn_save_changes' => 'Save Changes',
+        'lbl_current_pass' => 'Current Password',
+        'lbl_new_pass' => 'New Password',
+        'lbl_confirm_pass' => 'Confirm New Password',
+        'btn_update_pass' => 'Update Password',
+        'lbl_sys_prefs' => 'System Preferences',
+        'lbl_enable_sound' => 'Enable Notification Sound',
+        'lbl_default_lang' => 'Default Language',
+        'btn_save_prefs' => 'Save Preferences',
+        'btn_select_photo' => 'Choose New Photo',
+        'btn_remove_photo' => 'Remove Photo',
+        'avatar_hint' => 'Supports JPG, PNG. Maximum 2MB.',
+        
+        // Notifikasi Archive
+        'notif_archive_title' => 'Notification Center',
+        'notif_all' => 'All Notifications',
+        'btn_clear_all' => 'Clear All',
+        'lbl_view_detail' => 'View Detail',
+        'empty_notif_archive' => 'No notifications received yet.',
+        'confirm_clear_all' => 'Are you sure you want to clear all notification history?'
+    ]
+];
+
+// Translation helper function
+if (!function_exists('__')) {
+    function __($key) {
+        global $dict, $lang_code;
+        return isset($dict[$lang_code][$key]) ? $dict[$lang_code][$key] : (isset($dict['id'][$key]) ? $dict['id'][$key] : $key);
+    }
+}
