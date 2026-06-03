@@ -1,3 +1,60 @@
+<?php
+require_once 'config/koneksi.php';
+session_start();
+
+// Fetch Store Status
+$store_status_stmt = $pdo->query("SELECT `setting_value` FROM `settings` WHERE `setting_key` = 'store_status'");
+$store_status = $store_status_stmt->fetchColumn() ?: 'open';
+
+// Handle AJAX Request to Save Order
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_order') {
+    header('Content-Type: application/json');
+    
+    if ($store_status === 'closed') {
+        echo json_encode(['success' => false, 'message' => 'Toko sedang tutup. Pemesanan tidak dapat diproses.']);
+        exit;
+    }
+    
+    $nama = trim($_POST['nama']);
+    $email = trim($_POST['email']);
+    $produk = trim($_POST['produk']);
+    $jumlah = intval($_POST['jumlah']);
+    $catatan = trim($_POST['catatan']);
+    
+    if (!empty($nama) && !empty($email) && !empty($produk) && $jumlah > 0) {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO `orders` (`customer_name`, `customer_email`, `product_name`, `quantity`, `note`, `status`) VALUES (?, ?, ?, ?, ?, 'pending')");
+            $stmt->execute([$nama, $email, $produk, $jumlah, $catatan]);
+            echo json_encode(['success' => true, 'message' => 'Pesanan berhasil dikirim ke database.']);
+            exit;
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Gagal menyimpan ke database: ' . $e->getMessage()]);
+            exit;
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Data pesanan tidak lengkap atau tidak valid.']);
+        exit;
+    }
+}
+
+// Fetch products grouped by category for dropdown options
+try {
+    $stmt = $pdo->query("SELECT * FROM `products` ORDER BY `id` ASC");
+    $all_products = $stmt->fetchAll();
+} catch (PDOException $e) {
+    die("Gagal memuat data produk: " . $e->getMessage());
+}
+
+$bakery_opts = [];
+$coffee_opts = [];
+$non_coffee_opts = [];
+
+foreach ($all_products as $p) {
+    if ($p['category'] === 'bakery') $bakery_opts[] = $p;
+    elseif ($p['category'] === 'coffee') $coffee_opts[] = $p;
+    elseif ($p['category'] === 'non-coffee') $non_coffee_opts[] = $p;
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -14,7 +71,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
  <div class="container">
-   <a class="navbar-brand" href="index.html">
+   <a class="navbar-brand" href="index.php">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="me-2" style="width: 28px; height: 28px; vertical-align: middle; color: var(--accent-gold);">
       <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
       <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
@@ -28,12 +85,12 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarMain">
    <ul class="navbar-nav ms-auto gap-1">
-    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="about.html">Tentang</a></li>
-    <li class="nav-item"><a class="nav-link" href="product.html">Produk</a></li>
-    <li class="nav-item"><a class="nav-link" href="gallery.html">Galeri</a></li>
-    <li class="nav-item"><a class="nav-link" href="contact.html">Kontak</a></li>
-    <li class="nav-item"><a class="nav-link" href="form.html">Order</a></li>
+    <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
+    <li class="nav-item"><a class="nav-link" href="about.php">Tentang</a></li>
+    <li class="nav-item"><a class="nav-link" href="product.php">Produk</a></li>
+    <li class="nav-item"><a class="nav-link" href="gallery.php">Galeri</a></li>
+    <li class="nav-item"><a class="nav-link" href="contact.php">Kontak</a></li>
+    <li class="nav-item"><a class="nav-link" href="form.php">Order</a></li>
    </ul>
   </div>
  </div>
@@ -44,7 +101,7 @@
  <div class="container position-relative" style="z-index:2">
   <nav aria-label="breadcrumb">
    <ol class="breadcrumb justify-content-center mb-3" style="font-size:.82rem">
-    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
     <li class="breadcrumb-item active">Form Order</li>
    </ol>
   </nav>
@@ -60,7 +117,18 @@
   <div class="row g-5 justify-content-center">
    <div class="col-lg-7">
 
-    <!-- ORDER FORM CARD -->
+    <?php if ($store_status === 'closed'): ?>
+     <!-- Toko Tutup Alert Banner -->
+     <div class="alert alert-danger d-flex align-items-center gap-3 mb-4 fade-in-up" role="alert" style="border-radius: 12px; border: 1px solid #f5c2c7; background-color: #f8d7da; color: #842029; padding: 1rem 1.5rem;">
+      <i class="bi bi-shop" style="font-size: 1.8rem; color: #842029;"></i>
+      <div>
+       <h5 class="alert-heading fw-bold mb-1" style="font-size: 1rem; margin: 0;">Maaf, Toko Kami Sedang Tutup</h5>
+       <p class="mb-0" style="font-size: 0.82rem; margin: 0; opacity: 0.9;">Saat ini kami tidak menerima pesanan baru sementara waktu. Silakan hubungi kami untuk informasi lebih lanjut.</p>
+      </div>
+     </div>
+     <?php endif; ?>
+     
+     <!-- ORDER FORM CARD -->
     <div class="order-form-card fade-in-up">
      <div class="d-flex align-items-center gap-3 mb-4">
       <div style="width:48px;height:48px;background:var(--brown-dark);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;color:var(--cream);border:1px solid var(--accent-gold);">
@@ -101,37 +169,38 @@
         <label class="form-label" for="produk">
          <i class="bi bi-cup-hot me-1" style="color:var(--brown-dark)"></i>Produk *
         </label>
-        <select class="form-select" id="produk" required>
+        <select class="form-select" id="produk" required <?= $store_status === 'closed' ? 'disabled' : '' ?>>
          <option value="">— Pilih produk —</option>
-         <optgroup label=" Bakery">
-          <option value="Croissant Butter (Rp 22.000)">Croissant Butter – Rp 22.000</option>
-          <option value="Almond Croissant (Rp 25.000)">Almond Croissant – Rp 25.000</option>
-          <option value="Strawberry Croissant (Rp 28.000)">Strawberry Croissant – Rp 28.000</option>
-          <option value="Salt Bread (Rp 25.000)">Salt Bread – Rp 25.000</option>
-          <option value="Strawberry Danish (Rp 28.000)">Strawberry Danish – Rp 28.000</option>
-          <option value="Donut Glazed (Rp 15.000)">Donut Glazed – Rp 15.000</option>
-          <option value="Roti Coklat (Rp 18.000)">Roti Coklat – Rp 18.000</option>
-          <option value="Cinnamon Roll (Rp 25.000)">Cinnamon Roll – Rp 25.000</option>
-          <option value="Banana Bread (Rp 20.000)">Banana Bread – Rp 20.000</option>
-          <option value="Red Velvet Cake (Rp 35.000)">Red Velvet Cake – Rp 35.000</option>
-          <option value="Cheesecake (Rp 32.000)">Cheesecake – Rp 32.000</option>
-          <option value="Cheese Bun (Rp 17.000)">Cheese Bun – Rp 17.000</option>
-         </optgroup>
-         <optgroup label=" Coffee">
-          <option value="Signature Latte (Rp 28.000)">Signature Latte – Rp 28.000</option>
-          <option value="Cappuccino (Rp 26.000)">Cappuccino – Rp 26.000</option>
-          <option value="Cold Brew (Rp 32.000)">Cold Brew – Rp 32.000</option>
-          <option value="Espresso (Rp 22.000)">Espresso – Rp 22.000</option>
-          <option value="Americano (Rp 24.000)">Americano – Rp 24.000</option>
-          <option value="Iced Caramel Latte (Rp 35.000)">Iced Caramel Latte – Rp 35.000</option>
-          <option value="Iced Hazelnut Coffee (Rp 32.000)">Iced Hazelnut Coffee – Rp 32.000</option>
-         </optgroup>
-         <optgroup label=" Non-Coffee">
-          <option value="Matcha Latte (Rp 30.000)">Matcha Latte – Rp 30.000</option>
-          <option value="Dark Chocolate (Rp 25.000)">Dark Chocolate – Rp 25.000</option>
-          <option value="Ice Tea (Rp 15.000)">Ice Tea – Rp 15.000</option>
-          <option value="Lemon Tea (Rp 20.000)">Lemon Tea – Rp 20.000</option>
-         </optgroup>
+         <?php if (count($bakery_opts) > 0): ?>
+          <optgroup label=" Bakery">
+           <?php foreach ($bakery_opts as $p): 
+              $val = $p['name'] . ' (Rp ' . number_format($p['price'], 0, ',', '.') . ')';
+              $lbl = $p['name'] . ' – Rp ' . number_format($p['price'], 0, ',', '.');
+           ?>
+            <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($lbl) ?></option>
+           <?php endforeach; ?>
+          </optgroup>
+         <?php endif; ?>
+         <?php if (count($coffee_opts) > 0): ?>
+          <optgroup label=" Coffee">
+           <?php foreach ($coffee_opts as $p): 
+              $val = $p['name'] . ' (Rp ' . number_format($p['price'], 0, ',', '.') . ')';
+              $lbl = $p['name'] . ' – Rp ' . number_format($p['price'], 0, ',', '.');
+           ?>
+            <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($lbl) ?></option>
+           <?php endforeach; ?>
+          </optgroup>
+         <?php endif; ?>
+         <?php if (count($non_coffee_opts) > 0): ?>
+          <optgroup label=" Non-Coffee">
+           <?php foreach ($non_coffee_opts as $p): 
+              $val = $p['name'] . ' (Rp ' . number_format($p['price'], 0, ',', '.') . ')';
+              $lbl = $p['name'] . ' – Rp ' . number_format($p['price'], 0, ',', '.');
+           ?>
+            <option value="<?= htmlspecialchars($val) ?>"><?= htmlspecialchars($lbl) ?></option>
+           <?php endforeach; ?>
+          </optgroup>
+         <?php endif; ?>
         </select>
         <div class="invalid-feedback">Silakan pilih produk.</div>
        </div>
@@ -159,14 +228,14 @@
        </div>
 
        <!-- Submit -->
-       <div class="col-12 d-flex gap-3 flex-wrap">
-        <button type="submit" class="btn-primary-brown flex-grow-1" style="border:none;">
-         <i class="bi bi-cart-plus me-2"></i>Tambah Pesanan
-        </button>
-        <button type="reset" class="btn-outline-brown" style="min-width:120px;" onclick="document.getElementById('orderForm').classList.remove('was-validated')">
-         <i class="bi bi-x-circle me-1"></i>Reset
-        </button>
-       </div>
+        <div class="col-12 d-flex gap-3 flex-wrap">
+         <button type="submit" class="btn-primary-brown flex-grow-1" style="border:none;" <?= $store_status === 'closed' ? 'disabled' : '' ?>>
+          <i class="bi bi-cart-plus me-2"></i>Tambah Pesanan
+         </button>
+         <button type="reset" class="btn-outline-brown" style="min-width:120px;" onclick="document.getElementById('orderForm').classList.remove('was-validated')" <?= $store_status === 'closed' ? 'disabled' : '' ?>>
+          <i class="bi bi-x-circle me-1"></i>Reset
+         </button>
+        </div>
 
       </div>
      </form>
@@ -250,21 +319,21 @@
    <div class="col-lg-2 col-md-6">
     <h6>Navigasi</h6>
     <ul class="footer-links">
-     <li><a href="index.html">Home</a></li>
-     <li><a href="about.html">Tentang Kami</a></li>
-     <li><a href="product.html">Produk</a></li>
-     <li><a href="gallery.html">Galeri</a></li>
-     <li><a href="contact.html">Kontak</a></li>
+     <li><a href="index.php">Home</a></li>
+     <li><a href="about.php">Tentang Kami</a></li>
+     <li><a href="product.php">Produk</a></li>
+     <li><a href="gallery.php">Galeri</a></li>
+     <li><a href="contact.php">Kontak</a></li>
     </ul>
    </div>
    <div class="col-lg-3 col-md-6">
     <h6>Menu Populer</h6>
     <ul class="footer-links">
-     <li><a href="product.html#croissant-butter">Croissant Butter</a></li>
-     <li><a href="product.html#signature-latte">Signature Latte</a></li>
-     <li><a href="product.html#donut-glazed">Donut Glazed</a></li>
-     <li><a href="product.html#cappuccino">Cappuccino</a></li>
-     <li><a href="product.html#roti-coklat">Roti Coklat</a></li>
+     <li><a href="product.php#croissant-butter">Croissant Butter</a></li>
+     <li><a href="product.php#signature-latte">Signature Latte</a></li>
+     <li><a href="product.php#donut-glazed">Donut Glazed</a></li>
+     <li><a href="product.php#cappuccino">Cappuccino</a></li>
+     <li><a href="product.php#roti-coklat">Roti Coklat</a></li>
     </ul>
    </div>
    <div class="col-lg-3 col-md-6">

@@ -31,11 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
   ACTIVE NAV LINK
   ============================================= */
 function setActiveNavLink() {
- const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+ const currentPage = window.location.pathname.split('/').pop() || 'index.php';
  const navLinks = document.querySelectorAll('.nav-link');
  navLinks.forEach(link => {
   const href = link.getAttribute('href');
-  if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+  if (href === currentPage || (currentPage === '' && href === 'index.php')) {
    link.classList.add('active');
   }
  });
@@ -93,23 +93,51 @@ function initOrderForm() {
   const jumlah = parseInt(document.getElementById('jumlah').value);
   const catatan = document.getElementById('catatan').value.trim() || '-';
 
-  const order = {
-   id:   ++orderCount,
-   nama,
-   email,
-   produk,
-   jumlah,
-   catatan,
-   waktu:  new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })
-  };
+  // Send via AJAX to save to MySQL database
+  const formData = new URLSearchParams();
+  formData.append('action', 'add_order');
+  formData.append('nama', nama);
+  formData.append('email', email);
+  formData.append('produk', produk);
+  formData.append('jumlah', jumlah);
+  formData.append('catatan', catatan);
 
-  orders.push(order);
-  sessionStorage.setItem('bnbOrders', JSON.stringify(orders));
-  renderTable();
-  showToast(` Pesanan ${nama} berhasil ditambahkan!`);
+  fetch('form.php', {
+   method: 'POST',
+   headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'X-Requested-With': 'XMLHttpRequest'
+   },
+   body: formData.toString()
+  })
+  .then(response => response.json())
+  .then(data => {
+   if (data.success) {
+    const order = {
+     id:   ++orderCount,
+     nama,
+     email,
+     produk,
+     jumlah,
+     catatan,
+     waktu:  new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })
+    };
 
-  form.reset();
-  form.classList.remove('was-validated');
+    orders.push(order);
+    sessionStorage.setItem('bnbOrders', JSON.stringify(orders));
+    renderTable();
+    showToast(` Pesanan ${nama} berhasil ditambahkan!`);
+
+    form.reset();
+    form.classList.remove('was-validated');
+   } else {
+    showToast(`⚠️ ${data.message}`);
+   }
+  })
+  .catch(err => {
+   console.error('Error:', err);
+   showToast('⚠️ Gagal mengirim pesanan ke server.');
+  });
  });
 
  if (exportBtn) {

@@ -1,3 +1,68 @@
+<?php
+require_once 'config/koneksi.php';
+
+try {
+    $stmt = $pdo->query("SELECT * FROM `products` ORDER BY `id` ASC");
+    $all_products = $stmt->fetchAll();
+} catch (PDOException $e) {
+    die("Gagal memuat produk: " . $e->getMessage());
+}
+
+$bakery_products = [];
+$coffee_products = [];
+$non_coffee_products = [];
+
+foreach ($all_products as $p) {
+    if ($p['category'] === 'bakery') $bakery_products[] = $p;
+    elseif ($p['category'] === 'coffee') $coffee_products[] = $p;
+    elseif ($p['category'] === 'non-coffee') $non_coffee_products[] = $p;
+}
+
+function renderProductCard($p, $delayIndex) {
+    $slug = strtolower(str_replace(' ', '-', preg_replace('/[^A-Za-z0-9 ]/', '', $p['name'])));
+    
+    $img_src = htmlspecialchars($p['image']);
+    if (!empty($p['image']) && !str_starts_with($p['image'], 'http')) {
+        $img_src = 'public/images/products/' . htmlspecialchars($p['image']);
+    }
+    
+    $price_formatted = 'Rp ' . number_format($p['price'], 0, ',', '.');
+    
+    $badge_html = '';
+    if ($p['is_bestseller']) {
+        $badge_html .= '<span class="badge-bestseller">Best Seller</span>';
+    }
+    if ($p['is_new']) {
+        $badge_html .= '<span class="badge-new">New</span>';
+    }
+    
+    $badge_container = '';
+    if (!empty($badge_html)) {
+        $badge_container = '<div style="position:absolute;top:10px;left:10px;display:flex;gap:5px;flex-wrap:wrap;">' . $badge_html . '</div>';
+    }
+    
+    $delay_class = 'delay-' . (($delayIndex % 4) + 1);
+    $category_attr = ($p['category'] === 'non-coffee') ? 'noncoffee' : htmlspecialchars($p['category']);
+
+    echo '
+    <div class="col-sm-6 col-lg-3 fade-in-up ' . $delay_class . ' product-item" data-category="' . $category_attr . '" id="' . $slug . '">
+     <div class="product-card card h-100">
+      <div style="overflow:hidden;position:relative;">
+       <img src="' . $img_src . '" class="card-img-top" alt="' . htmlspecialchars($p['name']) . '" loading="lazy" />
+       ' . $badge_container . '
+      </div>
+      <div class="card-body d-flex flex-column">
+       <h5 class="card-title">' . htmlspecialchars($p['name']) . '</h5>
+       <p class="card-text flex-grow-1">' . htmlspecialchars($p['description']) . '</p>
+       <div class="d-flex justify-content-between align-items-center mt-3">
+        <span class="price">' . $price_formatted . '</span>
+        <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       </div>
+      </div>
+     </div>
+    </div>';
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -14,7 +79,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
  <div class="container">
-   <a class="navbar-brand" href="index.html">
+   <a class="navbar-brand" href="index.php">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="me-2" style="width: 28px; height: 28px; vertical-align: middle; color: var(--accent-gold);">
       <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
       <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
@@ -28,12 +93,12 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarMain">
    <ul class="navbar-nav ms-auto gap-1">
-    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="about.html">Tentang</a></li>
-    <li class="nav-item"><a class="nav-link" href="product.html">Produk</a></li>
-    <li class="nav-item"><a class="nav-link" href="gallery.html">Galeri</a></li>
-    <li class="nav-item"><a class="nav-link" href="contact.html">Kontak</a></li>
-    <li class="nav-item"><a class="nav-link" href="form.html">Order</a></li>
+    <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
+    <li class="nav-item"><a class="nav-link" href="about.php">Tentang</a></li>
+    <li class="nav-item"><a class="nav-link" href="product.php">Produk</a></li>
+    <li class="nav-item"><a class="nav-link" href="gallery.php">Galeri</a></li>
+    <li class="nav-item"><a class="nav-link" href="contact.php">Kontak</a></li>
+    <li class="nav-item"><a class="nav-link" href="form.php">Order</a></li>
    </ul>
   </div>
  </div>
@@ -44,7 +109,7 @@
  <div class="container position-relative" style="z-index:2">
   <nav aria-label="breadcrumb">
    <ol class="breadcrumb justify-content-center mb-3" style="font-size:.82rem">
-    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
     <li class="breadcrumb-item active">Produk</li>
    </ol>
   </nav>
@@ -74,23 +139,23 @@
    </h3>
   </div>
   <div class="row g-4 mb-5">
-
-   <!-- Croissant -->
-   <div class="col-sm-6 col-lg-3 fade-in-up delay-1 product-item" data-category="bakery" id="croissant-butter">
-    <div class="product-card card h-100">
-     <div style="overflow:hidden;position:relative;">
-      <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80&fm=webp"
-         class="card-img-top" alt="Croissant Butter" loading="lazy" />
-      <div style="position:absolute;top:10px;left:10px;display:flex;gap:5px;flex-wrap:wrap;">
-       <span class="badge-bestseller">Best Seller</span>
-      </div>
+   <?php 
+   if (count($bakery_products) > 0) {
+       foreach ($bakery_products as $idx => $p) {
+           renderProductCard($p, $idx);
+       }
+   } else {
+       echo '<div class="col-12 text-center text-muted py-4">Tidak ada menu bakery tersedia.</div>';
+   }
+   ?>
+  </div>
      </div>
      <div class="card-body d-flex flex-column">
       <h5 class="card-title">Croissant Butter</h5>
       <p class="card-text flex-grow-1">Croissant berlapis mentega premium, renyah di luar, lembut di dalam. Dipanggang fresh setiap pagi.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 22.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -108,7 +173,7 @@
       <p class="card-text flex-grow-1">Croissant berlapis dengan tambahan almond yang renyah, memberikan tekstur dan rasa yang khas. Dipanggang fresh setiap pagi.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 25.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -129,7 +194,7 @@
       <p class="card-text flex-grow-1">Croissant berlapis dengan tambahan strawberry yang lezat, memberikan tekstur dan rasa yang khas. Dipanggang fresh setiap pagi.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 28.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -147,7 +212,7 @@
       <p class="card-text flex-grow-1">Roti yang lembut dan gurih, cocok untuk sarapan atau camilan. Dipanggang fresh setiap pagi.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 25.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -165,7 +230,7 @@
       <p class="card-text flex-grow-1">Danish berlapis dengan tambahan strawberry yang lezat, memberikan tekstur dan rasa yang khas. Dipanggang fresh setiap pagi.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 28.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -186,7 +251,7 @@
       <p class="card-text flex-grow-1">Donut empuk dengan glazing gula mengkilap. Tersedia rasa: original, coklat, stroberi, dan matcha.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 15.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -207,7 +272,7 @@
       <p class="card-text flex-grow-1">Roti lembut isi coklat premium. Lumer di dalam saat dimakan hangat, cocok untuk sarapan atau camilan sore.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 18.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -225,7 +290,7 @@
       <p class="card-text flex-grow-1">Gulungan roti hangat dengan isian kayu manis dan krim keju yang manis. Aroma harumnya mengisi seluruh kafe.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 25.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -243,7 +308,7 @@
       <p class="card-text flex-grow-1">Roti pisang lembut yang dipanggang sempurna. Dibuat dari pisang kepok matang pilihan, tanpa pengawet.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 20.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -261,7 +326,7 @@
       <p class="card-text flex-grow-1">Kue red velvet lembut dengan rasa khas dan tampilan yang menarik. Dibuat dengan bahan berkualitas tinggi.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 35.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -282,7 +347,7 @@
       <p class="card-text flex-grow-1">Kue keju lembut dengan rasa khas dan tampilan yang menarik. Dibuat dengan bahan berkualitas tinggi.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 32.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -303,7 +368,7 @@
       <p class="card-text flex-grow-1">Roti fluffy dengan topping keju cheddar meleleh dan taburan wijen. Favorit pelanggan semua usia.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 17.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -318,23 +383,23 @@
    </h3>
   </div>
   <div class="row g-4 mb-5">
-
-   <!-- Latte -->
-   <div class="col-sm-6 col-lg-3 fade-in-up delay-1 product-item" data-category="coffee" id="signature-latte">
-    <div class="product-card card h-100">
-     <div style="overflow:hidden;position:relative;">
-      <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80&fm=webp"
-         class="card-img-top" alt="Signature Latte" loading="lazy" />
-      <div style="position:absolute;top:10px;left:10px;">
-       <span class="badge-bestseller">Best Seller</span>
-      </div>
+   <?php 
+   if (count($coffee_products) > 0) {
+       foreach ($coffee_products as $idx => $p) {
+           renderProductCard($p, $idx);
+       }
+   } else {
+       echo '<div class="col-12 text-center text-muted py-4">Tidak ada menu kopi tersedia.</div>';
+   }
+   ?>
+  </div>
      </div>
      <div class="card-body d-flex flex-column">
       <h5 class="card-title">Signature Latte</h5>
       <p class="card-text flex-grow-1">Espresso double shot dengan susu full cream yang di-steam sempurna. Creamy, smooth, dan selalu memuaskan.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 28.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -352,7 +417,7 @@
       <p class="card-text flex-grow-1">Cappuccino klasik dengan busa susu tebal dan rasa espresso yang kaya. Disajikan dengan taburan bubuk coklat.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 26.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -373,7 +438,7 @@
       <p class="card-text flex-grow-1">Kopi diseduh dingin selama 18 jam untuk menghasilkan rasa yang halus, kaya, dan rendah asam. Segar dan bold.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 32.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -391,7 +456,7 @@
       <p class="card-text flex-grow-1">Satu shot espresso pekat dari biji kopi arabika Flores single origin. Untuk yang suka rasa kopi yang pure dan autentik.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 22.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -409,7 +474,7 @@
       <p class="card-text flex-grow-1">Americano klasik dengan rasa espresso yang kaya dan aroma yang kuat. Disajikan dengan es.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 24.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -430,7 +495,7 @@
       <p class="card-text flex-grow-1">Latte karamel dingin dengan rasa manis dan karamel yang kaya. Disajikan dengan es dan taburan bubuk coklat.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 35.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -448,7 +513,7 @@
       <p class="card-text flex-grow-1">Kopi dingin dengan rasa hazelnut yang kaya dan lembut. Disajikan dengan es dan taburan bubuk coklat.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 32.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
       </div>
      </div>
     </div>
@@ -463,87 +528,22 @@
    </h3>
   </div>
   <div class="row g-4">
-   <!-- Matcha Latte -->
-   <div class="col-sm-6 col-lg-3 fade-in-up delay-1 product-item" data-category="noncoffee">
-    <div class="product-card card h-100">
-     <div style="overflow:hidden;position:relative;">
-      <img src="https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400&q=80&fm=webp"
-         class="card-img-top" alt="Matcha Latte" loading="lazy" />
-      <div style="position:absolute;top:10px;left:10px;">
-       <span class="badge-bestseller">Best Seller</span>
-      </div>
-     </div>
-     <div class="card-body d-flex flex-column">
-      <h5 class="card-title">Matcha Latte</h5>
-      <p class="card-text flex-grow-1">Matcha premium grade ceremonial dari Jepang dipadukan dengan susu segar. Creamy, earthy, dan menyegarkan.</p>
-      <div class="d-flex justify-content-between align-items-center mt-3">
-       <span class="price">Rp 30.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
-      </div>
-     </div>
-    </div>
-   </div>
-
-   <!-- Chocolate -->
-   <div class="col-sm-6 col-lg-3 fade-in-up delay-2 product-item" data-category="noncoffee">
-    <div class="product-card card h-100">
-     <div style="overflow:hidden;">
-      <img src="https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=400&q=80&fm=webp"
-         class="card-img-top" alt="Dark Chocolate" loading="lazy" />
-     </div>
-     <div class="card-body d-flex flex-column">
-      <h5 class="card-title">Dark Chocolate</h5>
-      <p class="card-text flex-grow-1">Minuman coklat panas atau dingin yang kaya rasa, dibuat dari coklat dark 70% premium. Indulge yourself!</p>
-      <div class="d-flex justify-content-between align-items-center mt-3">
-       <span class="price">Rp 25.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
-      </div>
-     </div>
-    </div>
-   </div>
-
-   <!-- Ice Tea -->
-   <div class="col-sm-6 col-lg-3 fade-in-up delay-2 product-item" data-category="noncoffee">
-    <div class="product-card card h-100">
-     <div style="overflow:hidden;">
-      <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&fm=webp"
-         class="card-img-top" alt="Ice Tea" loading="lazy" />
-     </div>
-     <div class="card-body d-flex flex-column">
-      <h5 class="card-title">Ice Tea</h5>
-      <p class="card-text flex-grow-1">Minuman teh dingin yang segar dan menyegarkan, dibuat dari daun teh premium. Ideal untuk menemani hari yang panas!</p>
-      <div class="d-flex justify-content-between align-items-center mt-3">
-       <span class="price">Rp 15.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
-      </div>
-     </div>
-    </div>
-   </div>
-
-   <!-- Lemon Tea -->
-   <div class="col-sm-6 col-lg-3 fade-in-up delay-3 product-item" data-category="noncoffee">
-    <div class="product-card card h-100">
-     <div style="overflow:hidden;">
-      <img src="https://i.pinimg.com/736x/64/bb/bc/64bbbc45a302b646abee022c00ca0c41.jpg"
-         class="card-img-top" alt="Lemon Tea" loading="lazy" />
-     </div>
-     <div class="card-body d-flex flex-column">
-      <h5 class="card-title">Lemon Tea</h5>
-      <p class="card-text flex-grow-1">Teh hitam premium dengan perasan lemon segar dan sedikit madu. Segar, ringan, dan menyehatkan.</p>
-      <div class="d-flex justify-content-between align-items-center mt-3">
-       <span class="price">Rp 20.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.45rem 1rem;font-size:.8rem;">Order</a>
-      </div>
-     </div>
-    </div>
-   </div>
+   <?php 
+   if (count($non_coffee_products) > 0) {
+       foreach ($non_coffee_products as $idx => $p) {
+           renderProductCard($p, $idx);
+       }
+   } else {
+       echo '<div class="col-12 text-center text-muted py-4">Tidak ada menu non-kopi tersedia.</div>';
+   }
+   ?>
   </div>
 
   <!-- CTA -->
   <div class="text-center mt-5 fade-in-up" style="padding:3rem;background:linear-gradient(135deg,var(--cream),var(--beige-light));border-radius:var(--radius-lg);">
    <h3 style="color:var(--brown-dark);margin-bottom:.8rem;">Sudah menemukan menu favoritmu?</h3>
    <p style="color:var(--text-mid);margin-bottom:1.5rem;font-size:.95rem;">Pesan sekarang dan nikmati langsung di kafe kami atau melalui layanan take away.</p>
-   <a href="form.html" class="btn-primary-brown">Pesan Sekarang →</a>
+   <a href="form.php" class="btn-primary-brown">Pesan Sekarang →</a>
   </div>
 
  </div>
@@ -573,11 +573,11 @@
    <div class="col-lg-2 col-md-6">
     <h6>Navigasi</h6>
     <ul class="footer-links">
-     <li><a href="index.html">Home</a></li>
-     <li><a href="about.html">Tentang Kami</a></li>
-     <li><a href="product.html">Produk</a></li>
-     <li><a href="gallery.html">Galeri</a></li>
-     <li><a href="contact.html">Kontak</a></li>
+     <li><a href="index.php">Home</a></li>
+     <li><a href="about.php">Tentang Kami</a></li>
+     <li><a href="product.php">Produk</a></li>
+     <li><a href="gallery.php">Galeri</a></li>
+     <li><a href="contact.php">Kontak</a></li>
     </ul>
    </div>
    <div class="col-lg-3 col-md-6">

@@ -17,7 +17,7 @@
 <!-- ======================== NAVBAR ======================== -->
 <nav class="navbar navbar-expand-lg">
  <div class="container">
-   <a class="navbar-brand" href="index.html">
+   <a class="navbar-brand" href="index.php">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="me-2" style="width: 28px; height: 28px; vertical-align: middle; color: var(--accent-gold);">
       <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
       <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
@@ -31,12 +31,12 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarMain">
    <ul class="navbar-nav ms-auto gap-1">
-    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="about.html">Tentang</a></li>
-    <li class="nav-item"><a class="nav-link" href="product.html">Produk</a></li>
-    <li class="nav-item"><a class="nav-link" href="gallery.html">Galeri</a></li>
-    <li class="nav-item"><a class="nav-link" href="contact.html">Kontak</a></li>
-    <li class="nav-item"><a class="nav-link" href="form.html">Order</a></li>
+    <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
+    <li class="nav-item"><a class="nav-link" href="about.php">Tentang</a></li>
+    <li class="nav-item"><a class="nav-link" href="product.php">Produk</a></li>
+    <li class="nav-item"><a class="nav-link" href="gallery.php">Galeri</a></li>
+    <li class="nav-item"><a class="nav-link" href="contact.php">Kontak</a></li>
+    <li class="nav-item"><a class="nav-link" href="form.php">Order</a></li>
    </ul>
   </div>
  </div>
@@ -53,8 +53,8 @@
     Nikmati roti yang dipanggang segar setiap hari dan kopi berkualitas premium yang diseduh dengan penuh cinta di satu tempat yang nyaman dan hangat.
    </p>
    <div class="d-flex gap-3 flex-wrap">
-    <a href="product.html" class="btn-cream"> Lihat Menu</a>
-    <a href="form.html" class="btn-outline-brown" style="color:var(--cream);border-color:var(--cream);">Order Sekarang</a>
+    <a href="product.php" class="btn-cream"> Lihat Menu</a>
+    <a href="form.php" class="btn-outline-brown" style="color:var(--cream);border-color:var(--cream);">Order Sekarang</a>
    </div>
    <div class="hero-stats">
     <div class="hero-stat">
@@ -99,7 +99,7 @@
       <p class="card-text flex-grow-1">Croissant berlapis mentega premium dengan tekstur renyah di luar, lembut di dalam. Dipanggang segar setiap pagi.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 22.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.5rem 1.2rem;font-size:.82rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.5rem 1.2rem;font-size:.82rem;">Order</a>
       </div>
      </div>
     </div>
@@ -119,7 +119,7 @@
       <p class="card-text flex-grow-1">Espresso double shot dengan susu full cream yang di-steam sempurna — pilihan yang selalu setia menemani harimu.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 28.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.5rem 1.2rem;font-size:.82rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.5rem 1.2rem;font-size:.82rem;">Order</a>
       </div>
      </div>
     </div>
@@ -139,14 +139,14 @@
       <p class="card-text flex-grow-1">Donut empuk dengan glazing gula yang mengkilap. Tersedia dalam berbagai rasa: original, coklat, stroberi.</p>
       <div class="d-flex justify-content-between align-items-center mt-3">
        <span class="price">Rp 15.000</span>
-       <a href="form.html" class="btn-primary-brown" style="padding:.5rem 1.2rem;font-size:.82rem;">Order</a>
+       <a href="form.php" class="btn-primary-brown" style="padding:.5rem 1.2rem;font-size:.82rem;">Order</a>
       </div>
      </div>
     </div>
    </div>
   </div>
   <div class="text-center mt-5 fade-in-up">
-   <a href="product.html" class="btn-outline-brown">Lihat Semua Menu →</a>
+   <a href="product.php" class="btn-outline-brown">Lihat Semua Menu →</a>
   </div>
  </div>
 </section>
@@ -250,8 +250,8 @@
    Kunjungi Bake'n Brew hari ini atau pesan langsung melalui form order kami.
   </p>
   <div class="d-flex gap-3 justify-content-center flex-wrap">
-   <a href="form.html" class="btn-primary-brown">Order Sekarang</a>
-   <a href="contact.html" class="btn-outline-brown">Hubungi Kami</a>
+   <a href="form.php" class="btn-primary-brown">Order Sekarang</a>
+   <a href="contact.php" class="btn-outline-brown">Hubungi Kami</a>
   </div>
  </div>
 </section>
@@ -280,21 +280,21 @@
    <div class="col-lg-2 col-md-6">
     <h6>Navigasi</h6>
     <ul class="footer-links">
-     <li><a href="index.html">Home</a></li>
-     <li><a href="about.html">Tentang Kami</a></li>
-     <li><a href="product.html">Produk</a></li>
-     <li><a href="gallery.html">Galeri</a></li>
-     <li><a href="contact.html">Kontak</a></li>
+     <li><a href="index.php">Home</a></li>
+     <li><a href="about.php">Tentang Kami</a></li>
+     <li><a href="product.php">Produk</a></li>
+     <li><a href="gallery.php">Galeri</a></li>
+     <li><a href="contact.php">Kontak</a></li>
     </ul>
    </div>
    <div class="col-lg-3 col-md-6">
     <h6>Menu Populer</h6>
     <ul class="footer-links">
-     <li><a href="product.html#croissant-butter">Croissant Butter</a></li>
-     <li><a href="product.html#signature-latte">Signature Latte</a></li>
-     <li><a href="product.html#donut-glazed">Donut Glazed</a></li>
-     <li><a href="product.html#cappuccino">Cappuccino</a></li>
-     <li><a href="product.html#roti-coklat">Roti Coklat</a></li>
+     <li><a href="product.php#croissant-butter">Croissant Butter</a></li>
+     <li><a href="product.php#signature-latte">Signature Latte</a></li>
+     <li><a href="product.php#donut-glazed">Donut Glazed</a></li>
+     <li><a href="product.php#cappuccino">Cappuccino</a></li>
+     <li><a href="product.php#roti-coklat">Roti Coklat</a></li>
     </ul>
    </div>
    <div class="col-lg-3 col-md-6">

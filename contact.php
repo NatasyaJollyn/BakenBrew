@@ -14,7 +14,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
  <div class="container">
-   <a class="navbar-brand" href="index.html">
+   <a class="navbar-brand" href="index.php">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="me-2" style="width: 28px; height: 28px; vertical-align: middle; color: var(--accent-gold);">
       <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
       <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" />
@@ -28,12 +28,12 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarMain">
    <ul class="navbar-nav ms-auto gap-1">
-    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="about.html">Tentang</a></li>
-    <li class="nav-item"><a class="nav-link" href="product.html">Produk</a></li>
-    <li class="nav-item"><a class="nav-link" href="gallery.html">Galeri</a></li>
-    <li class="nav-item"><a class="nav-link" href="contact.html">Kontak</a></li>
-    <li class="nav-item"><a class="nav-link" href="form.html">Order</a></li>
+    <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
+    <li class="nav-item"><a class="nav-link" href="about.php">Tentang</a></li>
+    <li class="nav-item"><a class="nav-link" href="product.php">Produk</a></li>
+    <li class="nav-item"><a class="nav-link" href="gallery.php">Galeri</a></li>
+    <li class="nav-item"><a class="nav-link" href="contact.php">Kontak</a></li>
+    <li class="nav-item"><a class="nav-link" href="form.php">Order</a></li>
    </ul>
   </div>
  </div>
@@ -44,7 +44,7 @@
  <div class="container position-relative" style="z-index:2">
   <nav aria-label="breadcrumb">
    <ol class="breadcrumb justify-content-center mb-3" style="font-size:.82rem">
-    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
     <li class="breadcrumb-item active">Kontak</li>
    </ol>
   </nav>
@@ -230,21 +230,21 @@
    <div class="col-lg-2 col-md-6">
     <h6>Navigasi</h6>
     <ul class="footer-links">
-     <li><a href="index.html">Home</a></li>
-     <li><a href="about.html">Tentang Kami</a></li>
-     <li><a href="product.html">Produk</a></li>
-     <li><a href="gallery.html">Galeri</a></li>
-     <li><a href="contact.html">Kontak</a></li>
+     <li><a href="index.php">Home</a></li>
+     <li><a href="about.php">Tentang Kami</a></li>
+     <li><a href="product.php">Produk</a></li>
+     <li><a href="gallery.php">Galeri</a></li>
+     <li><a href="contact.php">Kontak</a></li>
     </ul>
    </div>
    <div class="col-lg-3 col-md-6">
     <h6>Menu Populer</h6>
     <ul class="footer-links">
-     <li><a href="product.html#croissant-butter">Croissant Butter</a></li>
-     <li><a href="product.html#signature-latte">Signature Latte</a></li>
-     <li><a href="product.html#donut-glazed">Donut Glazed</a></li>
-     <li><a href="product.html#cappuccino">Cappuccino</a></li>
-     <li><a href="product.html#roti-coklat">Roti Coklat</a></li>
+     <li><a href="product.php#croissant-butter">Croissant Butter</a></li>
+     <li><a href="product.php#signature-latte">Signature Latte</a></li>
+     <li><a href="product.php#donut-glazed">Donut Glazed</a></li>
+     <li><a href="product.php#cappuccino">Cappuccino</a></li>
+     <li><a href="product.php#roti-coklat">Roti Coklat</a></li>
     </ul>
    </div>
    <div class="col-lg-3 col-md-6">
