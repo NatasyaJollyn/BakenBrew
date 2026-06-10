@@ -41,60 +41,55 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 
 > [!TIP]
 > **Rekomendasi Suara Google AI Studio (Multi-Voice)**:
-> Untuk demo kelompok beranggotakan 5 orang, sangat disarankan menggunakan **5 jenis suara AI yang berbeda** (misalnya memadukan suara laki-laki dan perempuan dengan intonasi berbeda) agar mencerminkan kontribusi masing-masing anggota.
+> Karena kelompok Anda beranggotakan **4 orang**, sangat disarankan menggunakan **4 jenis suara AI yang berbeda** (misalnya memadukan suara laki-laki dan perempuan dengan intonasi berbeda) agar mencerminkan kontribusi masing-masing anggota.
 > Di awal bagian, masing-masing suara AI harus menyebutkan nama anggotanya agar dosen tahu siapa yang sedang berkontribusi di bagian tersebut.
 
 ### 🎭 Pembagian Peran & Rekomendasi Suara AI:
-1.  **Presenter 1 (P1 - Pembukaan & Intro)**: Menyapa penguji, mengenalkan tim, dan mendemokan beranda. *(Rekomendasi: Suara Laki-laki A, tenang & berwibawa)*
-2.  **Presenter 2 (P2 - Katalog Menu)**: Mendemokan halaman produk, filter kategori, dan lencana produk. *(Rekomendasi: Suara Perempuan A, ceria & jelas)*
-3.  **Presenter 3 (P3 - Formulir Transaksi)**: Mengisi form pesanan, mendemokan Double Submit Protection, dan toast sukses. *(Rekomendasi: Suara Laki-laki B, tegas & presisi)*
-4.  **Presenter 4 (P4 - Dashboard Admin & Notifikasi)**: Menjelaskan login admin, grafik dashboard, dan lonceng notifikasi real-time. *(Rekomendasi: Suara Perempuan B, profesional & terstruktur)*
-5.  **Presenter 5 (P5 - Ketangguhan Sistem & Penutup)**: Mendemokan setelan tutup toko, simulasi database offline, keamanan kode, dan penutup. *(Rekomendasi: Suara Laki-laki C, logis & informatif)*
+1.  **Presenter 1 (P1 - Pembukaan & Katalog)**: Menyapa penguji, mengenalkan tim, beranda, dan filtrasi katalog produk. *(Rekomendasi: Suara Laki-laki A, tenang & berwibawa)*
+2.  **Presenter 2 (P2 - Alur Transaksi & Form)**: Mengisi form pesanan, mendemokan Double Submit Protection, dan toast sukses. *(Rekomendasi: Suara Perempuan A, ceria & jelas)*
+3.  **Presenter 3 (P3 - Admin Panel & Notifikasi)**: Menjelaskan login admin, dashboard analitik, dan lonceng notifikasi real-time. *(Rekomendasi: Suara Laki-laki B, tegas & presisi)*
+4.  **Presenter 4 (P4 - Uji Ekstrem & Penutup)**: Setelan tutup toko, database offline failover, keamanan kode, dan penutup. *(Rekomendasi: Suara Perempuan B, profesional & terstruktur)*
 
 ---
 
 ### 🎬 Naskah Percakapan & Petunjuk Layar
 
-#### **Bagian 1: Pembukaan & Tampilan Beranda**
+#### **Bagian 1: Pembukaan & Tampilan Katalog**
 *   **Petunjuk Layar**: *Tampilkan halaman utama `index.php` secara live dari domain hosting `http://king-zays.infinityfreeapp.com`.*
 *   **P1 - Suara Laki-laki A (Bicara)**:
-    > "Selamat pagi/siang kepada Bapak/Ibu Dosen Penguji dan rekan-rekan sekalian. Saya perwakilan kelompok 5 akan memandu jalannya presentasi web **Bake'n Brew**. Hari ini kami sangat antusias mendemokan aplikasi pemesanan online untuk produk kopi dan roti premium secara live. 
+    > "Selamat pagi/siang kepada Bapak/Ibu Dosen Penguji dan rekan-rekan sekalian. Saya perwakilan kelompok akan memandu jalannya presentasi web **Bake'n Brew**. Hari ini kami mendemokan platform pemesanan online untuk produk kopi dan roti premium secara live. 
     > 
-    > Seperti yang terlihat di layar, kami menerapkan desain visual bertema hangat (*warm coffee shop*) dengan tipografi modern untuk kenyamanan mata pengguna. Pada navbar atas, terdapat lencana status toko aktif, yang saat ini menyala hijau bertuliskan **Buka**. Selanjutnya, rekan saya akan mendemokan halaman menu."
-
-#### **Bagian 2: Katalog Menu & Fitur Filter**
+    > Kami menerapkan desain visual bertema hangat (*warm coffee shop*) dengan warna cokelat premium dan tipografi modern. Pada navbar atas, terdapat lencana status toko aktif, yang saat ini menyala hijau bertuliskan **Buka**."
 *   **Petunjuk Layar**: *Beralih ke halaman produk `product.php`. Klik filter kategori 'Bakery' lalu klik filter 'Coffee'.*
-*   **P2 - Suara Perempuan A (Bicara)**:
-    > "Halo, saya Natasya. Saya akan menjelaskan bagian Katalog Menu. Di halaman `product.php` ini, pelanggan dapat menelusuri produk yang kami tawarkan. 
-    > 
-    > Kami menyematkan filter kategori berbasis JavaScript yang bekerja sangat cepat dan interaktif tanpa memuat ulang halaman. Setiap kartu produk juga dilengkapi lencana dinamis seperti *Best Seller* atau *New* untuk produk unggulan, dengan aspek rasio gambar yang seragam agar layout terlihat premium."
+*   **P1 - Suara Laki-laki A (Bicara)**:
+    > "Di halaman `product.php`, pelanggan dapat menelusuri menu secara cepat menggunakan filter kategori berbasis JavaScript tanpa me-refresh halaman. Setiap kartu produk dilengkapi lencana dinamis seperti *Best Seller* atau *New* untuk menyoroti menu unggulan."
 
-#### **Bagian 3: Alur Pemesanan & Proteksi Tombol**
+#### **Bagian 2: Alur Pemesanan & Proteksi Tombol**
 *   **Petunjuk Layar**: *Beralih ke halaman pemesanan `form.php`. Isi form dengan lengkap.*
-*   **P3 - Suara Laki-laki B (Bicara)**:
-    > "Halo, saya Firzan. Saya akan mendemonstrasikan alur pemesanan pelanggan di halaman `form.php`. Saya akan memilih menu *Croissant Butter*, mengisi Nama, Email, Jumlah Pesanan sebanyak `2`, dan menambahkan catatan: *'Minta dihangatkan'*. Harap perhatikan tombol **Order** ketika saya menekannya."
+*   **P2 - Suara Perempuan A (Bicara)**:
+    > "Halo, saya Natasya. Saya akan mendemonstrasikan alur pemesanan pelanggan. Saya akan memilih menu *Croissant Butter*, mengisi Nama, Email, Jumlah Pesanan sebanyak `2`, dan menambahkan catatan: *'Minta dihangatkan'*. Harap perhatikan tombol **Order** ketika saya menekannya."
 *   **Petunjuk Layar**: *Klik tombol "Order". Tunjukkan tombol yang berubah menjadi abu-abu (disabled) dengan teks "Memproses..." sebelum menampilkan toast sukses.*
-*   **P3 - Suara Laki-laki B (Bicara)**:
-    > "Ketika tombol diklik, sistem langsung mengunci tombol tersebut (*disabled*) dan memunculkan animasi loading. Fitur **Double Submit Protection** ini dirancang untuk mencegah pelanggan tidak sengaja mengirimkan pesanan ganda akibat klik ganda saat koneksi lambat. Setelah berhasil, notifikasi Toast sukses muncul di sudut kanan atas, dan baris pesanan baru langsung ter-render di tabel pesanan aktif pelanggan."
+*   **P2 - Suara Perempuan A (Bicara)**:
+    > "Ketika tombol diklik, sistem langsung mengunci tombol tersebut (*disabled*) dan memunculkan animasi loading. Fitur **Double Submit Protection** ini dirancang untuk mencegah pelanggan tidak sengaja mengirimkan pesanan ganda akibat klik beruntun saat jaringan lambat. Setelah berhasil, notifikasi Toast sukses muncul di kanan atas, dan pesanan baru langsung ter-render di tabel pesanan pelanggan."
 
-#### **Bagian 4: Dashboard Admin & Notifikasi Real-time**
+#### **Bagian 3: Dashboard Admin & Notifikasi Real-time**
 *   **Petunjuk Layar**: *Buka tab admin yang telah login dan berada di Dashboard `admin/dashboard.php`. Jangan di-refresh. Tunggu ikon lonceng bergoyang.*
-*   **P4 - Suara Perempuan B (Bicara)**:
-    > "Halo, saya Ratna. Kini kita beralih ke sisi **Admin Panel** di `/admin/dashboard.php`. Di dashboard utama ini, admin disajikan data analitik operasional seperti statistik pesanan, total omzet, bagan rasio produk, serta tombol toggle cepat status operasional toko.
+*   **P3 - Suara Laki-laki B (Bicara)**:
+    > "Halo, saya Firzan. Kini kita beralih ke sisi **Admin Panel** di `/admin/dashboard.php`. Di dashboard utama ini, admin disajikan data analitik operasional seperti statistik pesanan, total omzet, bagan rasio produk, serta tombol toggle cepat status operasional toko.
     > 
-    > Perhatikan ikon lonceng di navbar kanan atas. Ikon lonceng bergoyang (*jiggle animation*) secara otomatis dan badge angkanya bertambah `1`. Sistem melakukan polling berkala di latar belakang untuk mendeteksi transaksi baru tanpa admin perlu me-refresh halaman."
+    > Perhatikan ikon lonceng di navbar kanan atas. Lonceng bergoyang (*jiggle animation*) secara otomatis dan badge angkanya bertambah `1`. Sistem melakukan polling berkala di latar belakang untuk mendeteksi transaksi baru tanpa admin perlu me-refresh halaman."
 *   **Petunjuk Layar**: *Klik ikon lonceng, lalu klik notifikasi teratas untuk masuk ke halaman `admin/pesanan.php`.*
-*   **P4 - Suara Perempuan B (Bicara)**:
+*   **P3 - Suara Laki-laki B (Bicara)**:
     > "Ketika admin mengklik notifikasi tersebut, sistem otomatis mengarahkan ke halaman **Kelola Pesanan**. Di sini pesanan baru berstatus *Pending*. Admin dapat menyiapkannya dan kemudian mengklik ikon centang hijau untuk menandai pesanan selesai."
 
-#### **Bagian 5: Pengujian Kondisi Ekstrem & Keamanan**
+#### **Bagian 4: Pengujian Kondisi Ekstrem & Keamanan**
 *   **Petunjuk Layar**: *Kembali ke dashboard admin, matikan toggle status toko menjadi "CLOSED". Beralih ke tab pelanggan, refresh halaman `index.php` dan `form.php`.*
-*   **P5 - Suara Laki-laki C (Bicara)**:
-    > "Halo, saya Refi. Saya akan menjelaskan aspek ketangguhan dan keamanan sistem. Jika admin menonaktifkan status operasional toko menjadi **Tutup**, di sisi pelanggan langsung muncul banner merah di bawah layar. Selain itu, formulir pemesanan otomatis terkunci dan diarsir buram untuk mencegah transaksi ilegal saat toko tutup.
+*   **P4 - Suara Perempuan B (Bicara)**:
+    > "Halo, saya Ratna. Saya akan menjelaskan aspek ketangguhan dan keamanan sistem. Jika admin menonaktifkan status operasional toko menjadi **Tutup**, di sisi pelanggan langsung muncul banner merah di bawah layar. Selain itu, formulir pemesanan otomatis terkunci dan diarsir buram untuk mencegah transaksi ilegal saat toko tutup.
     > 
     > Selanjutnya, kami juga mendemonstrasikan penanganan database offline."
 *   **Petunjuk Layar**: *Buka Laragon/XAMPP, matikan servis MySQL (Apache tetap menyala). Kembali ke tab pelanggan di halaman produk `product.php` lalu lakukan refresh.*
-*   **P5 - Suara Laki-laki C (Bicara)**:
+*   **P4 - Suara Perempuan B (Bicara)**:
     > "Jika database MySQL mati, halaman PHP Bake'n Brew tidak akan crash! Sistem mendeteksi kegagalan koneksi, memunculkan banner warning kuning bertuliskan *'Koneksi Database Offline'*, lalu memuat *mock data* produk dari berkas JSON lokal agar pelanggan tetap bisa melihat menu. 
     > 
     > Seluruh kode program kami rancang menggunakan standar keamanan tertinggi: menangkal SQL Injection dengan *Prepared Statements*, menyaring input dari XSS dengan `htmlspecialchars()`, serta memvalidasi upload file gambar menggunakan `getimagesize()` dan mengompresnya ke format WebP agar performa loading website sangat cepat dan efisien.
