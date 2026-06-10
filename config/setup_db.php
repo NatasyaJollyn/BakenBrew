@@ -6,12 +6,20 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Check environment: Local Laragon vs InfinityFree Live Server
+// Check environment: Local Laragon vs Clever Cloud vs InfinityFree Live Server
 $is_local = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1', '[::1]']) 
             || (strpos($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1:') === 0) 
             || (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost:') === 0);
 
-if ($is_local) {
+$port = null;
+if (getenv('MYSQL_ADDON_HOST') !== false) {
+    // Clever Cloud Auto-detect
+    $host = getenv('MYSQL_ADDON_HOST');
+    $user = getenv('MYSQL_ADDON_USER');
+    $pass = getenv('MYSQL_ADDON_PASSWORD');
+    $db   = getenv('MYSQL_ADDON_DB');
+    $port = getenv('MYSQL_ADDON_PORT');
+} else if ($is_local) {
     $host = 'localhost';
     $user = 'root';
     $pass = '';
@@ -62,7 +70,7 @@ try {
     }
     
     // Connect to specific DB
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=$charset", $user, $pass, $options);
+    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=$charset" . ($port ? ";port=$port" : ""), $user, $pass, $options);
 
     // 2. Create tables
     // Admin Table

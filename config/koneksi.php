@@ -3,12 +3,20 @@
 // BAKE'N BREW - Database Connection Configuration (Laragon)
 // ========================================================
 
-// Check environment: Local Laragon vs InfinityFree Live Server
+// Check environment: Local Laragon vs Clever Cloud vs InfinityFree Live Server
 $is_local = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1', '[::1]']) 
             || (strpos($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1:') === 0) 
             || (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost:') === 0);
 
-if ($is_local) {
+$port = null;
+if (getenv('MYSQL_ADDON_HOST') !== false) {
+    // Production (Clever Cloud Auto-detect)
+    $host = getenv('MYSQL_ADDON_HOST');
+    $user = getenv('MYSQL_ADDON_USER');
+    $pass = getenv('MYSQL_ADDON_PASSWORD');
+    $db   = getenv('MYSQL_ADDON_DB');
+    $port = getenv('MYSQL_ADDON_PORT');
+} else if ($is_local) {
     $host = 'localhost';
     $user = 'root';
     $pass = '';
@@ -22,7 +30,7 @@ if ($is_local) {
 }
 $charset = 'utf8mb4';
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset" . ($port ? ";port=$port" : "");
 
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
