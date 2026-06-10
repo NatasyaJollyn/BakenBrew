@@ -55,76 +55,85 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 #### **Bagian 1: Pembukaan, Login & Dashboard Admin**
 *   **Petunjuk Layar**: *Coba ketik langsung URL `/admin/dashboard.php` di browser saat belum login, untuk menunjukkan sistem menolak bypass dan langsung me-redirect kembali ke `/admin/login.php`. Setelah itu, kembalikan ke tampilan halaman login admin `/admin/login.php`.*
 *   **P1 - Suara Cowok 1**:
-    > **(Nada: Lantang, Ramah, dan Bersemangat)** 
-    > "Selamat pagi kepada Bapak dan Ibu Dosen Penguji serta rekan-rekan sekalian. Kami dari kelompok Bake'n Brew hari ini sangat antusias untuk mempresentasikan sekaligus mendemokan aplikasi web pemesanan online kopi dan roti premium secara langsung. 
-    > 
-    > Berbeda dari demo biasa, kami memulai presentasi dari pusat kendali sistem, yaitu **Admin Panel atau Backend**."
-    > 
-    > **(Nada: Tenang, Jelas, dan Profesional)**
-    > "Untuk memenuhi syarat tugas kuliah, kami menerapkan sistem otentikasi login yang aman. Sebagai pembuktian awal, jika ada pengguna tidak sah mencoba membypass dengan mengetikkan langsung URL dashboard di browser, sistem secara otomatis menolaknya dan langsung me-redirect kembali ke halaman `/admin/login.php` menggunakan session management PHP. Admin harus memasukkan kredensial resmi pada form login ini untuk diverifikasi."
+    > "[Ramah & Sopan] Selamat pagi kepada Bapak dan Ibu Dosen Penguji serta rekan-rekan sekalian. 
+    > [Bersemangat & Lantang] Kami dari kelompok Bake'n Brew hari ini sangat antusias untuk mempresentasikan sekaligus mendemokan aplikasi web pemesanan online kopi dan roti premium secara langsung. 
+    > [Tegas & Menarik Perhatian] Berbeda dari demo biasa, kami memulai presentasi dari pusat kendali sistem, yaitu **Admin Panel atau Backend**.
+    > [Serius & Profesional] Untuk memenuhi syarat tugas kuliah, kami menerapkan sistem otentikasi login yang aman. 
+    > [Informatif & Tenang] Sebagai pembuktian awal, jika ada pengguna tidak sah mencoba membypass dengan mengetikkan langsung URL dashboard di browser, sistem secara otomatis menolaknya dan langsung me-redirect kembali ke halaman `/admin/login.php` menggunakan session management PHP. 
+    > [Tegas & Meyakinkan] Admin harus memasukkan kredensial resmi pada form login ini untuk diverifikasi."
 *   **Petunjuk Layar**: *Input username `admin` dan password `admin123` lalu klik Sign In. Setelah masuk, tampilkan Dashboard Utama `/admin/dashboard.php`.*
 *   **P1 - Suara Cowok 1**:
-    > **(Nada: Informatif, Mantap, dan Terstruktur)**
-    > "Setelah berhasil login, kita masuk ke halaman **Dashboard Admin** (`dashboard.php`). Halaman ini berfungsi sebagai pusat pantau data operasional toko secara aktual. 
-    > 
-    > Di bagian atas, terdapat widget informasi total produk, pesanan aktif yang butuh diproses, dan total omzet yang dihitung dinamis menggunakan query agregat SQL. Di tengah, kami merender diagram lingkaran rasio kategori menu menggunakan CSS murni untuk melihat segmentasi produk secara visual. 
-    > 
-    > Di kanan atas dashboard, terdapat sakelar **Status Operasional Toko** (Open/Closed). Setelan ini menyimpan status toko langsung ke database tabel `settings` dan mengontrol seluruh alur transaksi di sisi pelanggan secara langsung. Saya akan mengeset status operasional ini menjadi **Open atau Buka**."
+    > "[Senang & Informatif] Setelah berhasil login, kita masuk ke halaman **Dashboard Admin** (`dashboard.php`). 
+    > [Tenang & Jelas] Halaman ini berfungsi sebagai pusat pantau data operasional toko secara aktual. 
+    > [Informatif & Detail] Di bagian atas, terdapat widget informasi total produk, pesanan aktif yang butuh diproses, dan total omzet yang dihitung dinamis menggunakan query agregat SQL. 
+    > [Fokus & Menjelaskan] Di tengah, kami merender diagram lingkaran rasio kategori menu menggunakan CSS murni untuk melihat segmentasi produk secara visual. 
+    > [Menarik Perhatian] Di kanan atas dashboard, terdapat sakelar **Status Operasional Toko** (Open/Closed). 
+    > [Informatif & Jelas] Setelan ini menyimpan status toko langsung ke database tabel `settings` dan mengontrol seluruh alur transaksi di sisi pelanggan secara langsung. 
+    > [Tegas & Mantap] Saya akan mengeset status operasional ini menjadi **Open atau Buka**."
 
 #### **Bagian 2: Kelola Menu (CRUD), Manajemen Pesanan, dan Polling Notifikasi**
 *   **Petunjuk Layar**: *Buka halaman produk admin `/admin/produk.php`. Klik tombol "Add New Menu", isi form dummy produk, lalu klik "Save Changes".*
 *   **P2 - Suara Cewek 1**:
-    > **(Nada: Ceria, Ramah, dan Jelas)**
-    > "Sekarang saya akan menjelaskan bagian pengelolaan data katalog produk dan pesanan. 
-    > 
-    > Di halaman **Kelola Produk** (`produk.php`), admin memiliki hak akses CRUD penuh. Tabel data produk ini kami lengkapi dengan sistem pagination SQL menggunakan perintah `LIMIT` dan `OFFSET` agar server tidak overload ketika menangani ratusan produk."
-    > 
-    > **(Nada: Antusias, Informatif, dan Bersemangat)**
-    > "Saat menambahkan menu baru, admin dapat mengunggah gambar. Di balik layar, script PHP melakukan validasi tipe berkas secara ketat menggunakan fungsi `getimagesize()` untuk menolak file non-gambar berbahaya. Sistem kemudian memproses file gambar menggunakan pustaka GD PHP untuk mengompresnya secara otomatis ke format `.webp`. Hal ini menghemat penyimpanan server hingga 80% dan mempercepat loading frontend secara dramatis."
+    > "[Ceria & Jelas] Sekarang saya akan menjelaskan bagian pengelolaan data katalog produk dan pesanan. 
+    > [Mantap & Ramah] Di halaman **Kelola Produk** (`produk.php`), admin memiliki hak akses CRUD penuh. 
+    > [Informatif & Profesional] Tabel data produk ini kami lengkapi dengan sistem pagination SQL menggunakan perintah `LIMIT` dan `OFFSET` agar server tidak overload ketika menangani ratusan produk. 
+    > [Tenang & Jelas] Saat menambahkan menu baru, admin dapat mengunggah gambar. 
+    > [Serius & Tegas] Di balik layar, script PHP melakukan validasi tipe berkas secara ketat menggunakan fungsi `getimagesize()` untuk menolak file non-gambar berbahaya. 
+    > [Antusias & Menjelaskan] Sistem kemudian memproses file gambar menggunakan pustaka GD PHP untuk mengompresnya secara otomatis ke format `.webp`. 
+    > [Lantang & Bersemangat] Hal ini menghemat penyimpanan server hingga 80% dan mempercepat loading frontend secara dramatis."
 *   **Petunjuk Layar**: *Buka halaman pesanan admin `/admin/pesanan.php`. Tunjukkan tabel pesanan pelanggan berstatus Pending, lalu klik ikon centang hijau untuk memprosesnya menjadi Completed.*
 *   **P2 - Suara Cewek 1**:
-    > **(Nada: Terstruktur, Jelas, dan Dinamis)**
-    > "Selanjutnya adalah halaman **Kelola Pesanan** (`pesanan.php`). Di sini admin mengelola antrean pesanan pelanggan secara teratur. Tabel ini menampilkan detail pesanan, jumlah, catatan khusus, dan status pesanan. Ketika pesanan selesai disiapkan, admin mengklik tombol centang untuk mengubah status pesanan dari *Pending* menjadi *Completed*.
-    > 
-    > Fitur krusial lainnya di panel admin ini adalah **Sistem Notifikasi Real-time**. Ikon lonceng di pojok kanan atas terhubung ke script `get_notifications.php` via AJAX dengan polling berkala setiap 5 detik. Jika ada pelanggan yang melakukan pemesanan di frontend, lonceng notifikasi admin akan bergoyang secara dinamis dan badge angkanya bertambah tanpa admin perlu me-refresh halaman."
+    > "[Ceria & Transisi] Selanjutnya adalah halaman **Kelola Pesanan** (`pesanan.php`). 
+    > [Tenang & Jelas] Di sini admin mengelola antrean pesanan pelanggan secara teratur. 
+    > [Informatif & Detail] Tabel ini menampilkan detail pesanan, jumlah, catatan khusus, dan status pesanan. 
+    > [Tegas & Mantap] Ketika pesanan selesai disiapkan, admin mengklik tombol centang untuk mengubah status pesanan dari *Pending* menjadi *Completed*. 
+    > [Antusias & Menarik Perhatian] Fitur krusial lainnya di panel admin ini adalah **Sistem Notifikasi Real-time**. 
+    > [Informatif & Jelas] Ikon lonceng di pojok kanan atas terhubung ke script `get_notifications.php` via AJAX dengan polling berkala setiap 5 detik. 
+    > [Lantang & Bersemangat] Jika ada pelanggan yang melakukan pemesanan di frontend, lonceng notifikasi admin akan bergoyang secara dinamis dan badge angkanya bertambah tanpa admin perlu me-refresh halaman."
 
 #### **Bagian 3: Tampilan Pelanggan (Frontend), Katalog Interaktif & Alur Transaksi**
 *   **Petunjuk Layar**: *Beralih ke tab pelanggan di halaman beranda `index.php`. Scroll perlahan.*
 *   **P3 - Suara Cowok 2**:
-    > **(Nada: Ramah, Hangat, dan Mengundang)**
-    > "Setelah melihat pusat kendali admin, kini kita beralih ke sisi **Pelanggan atau Frontend**. Di halaman utama `index.php`, pelanggan disapa oleh spanduk hero interaktif yang memukau. Di navbar atas, pelanggan dapat melihat lencana status toko aktif, yang saat ini menyala hijau bertuliskan **Buka** berkat setelan admin yang diaktifkan sebelumnya."
+    > "[Ramah & Ceria] Setelah melihat pusat kendali admin, kini kita beralih ke sisi **Pelanggan atau Frontend**. 
+    > [Antusias & Hangat] Di halaman utama `index.php`, pelanggan disapa oleh spanduk hero interaktif yang memukau. 
+    > [Informatif & Jelas] Di navbar atas, pelanggan dapat melihat lencana status toko aktif, yang saat ini menyala hijau bertuliskan **Buka** berkat setelan admin yang diaktifkan sebelumnya."
 *   **Petunjuk Layar**: *Buka halaman produk pelanggan `product.php`. Klik tombol filter 'Bakery' lalu klik filter 'Coffee'.*
 *   **P3 - Suara Cowok 2**:
-    > **(Nada: Antusias, Jelas, dan Cepat)**
-    > "Di halaman **Katalog Menu** (`product.php`), kami memuat 23 menu café secara responsif dalam tata letak grid. Untuk memberikan pengalaman pengguna yang sangat cepat, kami mengimplementasikan filtrasi menu berbasis manipulasi DOM JavaScript secara langsung. Pelanggan dapat mengklik kategori seperti *Bakery* atau *Coffee*, dan katalog akan tersaring secara instan tanpa loading halaman."
+    > "[Tenang & Profesional] Di halaman **Katalog Menu** (`product.php`), kami memuat 23 menu café secara responsif dalam tata letak grid. 
+    > [Antusias & Menjelaskan] Untuk memberikan pengalaman pengguna yang sangat cepat, kami mengimplementasikan filtrasi menu berbasis manipulasi DOM JavaScript secara langsung. 
+    > [Lantang & Ramah] Pelanggan dapat mengklik kategori seperti *Bakery* atau *Coffee*, dan katalog akan tersaring secara instan tanpa loading halaman."
 *   **Petunjuk Layar**: *Buka halaman pemesanan `form.php`. Isi form pemesanan secara lengkap, lalu tekan tombol "Order" dan tunjukkan pesan sukses.*
 *   **P3 - Suara Cowok 2**:
-    > **(Nada: Tegas, Dinamis, dan Meyakinkan)**
-    > "Di halaman **Pemesanan** (`form.php`), pelanggan dapat mengirim pesanan secara langsung. Saya akan mengisi Nama, Email, Jumlah, dan Catatan. Saat saya mengklik tombol 'Order', sistem mengirim data via AJAX POST secara asinkron. 
-    > 
-    > Di saat yang sama, tombol langsung dikunci menjadi abu-abu dan menampilkan teks 'Memproses...'. Fitur **Double Submit Protection** ini mencegah penulisan database ganda jika pelanggan tidak sengaja mengklik tombol kirim berkali-kali. Setelah sukses, Toast notifikasi muncul di kanan bawah dan data pesanan langsung ditambahkan ke tabel riwayat pesanan aktif pelanggan di bagian bawah yang datanya disimpan secara aman menggunakan `sessionStorage` browser."
+    > "[Ceria & Transisi] Di halaman **Pemesanan** (`form.php`), pelanggan dapat mengirim pesanan secara langsung. 
+    > [Tenang & Jelas] Saya akan mengisi Nama, Email, Jumlah, dan Catatan. 
+    > [Fokus & Menjelaskan] Saat saya mengklik tombol 'Order', sistem mengirim data via AJAX POST secara asinkron. 
+    > [Tegas & Menarik Perhatian] Di saat yang sama, tombol langsung dikunci menjadi abu-abu dan menampilkan teks 'Memproses...'. 
+    > [Serius & Meyakinkan] Fitur **Double Submit Protection** ini mencegah penulisan database ganda jika pelanggan tidak sengaja mengklik tombol kirim berkali-kali. 
+    > [Lantang, Senang & Bersemangat] Setelah sukses, Toast notifikasi muncul di kanan bawah dan data pesanan langsung ditambahkan ke tabel riwayat pesanan aktif pelanggan di bagian bawah yang datanya disimpan secara aman menggunakan `sessionStorage` browser."
 
 #### **Bagian 4: Ketangguhan Sistem (Skenario Ekstrem), Keamanan Kode & Penutup**
 *   **Petunjuk Layar**: *Kembali ke dashboard admin, matikan toggle status toko menjadi "CLOSED". Beralih ke tab pelanggan, refresh halaman `form.php`.*
 *   **P4 - Suara Cewek 2**:
-    > **(Nada: Serius, Profesional, dan Tegas)**
-    > "Saya akan mendemonstrasikan ketangguhan sistem kami dalam menangani kondisi ekstrem. 
-    > 
-    > Skenario pertama adalah penutupan toko. Ketika status diubah menjadi *Closed* di panel admin, di sisi pelanggan langsung muncul spanduk pemberitahuan tutup berwarna merah. Jika pelanggan mencoba mengakses `form.php`, formulir pemesanan otomatis terkunci (*disabled*) dan tidak menerima input apa pun untuk menghindari transaksi ilegal."
+    > "[Serius & Profesional] Saya akan mendemonstrasikan ketangguhan sistem kami dalam menangani kondisi ekstrem. 
+    > [Tegas & Jelas] Skenario pertama adalah penutupan toko. 
+    > [Informatif & Serius] Ketika status diubah menjadi *Closed* di panel admin, di sisi pelanggan langsung muncul spanduk pemberitahuan tutup berwarna merah. 
+    > [Tegas & Meyakinkan] Jika pelanggan mencoba mengakses `form.php`, formulir pemesanan otomatis terkunci (*disabled*) dan tidak menerima input apa pun untuk menghindari transaksi ilegal."
 *   **Petunjuk Layar**: *Matikan servis database MySQL di panel Laragon/XAMPP. Kembali ke tab pelanggan di halaman `product.php` lalu lakukan refresh halaman.*
 *   **P4 - Suara Cewek 2**:
-    > **(Nada: Serius, Informatif, dan Meyakinkan)**
-    > "Skenario ekstrem kedua adalah kerusakan database atau server mati. Biasanya, jika database MySQL mati, situs PHP akan langsung crash dan menampilkan error bawaan server yang berantakan. Namun di Bake'n Brew, kami merancang sistem failover dengan **Database Resilience**.
-    > 
-    > Halaman katalog tetap dapat dimuat dengan aman! Sistem mendeteksi matinya database, menampilkan spanduk peringatan kuning bertuliskan *'Koneksi Database Offline'*, lalu otomatis memuat data produk cadangan dari berkas JSON lokal. Di saat yang sama, di sisi panel admin, seluruh tombol penulisan data seperti tambah, edit, dan hapus otomatis dikunci (*disabled*) untuk melindungi data.
-    > 
-    > Seluruh aplikasi ini dibangun dengan standar keamanan tinggi: bebas dari celah SQL Injection berkat penggunaan *PDO Prepared Statements*, aman dari serangan Cross-Site Scripting berkat sanitasi output menggunakan `htmlspecialchars()`, serta memiliki antarmuka responsif ramah seluler (*mobile-first*)."
+    > "[Serius & Transisi] Skenario ekstrem kedua adalah kerusakan database atau server mati. 
+    > [Khawatir & Menjelaskan] Biasanya, jika database MySQL mati, situs PHP akan langsung crash dan menampilkan error bawaan server yang berantakan. 
+    > [Bangga & Lantang] Namun di Bake'n Brew, kami merancang sistem failover dengan **Database Resilience**. 
+    > [Antusias & Bersemangat] Halaman katalog tetap dapat dimuat dengan aman! 
+    > [Informatif & Jelas] Sistem mendeteksi matinya database, menampilkan spanduk peringatan kuning bertuliskan *'Koneksi Database Offline'*, lalu otomatis memuat data produk cadangan dari berkas JSON lokal. 
+    > [Tegas & Detail] Di saat yang sama, di sisi panel admin, seluruh tombol penulisan data seperti tambah, edit, dan hapus otomatis dikunci (*disabled*) untuk melindungi data. 
+    > [Profesional & Meyakinkan] Seluruh aplikasi ini dibangun dengan standar keamanan tinggi: bebas dari celah SQL Injection berkat penggunaan *PDO Prepared Statements*, aman dari serangan Cross-Site Scripting berkat sanitasi output menggunakan `htmlspecialchars()`, serta memiliki antarmuka responsif ramah seluler (*mobile-first*)."
 *   **Petunjuk Layar**: *Nyalakan kembali database MySQL di Laragon. Kembali ke tab admin, klik tombol dropdown profil di pojok kanan atas, lalu klik **Logout**. Sistem akan secara otomatis me-redirect kembali ke halaman login `/admin/login.php`.*
 *   **P4 - Suara Cewek 2**:
-    > **(Nada: Mantap, Lantang, dan Penuh Terima Kasih)**
-    > "Terakhir, sebagai penutup alur keamanan admin, kami menyediakan fitur **Logout**. Saat tombol ini diklik, sistem secara instan menghancurkan (*destroy*) seluruh data session di server agar token akses tidak bisa disalahgunakan kembali oleh pihak lain. 
-    > 
-    > Kesimpulannya, website Bake'n Brew ini siap dirilis secara live di production. Sekian presentasi dari kelompok kami. Terima kasih atas perhatiannya."
+    > "[Ceria & Transisi] Terakhir, sebagai penutup alur keamanan admin, kami menyediakan fitur **Logout**. 
+    > [Tegas & Serius] Saat tombol ini diklik, sistem secara instan menghancurkan (*destroy*) seluruh data session di server agar token akses tidak bisa disalahgunakan kembali oleh pihak lain. 
+    > [Lantang & Bersemangat] Kesimpulannya, website Bake'n Brew ini siap dirilis secara live di production. 
+    > [Ramah & Sopan] Sekian presentasi dari kelompok kami. 
+    > [Senang, Lantang & Penuh Terima Kasih] Terima kasih atas perhatiannya."
 
 ---
 
