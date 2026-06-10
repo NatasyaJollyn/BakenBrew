@@ -55,10 +55,10 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 #### **Bagian 1: Pembukaan, Login & Dashboard Admin**
 *   **Petunjuk Layar**: *Coba ketik langsung URL `/admin/dashboard.php` di browser saat belum login, untuk menunjukkan sistem menolak bypass dan langsung me-redirect kembali ke `/admin/login.php`. Setelah itu, kembalikan ke tampilan halaman login admin `/admin/login.php`.*
 *   **P1 - Suara Cowok 1**:
-    > "[Ramah & Sopan] Selamat pagi kepada Bapak dan Ibu Dosen Penguji serta rekan-rekan sekalian. 
-    > [Bersemangat & Lantang] Kami dari kelompok Bake'n Brew hari ini sangat antusias untuk mempresentasikan sekaligus mendemokan aplikasi web pemesanan online kopi dan roti premium secara langsung. 
-    > [Tegas & Menarik Perhatian] Berbeda dari demo biasa, kami memulai presentasi dari pusat kendali sistem, yaitu **Admin Panel atau Backend**.
-    > [Serius & Profesional] Untuk memenuhi syarat tugas kuliah, kami menerapkan sistem otentikasi login yang aman. 
+    > "[Ramah & Sopan] Halo rekan-rekan sekalian, selamat datang dalam sesi demo produk aplikasi web Bake'n Brew. 
+    > [Bersemangat & Lantang] Kami sangat antusias untuk mempresentasikan sekaligus mendemokan sistem pemesanan online kopi dan roti premium ini secara langsung. 
+    > [Tegas & Menarik Perhatian] Berbeda dari demo biasa, kami akan memulai presentasi langsung dari pusat kendali sistem, yaitu **Admin Panel atau Backend**.
+    > [Serius & Profesional] Untuk menjaga keamanan data operasional, kami mengimplementasikan sistem autentikasi login yang aman. 
     > [Informatif & Tenang] Sebagai pembuktian awal, jika ada pengguna tidak sah mencoba membypass dengan mengetikkan langsung URL dashboard di browser, sistem secara otomatis menolaknya dan langsung me-redirect kembali ke halaman `/admin/login.php` menggunakan session management PHP. 
     > [Tegas & Meyakinkan] Admin harus memasukkan kredensial resmi pada form login ini untuk diverifikasi."
 *   **Petunjuk Layar**: *Input username `admin` dan password `admin123` lalu klik Sign In. Setelah masuk, tampilkan Dashboard Utama `/admin/dashboard.php`.*
@@ -132,7 +132,7 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
     > "[Ceria & Transisi] Terakhir, sebagai penutup alur keamanan admin, kami menyediakan fitur **Logout**. 
     > [Tegas & Serius] Saat tombol ini diklik, sistem secara instan menghancurkan (*destroy*) seluruh data session di server agar token akses tidak bisa disalahgunakan kembali oleh pihak lain. 
     > [Lantang & Bersemangat] Kesimpulannya, website Bake'n Brew ini siap dirilis secara live di production. 
-    > [Ramah & Sopan] Sekian presentasi dari kelompok kami. 
+    > [Ramah & Sopan] Sekian presentasi produk dari tim kami. 
     > [Senang, Lantang & Penuh Terima Kasih] Terima kasih atas perhatiannya."
 
 ---
