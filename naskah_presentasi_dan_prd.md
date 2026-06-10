@@ -95,7 +95,7 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 *   **P3 - Suara Laki-laki B (Bicara)**:
     > "Di halaman **Pemesanan** (`form.php`), pelanggan dapat mengirim pesanan secara langsung. Saya akan mengisi Nama, Email, Jumlah, dan Catatan. Saat saya mengklik tombol 'Order', sistem mengirim data via AJAX POST secara asinkron. 
     > 
-    > Di saat yang sama, tombol langsung dikunci menjadi abu-abu dan menampilkan teks 'Memproses...'. Fitur **Double Submit Protection** ini mencegah penulisan database ganda jika pelanggan tidak sengaja mengklik tombol kirim berkali-kali. Setelah sukses, Toast notifikasi muncul dan data pesanan langsung ditambahkan ke tabel riwayat pesanan aktif pelanggan di bagian bawah yang datanya disimpan secara aman menggunakan `sessionStorage` browser."
+    > Di saat yang sama, tombol langsung dikunci menjadi abu-abu dan menampilkan teks 'Memproses...'. Fitur **Double Submit Protection** ini mencegah penulisan database ganda jika pelanggan tidak sengaja mengklik tombol kirim berkali-kali. Setelah sukses, Toast notifikasi muncul di kanan bawah dan data pesanan langsung ditambahkan ke tabel riwayat pesanan aktif pelanggan di bagian bawah yang datanya disimpan secara aman menggunakan `sessionStorage` browser."
 
 #### **Bagian 4: Ketangguhan Sistem (Skenario Ekstrem), Keamanan Kode & Penutup**
 *   **Petunjuk Layar**: *Kembali ke dashboard admin, matikan toggle status toko menjadi "CLOSED". Beralih ke tab pelanggan, refresh halaman `form.php`.*
