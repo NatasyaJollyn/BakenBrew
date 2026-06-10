@@ -132,7 +132,7 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 *   **Petunjuk Layar**: *Nyalakan kembali database MySQL di Laragon. Kembali ke tab admin, klik tombol dropdown profil di pojok kanan atas, lalu klik **Logout**. Sistem akan secara otomatis me-redirect kembali ke halaman login `/admin/login.php`.*
 *   **P4 - Suara Cewek 2**:
     > "[Ceria & Transisi] Terakhir, sebagai penutup alur keamanan admin, kami menyediakan fitur **Logout**. 
-    > [Tegas & Serius] Saat tombol ini diklik, sistem secara instan menghancurkan (*destroy*) seluruh data session di server agar token akses tidak bisa disalahgunakan kembali oleh pihak lain. 
+    > [Tenang & Jelas] Saat tombol ini diklik, sistem akan menghapus seluruh data sesi (session) di server untuk memastikan hak akses admin dinonaktifkan secara aman. 
     > [Lantang & Bersemangat] Kesimpulannya, website Bake'n Brew ini siap dirilis secara live di production. 
     > [Ramah & Sopan] Sekian presentasi produk dari tim kami. 
     > [Senang, Lantang & Penuh Terima Kasih] Terima kasih atas perhatiannya."
