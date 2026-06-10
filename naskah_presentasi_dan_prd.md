@@ -37,64 +37,81 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 
 ---
 
-## 🗣️ Bagian 2: Naskah Dialog & Alur Presentasi Live (Durasi: ~5-7 Menit)
+## 🗣️ Bagian 2: Naskah Dialog & Alur Presentasi Live (Durasi: ~7-9 Menit)
 
 > [!TIP]
 > **Rekomendasi Suara Google AI Studio (Multi-Voice)**:
-> Karena kelompok Anda beranggotakan **4 orang**, sangat disarankan menggunakan **4 jenis suara AI yang berbeda** (misalnya memadukan suara laki-laki dan perempuan dengan intonasi berbeda) agar mencerminkan kontribusi masing-masing anggota.
+> Untuk presentasi kelompok beranggotakan **4 orang**, sangat disarankan menggunakan **4 jenis suara AI yang berbeda** (misalnya memadukan suara laki-laki dan perempuan dengan intonasi berbeda) agar mencerminkan kontribusi masing-masing anggota.
 > Di awal bagian, masing-masing suara AI harus menyebutkan nama anggotanya agar dosen tahu siapa yang sedang berkontribusi di bagian tersebut.
 
 ### 🎭 Pembagian Peran & Rekomendasi Suara AI:
-1.  **Presenter 1 (P1 - Pembukaan & Katalog)**: Menyapa penguji, mengenalkan tim, beranda, dan filtrasi katalog produk. *(Rekomendasi: Suara Laki-laki A, tenang & berwibawa)*
-2.  **Presenter 2 (P2 - Alur Transaksi & Form)**: Mengisi form pesanan, mendemokan Double Submit Protection, dan toast sukses. *(Rekomendasi: Suara Perempuan A, ceria & jelas)*
-3.  **Presenter 3 (P3 - Admin Panel & Notifikasi)**: Menjelaskan login admin, dashboard analitik, dan lonceng notifikasi real-time. *(Rekomendasi: Suara Laki-laki B, tegas & presisi)*
-4.  **Presenter 4 (P4 - Uji Ekstrem & Penutup)**: Setelan tutup toko, database offline failover, keamanan kode, dan penutup. *(Rekomendasi: Suara Perempuan B, profesional & terstruktur)*
+1.  **Presenter 1 (P1 - Pembukaan, Login & Dashboard Admin)**: Menyapa penguji, mengenalkan tim, mendemokan login admin, dashboard analitik, dan status operasional. *(Rekomendasi: Suara Laki-laki A, tenang & berwibawa)*
+2.  **Presenter 2 (P2 - CRUD Katalog & Kelola Pesanan)**: Menjelaskan proses CRUD produk (WebP + GD library), kelola status pesanan, serta sistem notifikasi real-time (polling). *(Rekomendasi: Suara Perempuan A, ceria & jelas)*
+3.  **Presenter 3 (P3 - Frontend Pelanggan, Katalog & Transaksi)**: Beranda pelanggan, katalog interaktif dengan filter JS, pengisian form order, AJAX submit, dan Double Submit Protection. *(Rekomendasi: Suara Laki-laki B, tegas & presisi)*
+4.  **Presenter 4 (P4 - Ketangguhan Sistem, Keamanan & Penutup)**: Demonstrasi skenario tutup toko, failover database offline (mock data), ringkasan keamanan kode (SQLi/XSS), dan penutupan. *(Rekomendasi: Suara Perempuan B, profesional & terstruktur)*
 
 ---
 
-### 🎬 Naskah Percakapan & Petunjuk Layar
+### 🎬 Naskah Percakapan & Petunjuk Layar (Admin-First & Detail Halaman)
 
-#### **Bagian 1: Pembukaan & Tampilan Katalog**
-*   **Petunjuk Layar**: *Tampilkan halaman utama `index.php` secara live dari domain hosting `http://king-zays.infinityfreeapp.com`.*
+#### **Bagian 1: Pembukaan, Login & Dashboard Admin**
+*   **Petunjuk Layar**: *Tampilkan halaman login admin `/admin/login.php` secara live.*
 *   **P1 - Suara Laki-laki A (Bicara)**:
-    > "Selamat pagi/siang kepada Bapak/Ibu Dosen Penguji dan rekan-rekan sekalian. Saya perwakilan kelompok akan memandu jalannya presentasi web **Bake'n Brew**. Hari ini kami mendemokan platform pemesanan online untuk produk kopi dan roti premium secara live. 
+    > "Selamat pagi/siang kepada Bapak/Ibu Dosen Penguji dan rekan-rekan sekalian. Kami dari kelompok Bake'n Brew akan mempresentasikan aplikasi web pemesanan online untuk produk kopi dan roti premium secara live. 
     > 
-    > Kami menerapkan desain visual bertema hangat (*warm coffee shop*) dengan warna cokelat premium dan tipografi modern. Pada navbar atas, terdapat lencana status toko aktif, yang saat ini menyala hijau bertuliskan **Buka**."
-*   **Petunjuk Layar**: *Beralih ke halaman produk `product.php`. Klik filter kategori 'Bakery' lalu klik filter 'Coffee'.*
+    > Berbeda dari demo biasa, kami akan memulai presentasi langsung dari pusat kendali sistem, yaitu **Admin Panel (Backend)**. 
+    > 
+    > Saat ini di layar tampil halaman login admin di `/admin/login.php`. Halaman ini dirancang minimalis dan bersih. Keamanannya dijaga ketat di tingkat server menggunakan session management PHP. Admin harus memasukkan username `admin` dan password terenkripsi untuk memverifikasi hak akses sebelum masuk ke sistem."
+*   **Petunjuk Layar**: *Input username `admin` dan password `admin123` lalu klik Sign In. Setelah masuk, tampilkan Dashboard Utama `/admin/dashboard.php`.*
 *   **P1 - Suara Laki-laki A (Bicara)**:
-    > "Di halaman `product.php`, pelanggan dapat menelusuri menu secara cepat menggunakan filter kategori berbasis JavaScript tanpa me-refresh halaman. Setiap kartu produk dilengkapi lencana dinamis seperti *Best Seller* atau *New* untuk menyoroti menu unggulan."
+    > "Setelah berhasil login, kita masuk ke halaman **Dashboard Admin** (`dashboard.php`). Halaman ini berfungsi sebagai pusat pantau data operasional toko secara aktual. 
+    > 
+    > Di bagian atas, terdapat widget informasi total produk, pesanan aktif yang butuh diproses, dan total omzet yang dihitung dinamis menggunakan query agregat SQL. Di tengah, kami merender diagram lingkaran rasio kategori menu menggunakan CSS murni untuk melihat segmentasi produk secara visual. 
+    > 
+    > Di kanan atas dashboard, terdapat sakelar **Status Operasional Toko** (Open/Closed). Setelan ini menyimpan status toko langsung ke database tabel `settings` dan mengontrol seluruh alur transaksi di sisi pelanggan secara langsung. Saya akan mengeset status operasional ini menjadi **Open / Buka**."
 
-#### **Bagian 2: Alur Pemesanan & Proteksi Tombol**
-*   **Petunjuk Layar**: *Beralih ke halaman pemesanan `form.php`. Isi form dengan lengkap.*
+#### **Bagian 2: Kelola Menu (CRUD), Manajemen Pesanan, dan Polling Notifikasi**
+*   **Petunjuk Layar**: *Buka halaman produk admin `/admin/produk.php`. Klik tombol "Add New Menu", isi form dummy produk, lalu klik "Save Changes".*
 *   **P2 - Suara Perempuan A (Bicara)**:
-    > "Halo, saya Natasya. Saya akan mendemonstrasikan alur pemesanan pelanggan. Saya akan memilih menu *Croissant Butter*, mengisi Nama, Email, Jumlah Pesanan sebanyak `2`, dan menambahkan catatan: *'Minta dihangatkan'*. Harap perhatikan tombol **Order** ketika saya menekannya."
-*   **Petunjuk Layar**: *Klik tombol "Order". Tunjukkan tombol yang berubah menjadi abu-abu (disabled) dengan teks "Memproses..." sebelum menampilkan toast sukses.*
+    > "Halo, saya Natasya. Saya akan menjelaskan bagian pengelolaan data katalog produk dan pesanan. 
+    > 
+    > Di halaman **Kelola Produk** (`produk.php`), admin memiliki hak akses CRUD penuh. Tabel data produk ini kami lengkapi dengan sistem pagination SQL menggunakan perintah `LIMIT` dan `OFFSET` agar server tidak overload ketika menangani ratusan produk. 
+    > 
+    > Saat menambahkan menu baru, admin dapat mengunggah gambar. Di balik layar, script PHP melakukan validasi tipe berkas secara ketat menggunakan fungsi `getimagesize()` untuk menolak file non-gambar berbahaya. Sistem kemudian memproses file gambar menggunakan pustaka GD PHP untuk mengompresnya secara otomatis ke format `.webp`. Hal ini menghemat penyimpanan server hingga 80% dan mempercepat loading frontend secara dramatis."
+*   **Petunjuk Layar**: *Buka halaman pesanan admin `/admin/pesanan.php`. Tunjukkan tabel pesanan pelanggan berstatus Pending, lalu klik ikon centang hijau untuk memprosesnya menjadi Completed.*
 *   **P2 - Suara Perempuan A (Bicara)**:
-    > "Ketika tombol diklik, sistem langsung mengunci tombol tersebut (*disabled*) dan memunculkan animasi loading. Fitur **Double Submit Protection** ini dirancang untuk mencegah pelanggan tidak sengaja mengirimkan pesanan ganda akibat klik beruntun saat jaringan lambat. Setelah berhasil, notifikasi Toast sukses muncul di kanan atas, dan pesanan baru langsung ter-render di tabel pesanan pelanggan."
+    > "Selanjutnya adalah halaman **Kelola Pesanan** (`pesanan.php`). Di sini admin mengelola antrean pesanan pelanggan secara teratur. Tabel ini menampilkan detail pesanan, jumlah, catatan khusus, dan status pesanan. Ketika pesanan selesai disiapkan, admin mengklik tombol centang untuk mengubah status pesanan dari *Pending* menjadi *Completed*.
+    > 
+    > Fitur krusial lainnya di panel admin ini adalah **Sistem Notifikasi Real-time**. Ikon lonceng di pojok kanan atas terhubung ke script `get_notifications.php` via AJAX dengan polling berkala setiap 5 detik. Jika ada pelanggan yang melakukan pemesanan di frontend, lonceng notifikasi admin akan bergoyang secara dinamis dan badge angkanya bertambah tanpa admin perlu me-refresh halaman."
 
-#### **Bagian 3: Dashboard Admin & Notifikasi Real-time**
-*   **Petunjuk Layar**: *Buka tab admin yang telah login dan berada di Dashboard `admin/dashboard.php`. Jangan di-refresh. Tunggu ikon lonceng bergoyang.*
+#### **Bagian 3: Tampilan Pelanggan (Frontend), Katalog Interaktif & Alur Transaksi**
+*   **Petunjuk Layar**: *Beralih ke tab pelanggan di halaman beranda `index.php`. Scroll perlahan.*
 *   **P3 - Suara Laki-laki B (Bicara)**:
-    > "Halo, saya Firzan. Kini kita beralih ke sisi **Admin Panel** di `/admin/dashboard.php`. Di dashboard utama ini, admin disajikan data analitik operasional seperti statistik pesanan, total omzet, bagan rasio produk, serta tombol toggle cepat status operasional toko.
+    > "Halo, saya Firzan. Sekarang mari kita beralih ke sisi **Pelanggan (Frontend)**. Di halaman utama `index.php`, pelanggan disapa oleh spanduk hero interaktif yang memukau. Di navbar atas, pelanggan dapat melihat lencana status toko aktif, yang saat ini menyala hijau bertuliskan **Buka** berkat setelan admin yang diaktifkan sebelumnya."
+*   **Petunjuk Layar**: *Buka halaman produk pelanggan `product.php`. Klik tombol filter 'Bakery' lalu klik filter 'Coffee'.*
+*   **P3 - Suara Laki-laki B (Bicara)**:
+    > "Di halaman **Katalog Menu** (`product.php`), kami memuat 23 menu café secara responsif dalam tata letak grid. Untuk memberikan pengalaman pengguna yang sangat cepat, kami mengimplementasikan filtrasi menu berbasis manipulasi DOM JavaScript secara langsung. Pelanggan dapat mengklik kategori seperti *Bakery* atau *Coffee*, dan katalog akan tersaring secara instan tanpa loading halaman."
+*   **Petunjuk Layar**: *Buka halaman pemesanan `form.php`. Isi form pemesanan secara lengkap, lalu tekan tombol "Order" dan tunjukkan pesan sukses.*
+*   **P3 - Suara Laki-laki B (Bicara)**:
+    > "Di halaman **Pemesanan** (`form.php`), pelanggan dapat mengirim pesanan secara langsung. Saya akan mengisi Nama, Email, Jumlah, dan Catatan. Saat saya mengklik tombol 'Order', sistem mengirim data via AJAX POST secara asinkron. 
     > 
-    > Perhatikan ikon lonceng di navbar kanan atas. Lonceng bergoyang (*jiggle animation*) secara otomatis dan badge angkanya bertambah `1`. Sistem melakukan polling berkala di latar belakang untuk mendeteksi transaksi baru tanpa admin perlu me-refresh halaman."
-*   **Petunjuk Layar**: *Klik ikon lonceng, lalu klik notifikasi teratas untuk masuk ke halaman `admin/pesanan.php`.*
-*   **P3 - Suara Laki-laki B (Bicara)**:
-    > "Ketika admin mengklik notifikasi tersebut, sistem otomatis mengarahkan ke halaman **Kelola Pesanan**. Di sini pesanan baru berstatus *Pending*. Admin dapat menyiapkannya dan kemudian mengklik ikon centang hijau untuk menandai pesanan selesai."
+    > Di saat yang sama, tombol langsung dikunci menjadi abu-abu dan menampilkan teks 'Memproses...'. Fitur **Double Submit Protection** ini mencegah penulisan database ganda jika pelanggan tidak sengaja mengklik tombol kirim berkali-kali. Setelah sukses, Toast notifikasi muncul dan data pesanan langsung ditambahkan ke tabel riwayat pesanan aktif pelanggan di bagian bawah yang datanya disimpan secara aman menggunakan `sessionStorage` browser."
 
-#### **Bagian 4: Pengujian Kondisi Ekstrem & Keamanan**
-*   **Petunjuk Layar**: *Kembali ke dashboard admin, matikan toggle status toko menjadi "CLOSED". Beralih ke tab pelanggan, refresh halaman `index.php` dan `form.php`.*
+#### **Bagian 4: Ketangguhan Sistem (Skenario Ekstrem), Keamanan Kode & Penutup**
+*   **Petunjuk Layar**: *Kembali ke dashboard admin, matikan toggle status toko menjadi "CLOSED". Beralih ke tab pelanggan, refresh halaman `form.php`.*
 *   **P4 - Suara Perempuan B (Bicara)**:
-    > "Halo, saya Ratna. Saya akan menjelaskan aspek ketangguhan dan keamanan sistem. Jika admin menonaktifkan status operasional toko menjadi **Tutup**, di sisi pelanggan langsung muncul banner merah di bawah layar. Selain itu, formulir pemesanan otomatis terkunci dan diarsir buram untuk mencegah transaksi ilegal saat toko tutup.
+    > "Halo, saya Ratna. Saya akan mendemonstrasikan ketangguhan sistem kami dalam menangani kondisi ekstrem. 
     > 
-    > Selanjutnya, kami juga mendemonstrasikan penanganan database offline."
-*   **Petunjuk Layar**: *Buka Laragon/XAMPP, matikan servis MySQL (Apache tetap menyala). Kembali ke tab pelanggan di halaman produk `product.php` lalu lakukan refresh.*
+    > Skenario pertama adalah penutupan toko. Ketika status diubah menjadi *Closed* di panel admin, di sisi pelanggan langsung muncul spanduk pemberitahuan tutup berwarna merah. Jika pelanggan mencoba mengakses `form.php`, formulir pemesanan otomatis terkunci (*disabled*) dan tidak menerima input apa pun untuk menghindari transaksi ilegal."
+*   **Petunjuk Layar**: *Matikan servis database MySQL di panel Laragon/XAMPP. Kembali ke tab pelanggan di halaman `product.php` lalu lakukan refresh halaman.*
 *   **P4 - Suara Perempuan B (Bicara)**:
-    > "Jika database MySQL mati, halaman PHP Bake'n Brew tidak akan crash! Sistem mendeteksi kegagalan koneksi, memunculkan banner warning kuning bertuliskan *'Koneksi Database Offline'*, lalu memuat *mock data* produk dari berkas JSON lokal agar pelanggan tetap bisa melihat menu. 
+    > "Skenario ekstrem kedua adalah kerusakan database atau server mati. Biasanya, jika database MySQL mati, situs PHP akan langsung crash dan menampilkan error bawaan server yang berantakan. Namun di Bake'n Brew, kami merancang sistem failover dengan **Database Resilience**.
     > 
-    > Seluruh kode program kami rancang menggunakan standar keamanan tertinggi: menangkal SQL Injection dengan *Prepared Statements*, menyaring input dari XSS dengan `htmlspecialchars()`, serta memvalidasi upload file gambar menggunakan `getimagesize()` dan mengompresnya ke format WebP agar performa loading website sangat cepat dan efisien.
+    > Halaman katalog tetap dapat dimuat dengan aman! Sistem mendeteksi matinya database, menampilkan spanduk peringatan kuning bertuliskan *'Koneksi Database Offline'*, lalu otomatis memuat data produk cadangan dari berkas JSON lokal. Di saat yang sama, di sisi panel admin, seluruh tombol penulisan data seperti tambah, edit, dan hapus otomatis dikunci (*disabled*) untuk melindungi data.
     > 
-    > Kesimpulannya, website Bake'n Brew siap dideploy dan dirilis ke production [READY TO RELEASE]. Terima kasih."
+    > Seluruh aplikasi ini dibangun dengan standar keamanan tinggi: bebas dari celah SQL Injection berkat penggunaan *PDO Prepared Statements*, aman dari serangan Cross-Site Scripting berkat sanitasi output menggunakan `htmlspecialchars()`, serta memiliki antarmuka responsif ramah seluler (*mobile-first*). 
+    > 
+    > Aplikasi web Bake'n Brew saat ini dinyatakan siap rilis secara live di production. Sekian presentasi dari kelompok kami. Terima kasih atas perhatiannya."
 
 ---
 
