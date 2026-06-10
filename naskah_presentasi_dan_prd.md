@@ -65,11 +65,13 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 *   **P1 - Suara Cowok 1**:
     > "[Senang & Informatif] Setelah berhasil login, kita masuk ke halaman **Dashboard Admin** (`dashboard.php`). 
     > [Tenang & Jelas] Halaman ini berfungsi sebagai pusat pantau data operasional toko secara aktual. 
-    > [Informatif & Detail] Di bagian atas, terdapat widget informasi total produk, pesanan aktif yang butuh diproses, dan total omzet yang dihitung dinamis menggunakan query agregat SQL. 
-    > [Fokus & Menjelaskan] Di tengah, kami merender diagram lingkaran rasio kategori menu menggunakan CSS murni untuk melihat segmentasi produk secara visual. 
-    > [Menarik Perhatian] Di kanan atas dashboard, terdapat sakelar **Status Operasional Toko** (Open/Closed). 
-    > [Informatif & Jelas] Setelan ini menyimpan status toko langsung ke database tabel `settings` dan mengontrol seluruh alur transaksi di sisi pelanggan secara langsung. 
-    > [Tegas & Mantap] Saya akan mengeset status operasional ini menjadi **Open atau Buka**."
+    > [Informatif & Detail] Di bagian atas, terdapat dua kartu informasi utama, yaitu **Total Menu** sebanyak 23 produk dan **Total Pesanan** sebanyak 4 pesanan, yang dihitung secara dinamis dari database. 
+    > [Menarik Perhatian] Di sebelah kanan atas, terdapat sakelar **Status Operasional Toko** (Buka/Tutup) untuk mengaktifkan atau menonaktifkan transaksi pelanggan secara realtime. 
+    > [Fokus & Menjelaskan] Di bagian kiri bawah, kami merender diagram lingkaran **Komposisi Menu** menggunakan CSS murni untuk melihat perbandingan kategori produk Bakery, Coffee, dan Non-Coffee secara visual. 
+    > [Informatif & Jelas] Sementara di bagian kanan bawah, terdapat tabel **Pesanan Terbaru** yang menyajikan antrean order pelanggan lengkap dengan status transaksi mereka. 
+    > [Tegas & Mantap] Saya akan mengaktifkan sakelar status operasional ini menjadi **Buka**."
+
+
 
 #### **Bagian 2: Kelola Menu (CRUD), Manajemen Pesanan, dan Polling Notifikasi**
 *   **Petunjuk Layar**: *Buka halaman produk admin `/admin/produk.php`. Klik tombol "Add New Menu", isi form dummy produk, lalu klik "Save Changes".*
