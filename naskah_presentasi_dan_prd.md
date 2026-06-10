@@ -109,9 +109,12 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
     > 
     > Halaman katalog tetap dapat dimuat dengan aman! Sistem mendeteksi matinya database, menampilkan spanduk peringatan kuning bertuliskan *'Koneksi Database Offline'*, lalu otomatis memuat data produk cadangan dari berkas JSON lokal. Di saat yang sama, di sisi panel admin, seluruh tombol penulisan data seperti tambah, edit, dan hapus otomatis dikunci (*disabled*) untuk melindungi data.
     > 
-    > Seluruh aplikasi ini dibangun dengan standar keamanan tinggi: bebas dari celah SQL Injection berkat penggunaan *PDO Prepared Statements*, aman dari serangan Cross-Site Scripting berkat sanitasi output menggunakan `htmlspecialchars()`, serta memiliki antarmuka responsif ramah seluler (*mobile-first*). 
+    > Seluruh aplikasi ini dibangun dengan standar keamanan tinggi: bebas dari celah SQL Injection berkat penggunaan *PDO Prepared Statements*, aman dari serangan Cross-Site Scripting berkat sanitasi output menggunakan `htmlspecialchars()`, serta memiliki antarmuka responsif ramah seluler (*mobile-first*)."
+*   **Petunjuk Layar**: *Nyalakan kembali database MySQL di Laragon. Kembali ke tab admin, klik tombol dropdown profil di pojok kanan atas, lalu klik **Logout**. Sistem akan secara otomatis me-redirect kembali ke halaman login `/admin/login.php`.*
+*   **P4 - Suara Perempuan B (Bicara)**:
+    > "Terakhir, sebagai penutup alur keamanan admin, kami menyediakan fitur **Logout**. Saat tombol ini diklik, sistem secara instan menghancurkan (*destroy*) seluruh data session di server agar token akses tidak bisa disalahgunakan kembali oleh pihak lain. 
     > 
-    > Aplikasi web Bake'n Brew saat ini dinyatakan siap rilis secara live di production. Sekian presentasi dari kelompok kami. Terima kasih atas perhatiannya."
+    > Kesimpulannya, website Bake'n Brew ini siap dirilis secara live di production. Sekian presentasi dari kelompok kami. Terima kasih atas perhatiannya."
 
 ---
 
