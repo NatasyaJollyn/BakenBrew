@@ -55,13 +55,13 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 ### 🎬 Naskah Percakapan & Petunjuk Layar (Admin-First & Detail Halaman)
 
 #### **Bagian 1: Pembukaan, Login & Dashboard Admin**
-*   **Petunjuk Layar**: *Tampilkan halaman login admin `/admin/login.php` secara live.*
+*   **Petunjuk Layar**: *Coba ketik langsung URL `/admin/dashboard.php` di browser saat belum login, untuk menunjukkan sistem menolak bypass dan langsung me-redirect kembali ke `/admin/login.php`. Setelah itu, kembalikan ke tampilan halaman login admin `/admin/login.php`.*
 *   **P1 - Suara Laki-laki A (Bicara)**:
     > "Selamat pagi/siang kepada Bapak/Ibu Dosen Penguji dan rekan-rekan sekalian. Kami dari kelompok Bake'n Brew akan mempresentasikan aplikasi web pemesanan online untuk produk kopi dan roti premium secara live. 
     > 
-    > Berbeda dari demo biasa, kami akan memulai presentasi langsung dari pusat kendali sistem, yaitu **Admin Panel (Backend)**. 
+    > Berbeda dari demo biasa, kami memulai presentasi dari pusat kendali sistem, yaitu **Admin Panel (Backend)**. 
     > 
-    > Saat ini di layar tampil halaman login admin di `/admin/login.php`. Halaman ini dirancang minimalis dan bersih. Keamanannya dijaga ketat di tingkat server menggunakan session management PHP. Admin harus memasukkan username `admin` dan password terenkripsi untuk memverifikasi hak akses sebelum masuk ke sistem."
+    > Untuk memenuhi syarat tugas, kami menerapkan sistem otentikasi login yang aman. Sebagai pembuktian awal, jika ada pengguna tidak sah mencoba membypass dengan mengetikkan langsung URL dashboard di browser, sistem secara otomatis menolaknya dan langsung me-redirect kembali ke halaman `/admin/login.php` menggunakan session management PHP. Admin harus memasukkan kredensial resmi pada form login ini untuk diverifikasi."
 *   **Petunjuk Layar**: *Input username `admin` dan password `admin123` lalu klik Sign In. Setelah masuk, tampilkan Dashboard Utama `/admin/dashboard.php`.*
 *   **P1 - Suara Laki-laki A (Bicara)**:
     > "Setelah berhasil login, kita masuk ke halaman **Dashboard Admin** (`dashboard.php`). Halaman ini berfungsi sebagai pusat pantau data operasional toko secara aktual. 
