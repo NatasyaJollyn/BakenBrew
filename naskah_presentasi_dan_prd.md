@@ -1,6 +1,6 @@
 # Ringkasan PRD & Naskah Dialog Presentasi EAS – Bake'n Brew
 
-Dokumen ini menggabungkan ringkasan fungsionalitas teknis (PRD) dari seluruh sistem **Bake'n Brew** serta **Naskah Dialog Presentasi** terstruktur (untuk individu maupun kelompok) agar Anda tampil prima di hadapan dosen penguji.
+Dokumen ini menggabungkan ringkasan fungsionalitas teknis (PRD) dari seluruh sistem **Bake'n Brew** serta **Naskah Dialog Presentasi** terstruktur (untuk individu maupun kelompok) agar dapat digunakan sebagai showcase portofolio profesional secara publik (misalnya untuk LinkedIn).
 
 ---
 
@@ -21,7 +21,7 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
     *   *Personal Transaction Cache*: Log pesanan aktif di bagian bawah form order yang disimpan di session browser pelanggan.
     *   *Real-time Store Status*: Banner status operasional (Buka/Tutup) yang tersinkronisasi langsung dengan setelan admin.
 *   **Fitur Backend (Admin Panel)**:
-    *   *Dashboard Ringkasan*: Statistik total produk, pesanan aktif, total omzet, bagan rasio kategori, serta toggle cepat status operasional toko.
+    *   *Dashboard Ringkasan*: Statistik total produk, total pesanan, status operasional toko (Buka/Tutup) dengan sakelar toggle cepat, bagan rasio kategori menu (Chart.js), serta daftar pesanan terbaru di bagian kanan bawah.
     *   *CRUD Katalog Menu*: Manajemen produk lengkap dengan upload foto otomatis terkompresi ke WebP (hemat storage server).
     *   *Order Management Log*: Daftar pesanan masuk dengan kemampuan menandai selesai (*complete*) atau menghapus log transaksi.
     *   *Sistem Notifikasi Real-time*: Animasi lonceng bergoyang (*jiggle*) dan badge angka unread setiap ada pesanan baru masuk lewat polling 5 detik.
@@ -43,7 +43,7 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 > Pada naskah di bawah, setiap bagian dialog telah dilengkapi dengan **Petunjuk Nada & Intonasi** agar hasil konversi text-to-speech tidak terdengar datar.
 
 ### 🎭 Pembagian Peran & Rekomendasi Suara AI:
-1.  **Presenter 1 (P1 - Suara Cowok 1)**: Menyapa penguji, mengenalkan tim secara umum, mendemokan login admin, dashboard analitik, dan status operasional. *(Karakter suara: Tenang, berwibawa, dan profesional)*
+1.  **Presenter 1 (P1 - Suara Cowok 1)**: Menyapa pemirsa, mengenalkan tim secara umum, mendemokan login admin, dashboard analitik, dan status operasional. *(Karakter suara: Tenang, berwibawa, dan profesional)*
 2.  **Presenter 2 (P2 - Suara Cewek 1)**: Menjelaskan proses CRUD produk (WebP + GD library), kelola status pesanan, serta notifikasi real-time (polling). *(Karakter suara: Jelas, antusias, dan ramah)*
 3.  **Presenter 3 (P3 - Suara Cowok 2)**: Beranda pelanggan, katalog interaktif dengan filter JS, pengisian form order, AJAX submit, dan Double Submit Protection. *(Karakter suara: Tegas, dinamis, dan meyakinkan)*
 4.  **Presenter 4 (P4 - Suara Cewek 2)**: Demonstrasi skenario tutup toko, failover database offline (mock data), ringkasan keamanan kode (SQLi/XSS), tombol logout, dan penutup. *(Karakter suara: Serius, mantap, dan ekspresif)*
@@ -67,7 +67,7 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
     > [Tenang & Jelas] Halaman ini berfungsi sebagai pusat pantau data operasional toko secara aktual. 
     > [Informatif & Detail] Di bagian atas, terdapat dua kartu informasi utama, yaitu **Total Menu** sebanyak 23 produk dan **Total Pesanan** sebanyak 4 pesanan, yang dihitung secara dinamis dari database. 
     > [Menarik Perhatian] Di sebelah kanan atas, terdapat sakelar **Status Operasional Toko** (Buka/Tutup) untuk mengaktifkan atau menonaktifkan transaksi pelanggan secara realtime. 
-    > [Fokus & Menjelaskan] Di bagian kiri bawah, kami merender diagram lingkaran **Komposisi Menu** menggunakan CSS murni untuk melihat perbandingan kategori produk Bakery, Coffee, dan Non-Coffee secara visual. 
+    > [Fokus & Menjelaskan] Di bagian kiri bawah, kami merender diagram lingkaran **Komposisi Menu** menggunakan pustaka Chart.js untuk melihat perbandingan kategori produk Bakery, Coffee, dan Non-Coffee secara visual. 
     > [Informatif & Jelas] Sementara di bagian kanan bawah, terdapat tabel **Pesanan Terbaru** yang menyajikan antrean order pelanggan lengkap dengan status transaksi mereka. 
     > [Tegas & Mantap] Saya akan mengaktifkan sakelar status operasional ini menjadi **Buka**."
 
@@ -139,7 +139,7 @@ Sistem **Bake'n Brew** adalah aplikasi web pemesanan kopi dan roti (*bakery*) be
 
 ---
 
-## 💡 Tips Tambahan untuk Menjawab Pertanyaan Dosen:
+## 💡 Tips Tambahan untuk Menjawab Pertanyaan Pemirsa / Klien:
 1.  **Jika ditanya tentang State Management**: Jawablah bahwa status order aktif pelanggan disimpan menggunakan `sessionStorage` di sisi browser, sehingga data keranjang belanja tetap aman selama tab browser tidak ditutup.
 2.  **Jika ditanya tentang Kompresi WebP**: Jawablah bahwa gambar produk yang diunggah dikompresi di sisi server menggunakan pustaka GD PHP (`imagecreatefrompng` / `imagewebp`) untuk mengurangi ukuran file hingga 70-80% tanpa mengurangi kualitas visual secara drastif.
 3.  **Jika ditanya tentang Polling Notifikasi**: Jawablah bahwa admin menggunakan fungsi `setInterval()` di JavaScript untuk menembak endpoint `get_notifications.php` setiap 5 detik guna mendeteksi status pesanan baru secara berkala tanpa membebani server secara berlebih.
